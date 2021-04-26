@@ -9,15 +9,17 @@
       @upload="handleUpload"
     >
       <!-- slot="preview" slot-scope="{fileList}" -->
-      <template class="upload-pic-list" v-slot:preview="{fileList}">
+      <template #preview="{fileList}" class="upload-pic-list">
         <div class="upload-pic-list__add" @click="$refs.upload.handleSelectFile()">
-          <i class="el-icon el-icon-plus"/>
+          <i class="el-icon el-icon-plus"></i>
         </div>
-        <div class="upload-pic-list__item" v-for="file in fileList" :key="file.id">
+        <div v-for="file in fileList" :key="file.id" class="upload-pic-list__item">
           <div
-            class="upload-pic-list__error"
             v-if="file.status === 'error'"
-          >上传失败: {{ file.message }}</div>
+            class="upload-pic-list__error"
+          >
+            上传失败: {{ file.message }}
+          </div>
           <div v-if="file.status === 'uploading'" class="upload-pic-list__progress">
             <el-progress :width="100" type="circle" :percentage="file.percentage"></el-progress>
           </div>
@@ -27,9 +29,8 @@
             class="upload-pic-list__remove el-icon el-icon-close"
             title="移除"
             @click="$refs.upload.handleRemove(file)"
-          />
+          ></i>
         </div>
-        
       </template>
     </c-upload>
   </div>

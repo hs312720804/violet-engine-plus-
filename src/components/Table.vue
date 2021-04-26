@@ -48,24 +48,6 @@ const defaultTableProps = {
 }
 export default {
   name: 'CTable',
-  data () {
-    return {
-      hiddenColumns: []
-    }
-  },
-  computed: {
-    selectStatus () {
-      const dataCount = this.data.length
-      const count = this.selected.length
-      if (dataCount === 0 || count === 0) {
-        return 'none'
-      }
-      if (dataCount === count) {
-        return 'all'
-      }
-      return 'indeterminate'
-    }
-  },
   props: {
     props: {
     },
@@ -104,6 +86,24 @@ export default {
       default () {
         return true
       }
+    }
+  },
+  data () {
+    return {
+      hiddenColumns: []
+    }
+  },
+  computed: {
+    selectStatus () {
+      const dataCount = this.data.length
+      const count = this.selected.length
+      if (dataCount === 0 || count === 0) {
+        return 'none'
+      }
+      if (dataCount === count) {
+        return 'all'
+      }
+      return 'indeterminate'
     }
   },
   methods: {
@@ -146,9 +146,9 @@ export default {
     const rowIndexDisableSelection = this.rowIndexDisableSelection
     const useContextMenu = this.useContextMenu
     const hiddenColumns = this.hiddenColumns
-    
+
     const selectionType = this.selectionType
-    
+
     const elementUITableEvents = [
       'cell-mouse-enter',
       'cell-mouse-leave',
@@ -170,17 +170,17 @@ export default {
     }, {})
     let options = {}
     if (selectionType !== 'none') {
-        options = {
-          props: {
-            width: 55,
-            align: 'center'
-          },
-          slots: {}
-        }
-        if (fixSelection) {
-          options.props.fixed = 'left'
-        }
-       
+      options = {
+        props: {
+          width: 55,
+          align: 'center'
+        },
+        slots: {}
+      }
+      if (fixSelection) {
+        options.props.fixed = 'left'
+      }
+
     }
     const getHeader = () => {
       // console.log('88888888<==header==>', this.header)
@@ -212,74 +212,74 @@ export default {
       //   return re
       // }, [])
       // console.log('a=>>>', header)
-        if (selectionType === 'multiple') {
-          options.props.renderHeader = () => {
-            return h(ElCheckbox, {
-              props: {
-                value: this.selectStatus === 'all',
-                indeterminate: this.selectStatus === 'indeterminate'
-              },
-              on: {
-                input: () => {
-                  const selectStatus = this.selectStatus
-                  const status = selectStatus === 'all' || selectStatus === 'indeterminate'
-                  this.$emit('all-row-selection-change', !status)
-                }
+      if (selectionType === 'multiple') {
+        options.props.renderHeader = () => {
+          return h(ElCheckbox, {
+            props: {
+              value: this.selectStatus === 'all',
+              indeterminate: this.selectStatus === 'indeterminate'
+            },
+            on: {
+              input: () => {
+                const selectStatus = this.selectStatus
+                const status = selectStatus === 'all' || selectStatus === 'indeterminate'
+                this.$emit('all-row-selection-change', !status)
               }
-            })
-          }
-          options.slots.default = ({ $index: index, row }) => {
-            const disabled = rowIndexDisableSelection.includes(index)
-            return h(ElCheckbox, {
-              props: {
-                value: this.selected.indexOf(index) > -1,
-                disabled
-              },
-              nativeOn: {
-                'click': event => event.stopPropagation()
-              },
-              on: {
-                input: (value) => {
-                  if (value) {
-                    this.$emit('row-selection-add', row, index)
-                  } else {
-                    this.$emit('row-selection-remove', row, index)
-                  }
-                }
-              }
-            })
-          }
+            }
+          })
         }
-          
-        if (selectionType === 'single') {
-          debugger
-          options.slots = ({ $index: index, row }) => {
-            const disabled = rowIndexDisableSelection.includes(index)
-            return h(ElRadio, {
-              class: 'hide-radio-label',
-              props: {
-                value: this.selected,
-                label: index,
-                disabled
-              },
-              nativeOn: {
-                click: (event) => {
-                  if (!disabled) {
-                    this.$emit('row-selection-change', row, index)
-                  }
-                  event.stopPropagation()
-                  event.preventDefault()
+        options.slots.default = ({ $index: index, row }) => {
+          const disabled = rowIndexDisableSelection.includes(index)
+          return h(ElCheckbox, {
+            props: {
+              value: this.selected.indexOf(index) > -1,
+              disabled
+            },
+            nativeOn: {
+              'click': event => event.stopPropagation()
+            },
+            on: {
+              input: value => {
+                if (value) {
+                  this.$emit('row-selection-add', row, index)
+                } else {
+                  this.$emit('row-selection-remove', row, index)
                 }
               }
-            })
-          }
+            }
+          })
         }
-        const selectionColumn = h(ElTableColumn, options, options.slots)
-        header.unshift(selectionColumn)
+      }
 
-        return header
-      };
-      
+      if (selectionType === 'single') {
+        debugger
+        options.slots = ({ $index: index, row }) => {
+          const disabled = rowIndexDisableSelection.includes(index)
+          return h(ElRadio, {
+            class: 'hide-radio-label',
+            props: {
+              value: this.selected,
+              label: index,
+              disabled
+            },
+            nativeOn: {
+              click: event => {
+                if (!disabled) {
+                  this.$emit('row-selection-change', row, index)
+                }
+                event.stopPropagation()
+                event.preventDefault()
+              }
+            }
+          })
+        }
+      }
+      const selectionColumn = h(ElTableColumn, options, options.slots)
+      header.unshift(selectionColumn)
+
+      return header
+    }
+
     // console.log('getHeader===>', getHeader)
     const table = h(
       ElTable,
@@ -287,7 +287,7 @@ export default {
         ref: 'table',
         class: 'cc-table',
         props: {
-          ...defaultTableProps,
+          ...defaultTableProps
         },
         ...this.props,
         data: this.data,

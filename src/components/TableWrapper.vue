@@ -23,6 +23,7 @@
 <script>
 export default {
   name: 'CTableWrapper',
+  props: ['columns', 'hiddenColumns'],
   data () {
     return {
       showContextMenu: false,
@@ -33,7 +34,12 @@ export default {
       }
     }
   },
-  props: ['columns', 'hiddenColumns'],
+  mounted () {
+    this.addEventListener()
+  },
+  unmounted () {
+    this.removeEventListener()
+  },
   methods: {
     handleShowContextMenu (event) {
       event.stopPropagation()
@@ -56,12 +62,6 @@ export default {
       $el.querySelector('thead').removeEventListener('contextmenu', this.handleShowContextMenu)
       $el.querySelector('.c-table-context-menu').removeEventListener('mouseleave', this.handleHideContextmenu)
     }
-  },
-  mounted () {
-    this.addEventListener()
-  },
-  destroyed () {
-    this.removeEventListener()
   }
 }
 </script>

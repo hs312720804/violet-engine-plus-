@@ -28,12 +28,12 @@
     :selected="table.selected"
     :select-on-row-click="true"
     :row-index-disable-selection="[1]"
+    :use-context-menu="true"
     @row-selection-add="handleRowSelectionAdd"
     @row-selection-remove="handleRowSelectionRemove"
     @row-selection-change="handleRowSelectionChange"
     @all-row-selection-change="handleAllRowSelectionChange"
     @row-click="handleRowClick"
-    :useContextMenu="true"
   >
   </c-table>
 </template>
@@ -48,21 +48,21 @@ export default {
     return {
       tableData1: [],
       tableData: [{
-          date: '2016-05-02',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1518 弄'
-        }, {
-          date: '2016-05-04',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1517 弄'
-        }, {
-          date: '2016-05-01',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1519 弄'
-        }, {
-          date: '2016-05-03',
-          name: '王小虎',
-          address: '上海市普陀区金沙江路 1516 弄'
+        date: '2016-05-02',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1518 弄'
+      }, {
+        date: '2016-05-04',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1517 弄'
+      }, {
+        date: '2016-05-01',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1519 弄'
+      }, {
+        date: '2016-05-03',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1516 弄'
       }],
       table: {
         props: {
@@ -107,6 +107,9 @@ export default {
       }
     }
   },
+  created() {
+    console.log('CTable==', CTable)
+  },
   methods: {
     handleEdit ({ $index: index }) {
       this.$message(`编辑第${index + 1}条记录`)
@@ -137,9 +140,6 @@ export default {
       console.log(arguments)
       this.$message(`row-click`)
     }
-  },
-  created() {
-    console.log('CTable==', CTable)
   }
 }
 </script>

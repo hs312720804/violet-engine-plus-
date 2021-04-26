@@ -61,6 +61,7 @@ module.exports = {
       multiline: 1
     }],
     // 'vue/require-default-prop': 'off',
-    'vue/html-closing-bracket-spacing': 'error'
+    'vue/html-closing-bracket-spacing': 'error',
+    '@typescript-eslint/no-var-requires': 0
   }
 }
