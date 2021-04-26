@@ -141,14 +141,105 @@ export default {
     }
   },
   render () {
-    // console.log('props==>', this.props)
+    console.log('props==>', this.props)
+    // debugger
     const fixSelection = this.fixSelection
     const rowIndexDisableSelection = this.rowIndexDisableSelection
     const useContextMenu = this.useContextMenu
     const hiddenColumns = this.hiddenColumns
-    
+    const header = this.header.reduce((result, item, index) => {
+      if (hiddenColumns.indexOf(index) === -1) {
+        let scopedSlots
+        if (item.render) {
+          scopedSlots = {
+            default: props => item.render(h, props)
+          }
+        }
+        result.push(h(ElTableColumn, {
+          key: index,
+          props: item,
+          scopedSlots
+        }))
+      }
+      return result
+    }, [])
     const selectionType = this.selectionType
-    
+    if (selectionType !== 'none') {
+      const options = {
+        props: {
+          width: 55,
+          align: 'center'
+        },
+        scopedSlots: {}
+      }
+      if (fixSelection) {
+        options.props.fixed = 'left'
+      }
+      if (selectionType === 'multiple') {
+        options.props.renderHeader = () => {
+          return h(ElCheckbox, {
+            props: {
+              value: this.selectStatus === 'all',
+              indeterminate: this.selectStatus === 'indeterminate'
+            },
+            on: {
+              input: () => {
+                const selectStatus = this.selectStatus
+                const status = selectStatus === 'all' || selectStatus === 'indeterminate'
+                this.$emit('all-row-selection-change', !status)
+              }
+            }
+          })
+        }
+
+        options.scopedSlots.default = ({ $index: index, row }) => {
+          const disabled = rowIndexDisableSelection.includes(index)
+          return h(ElCheckbox, {
+            props: {
+              value: this.selected.indexOf(index) > -1,
+              disabled
+            },
+            nativeOn: {
+              'click': event => event.stopPropagation()
+            },
+            on: {
+              input: (value) => {
+                if (value) {
+                  this.$emit('row-selection-add', row, index)
+                } else {
+                  this.$emit('row-selection-remove', row, index)
+                }
+              }
+            }
+          })
+        }
+      }
+      if (selectionType === 'single') {
+        options.scopedSlots.default = ({ $index: index, row }) => {
+          const disabled = rowIndexDisableSelection.includes(index)
+          return h(ElRadio, {
+            class: 'hide-radio-label',
+            props: {
+              value: this.selected,
+              label: index,
+              disabled
+            },
+            nativeOn: {
+              click: (event) => {
+                if (!disabled) {
+                  this.$emit('row-selection-change', row, index)
+                }
+                event.stopPropagation()
+                event.preventDefault()
+              }
+            }
+          })
+        }
+      }
+      const selectionColumn = h(ElTableColumn, options)
+      header.unshift(selectionColumn)
+    }
+
     const elementUITableEvents = [
       'cell-mouse-enter',
       'cell-mouse-leave',
@@ -168,119 +259,6 @@ export default {
       // debugger
       return result
     }, {})
-    let options = {}
-    if (selectionType !== 'none') {
-        options = {
-          props: {
-            width: 55,
-            align: 'center'
-          },
-          slots: {}
-        }
-        if (fixSelection) {
-          options.props.fixed = 'left'
-        }
-       
-    }
-    const getHeader = () => {
-      // console.log('88888888<==header==>', this.header)
-      const header = this.header.reduce((result, item, index) => {
-        if (hiddenColumns.indexOf(index) === -1) {
-          let slots
-          if (item.render) {
-            slots = {
-              default: props => item.render(h, props)
-            }
-          }
-          // console.log('result===>', index)
-          // console.log('result===>', result)
-          let a = h(ElTableColumn, {
-            key: index,
-            ...item,
-            slots
-          })
-          // debugger
-          // let a = 1
-          result.push(a)
-        }
-        console.log('result===>', result)
-        return result
-      }, [])
-
-      // const a = this.header.reduce((re, obj, i) => {
-      //   re.push(obj)
-      //   return re
-      // }, [])
-      // console.log('a=>>>', header)
-        if (selectionType === 'multiple') {
-          options.props.renderHeader = () => {
-            return h(ElCheckbox, {
-              props: {
-                value: this.selectStatus === 'all',
-                indeterminate: this.selectStatus === 'indeterminate'
-              },
-              on: {
-                input: () => {
-                  const selectStatus = this.selectStatus
-                  const status = selectStatus === 'all' || selectStatus === 'indeterminate'
-                  this.$emit('all-row-selection-change', !status)
-                }
-              }
-            })
-          }
-          options.slots.default = ({ $index: index, row }) => {
-            const disabled = rowIndexDisableSelection.includes(index)
-            return h(ElCheckbox, {
-              props: {
-                value: this.selected.indexOf(index) > -1,
-                disabled
-              },
-              nativeOn: {
-                'click': event => event.stopPropagation()
-              },
-              on: {
-                input: (value) => {
-                  if (value) {
-                    this.$emit('row-selection-add', row, index)
-                  } else {
-                    this.$emit('row-selection-remove', row, index)
-                  }
-                }
-              }
-            })
-          }
-        }
-          
-        if (selectionType === 'single') {
-          debugger
-          options.slots = ({ $index: index, row }) => {
-            const disabled = rowIndexDisableSelection.includes(index)
-            return h(ElRadio, {
-              class: 'hide-radio-label',
-              props: {
-                value: this.selected,
-                label: index,
-                disabled
-              },
-              nativeOn: {
-                click: (event) => {
-                  if (!disabled) {
-                    this.$emit('row-selection-change', row, index)
-                  }
-                  event.stopPropagation()
-                  event.preventDefault()
-                }
-              }
-            })
-          }
-        }
-        const selectionColumn = h(ElTableColumn, options, options.slots)
-        header.unshift(selectionColumn)
-
-        return header
-      };
-      
-    // console.log('getHeader===>', getHeader)
     const table = h(
       ElTable,
       {
@@ -288,22 +266,18 @@ export default {
         class: 'cc-table',
         props: {
           ...defaultTableProps,
+          ...this.props,
+          data: this.data
         },
-        ...this.props,
-        data: this.data,
-        // directives: this.$directives,
+        directives: this.$directives,
         on: {
           ...elementUITableEvents,
           'sort-change': this.handleSortChange,
           'row-click': this.handleRowClick
         }
       },
-      // header
-      {
-        default: getHeader
-      }
+      header
     )
-    // console.log('table==>', table)
     if (!useContextMenu) {
       return table
     }
