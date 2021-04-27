@@ -103,6 +103,7 @@ export default {
           }
         ],
         selectionType: 'multiple',
+        // selectionType: 'single',
         selected: []
       }
     }
@@ -124,7 +125,8 @@ export default {
       this.table.selected = index
     },
     handleRowSelectionAdd (item, index) {
-      this.table.selected = this.table.selected.concat(index)
+      // this.table.selected = this.table.selected.concat(index)
+      this.table.selected.push(index)
     },
     handleRowSelectionRemove (item, index) {
       this.table.selected = this.table.selected.filter(item => item !== index)

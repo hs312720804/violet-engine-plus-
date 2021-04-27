@@ -2,46 +2,81 @@
 import { ElTable as ElTable, ElTableColumn, ElCheckbox, ElRadio } from 'element-plus'
 import TableWrapper from './TableWrapper.vue'
 import { h } from 'vue'
+// interface ObjectOf<V> {
+//   [_: string]: V
+// }
+// class OrderItem {
+//   uuid: string
+//   amount: number;
+//   secondaryTotal: number;
+//   total: number;
+//   originalTotal: number;
+//   checked: boolean;
+// }
+// interface Table {
+//   components: {
+//     extends: ObjectOf<OrderItem>
+//   }
+// }
+// const aaa:Table = {
+//   components: {
+//     'extends': [{ 'uuid': '12' }]
+//   }
+// }
+// function identity<T>(arg: T): T {
+//   return arg
+// }
+
+// let myIdentity: {<U>(arg: U) : U;} = identity
+// console.log('111=>', myIdentity([1,2,3]))
+
+// function loggingIdentity<T>(arg: Array<T>): number {
+//   console.log(arg.length)  // Array has a .length, so no more error
+//   return arg.length
+// }
+// let aaa = [1, 2, 3]
+// console.log(toString.call(bbb))
+
 // elementui 的 hover-row 功能导致在数据量大的时候很卡,
 // 下面通过特殊的手段禁用
-const TableBody = {
-  extends: ElTable.components.TableBody,
-  methods: {
-    getRowClass (row, rowIndex) {
-      const classes = ['el-table__row']
-      if (this.table.highlightCurrentRow && row === this.store.states.currentRow) {
-        classes.push('current-row')
-      }
+// const TableBody = {
+//   extends: ElTable.components.TableBody,
+//   methods: {
+//     getRowClass (row, rowIndex) {
+//       const classes = ['el-table__row']
+//       if (this.table.highlightCurrentRow && row === this.store.states.currentRow) {
+//         classes.push('current-row')
+//       }
 
-      // if (rowIndex === this.store.states.hoverRow) {
-      //   classes.push('hover-row');
-      // }
+//       // if (rowIndex === this.store.states.hoverRow) {
+//       //   classes.push('hover-row');
+//       // }
 
-      if (this.stripe && rowIndex % 2 === 1) {
-        classes.push('el-table__row--striped')
-      }
-      const rowClassName = this.table.rowClassName
-      if (typeof rowClassName === 'string') {
-        classes.push(rowClassName)
-      } else if (typeof rowClassName === 'function') {
-        // classes.push(rowClassName.call(null, {row, rowIndex}))
-        classes.push(rowClassName(row, rowIndex))
-      }
+//       if (this.stripe && rowIndex % 2 === 1) {
+//         classes.push('el-table__row--striped')
+//       }
+//       const rowClassName = this.table.rowClassName
+//       if (typeof rowClassName === 'string') {
+//         classes.push(rowClassName)
+//       } else if (typeof rowClassName === 'function') {
+//         // classes.push(rowClassName.call(null, {row, rowIndex}))
+//         classes.push(rowClassName(row, rowIndex))
+//       }
 
-      if (this.store.states.expandRows.indexOf(row) > -1) {
-        classes.push('expanded')
-      }
+//       if (this.store.states.expandRows.indexOf(row) > -1) {
+//         classes.push('expanded')
+//       }
 
-      return classes
-    }
-  }
-}
-const Table = {
-  extends: ElTable,
-  components: {
-    TableBody
-  }
-}
+//       return classes
+//     }
+//   }
+// }
+// const Table = {
+//   extends: ElTable,
+//   components: {
+//     TableBody
+//   }
+// }
 const defaultTableProps = {
   border: true,
   'highlight-current-row': false
@@ -50,10 +85,16 @@ export default {
   name: 'CTable',
   props: {
     props: {
+      type: Object, //类型
+      default: null //默认值
     },
     data: {
+      type: Object, //类型
+      default: null //默认值
     },
     header: {
+      type: Object, //类型
+      default: null //默认值
     },
     selectionType: {
       type: String,
@@ -62,6 +103,8 @@ export default {
       }
     },
     selected: {
+      type: Object, //类型
+      default: null //默认值
     },
     selectOnRowClick: {
       type: Boolean,
@@ -150,38 +193,26 @@ export default {
     const selectionType = this.selectionType
 
     const elementUITableEvents = [
-      'cell-mouse-enter',
-      'cell-mouse-leave',
-      'cell-click',
-      'cell-dblclick',
-      'row-click',
-      'row-contextmenu',
-      'row-dblclick',
-      'header-click',
-      'header-contextmenu',
-      'sort-change',
-      'current-change',
-      'header-dragend',
-      'expand-change'
+      'onCellMouseEnter',
+      'onCellMouseLeave',
+      'onCellClick',
+      'onCellDblclick',
+      // 'onRowClick',
+      'onRowContextmenu',
+      'onRowDblclick',
+      'onHeaderClick',
+      'onHeaderContextmenu',
+      // 'onSortChange',
+      'onCurrentChange',
+      'onHeaderDragend',
+      'onExpandChange'
     ].reduce((result, item) => {
       result[item] = this.createEmitter(item)
       // debugger
       return result
     }, {})
     let options = {}
-    if (selectionType !== 'none') {
-      options = {
-        props: {
-          width: 55,
-          align: 'center'
-        },
-        slots: {}
-      }
-      if (fixSelection) {
-        options.props.fixed = 'left'
-      }
 
-    }
     const getHeader = () => {
       // console.log('88888888<==header==>', this.header)
       const header = this.header.reduce((result, item, index) => {
@@ -203,7 +234,7 @@ export default {
           // let a = 1
           result.push(a)
         }
-        console.log('result===>', result)
+        // console.log('result===>', result)
         return result
       }, [])
 
@@ -212,70 +243,92 @@ export default {
       //   return re
       // }, [])
       // console.log('a=>>>', header)
-      if (selectionType === 'multiple') {
-        options.props.renderHeader = () => {
-          return h(ElCheckbox, {
-            props: {
-              value: this.selectStatus === 'all',
-              indeterminate: this.selectStatus === 'indeterminate'
-            },
-            on: {
-              input: () => {
+      if (selectionType !== 'none') {
+        options = {
+        // props: {
+          width: 55,
+          align: 'center',
+          // },
+          slots: {}
+        }
+        if (fixSelection) {
+          options.fixed = 'left'
+        }
+        if (selectionType === 'multiple') {
+        // options.type = 'selection'
+          options.renderHeader = () => {
+            return h(ElCheckbox, {
+            // props: {
+            // value: this.selectStatus === 'all',
+              modelValue: this.selectStatus === 'all',
+              'onUpdate:modelValue': value => this.$emit('update:modelValue', value),
+              indeterminate: this.selectStatus === 'indeterminate',
+              // },
+              // on: {
+              onChange: () => {
                 const selectStatus = this.selectStatus
                 const status = selectStatus === 'all' || selectStatus === 'indeterminate'
                 this.$emit('all-row-selection-change', !status)
               }
-            }
-          })
-        }
-        options.slots.default = ({ $index: index, row }) => {
-          const disabled = rowIndexDisableSelection.includes(index)
-          return h(ElCheckbox, {
-            props: {
-              value: this.selected.indexOf(index) > -1,
-              disabled
-            },
-            nativeOn: {
-              'click': event => event.stopPropagation()
-            },
-            on: {
-              input: value => {
+            // }
+            })
+          }
+          options.slots.default = ({ $index: index, row, $event }) => {
+            const disabled = rowIndexDisableSelection.includes(index)
+            return h(ElCheckbox, {
+            // props: {
+            // value: this.selected.indexOf(index) > -1,
+              modelValue: this.selected.indexOf(index) > -1,
+              // 'onUpdate:modelValue': value => this.$emit('update:modelValue', value),
+              disabled,
+              // },
+              // nativeOn: {
+              onClick: event => event.stopPropagation(),
+              // },
+              // on: {
+              onChange: value => {
                 if (value) {
                   this.$emit('row-selection-add', row, index)
                 } else {
                   this.$emit('row-selection-remove', row, index)
                 }
+                $event.stopPropagation()
+                $event.preventDefault()
               }
-            }
-          })
+            // }
+            })
+          }
         }
-      }
 
-      if (selectionType === 'single') {
-        debugger
-        options.slots = ({ $index: index, row }) => {
-          const disabled = rowIndexDisableSelection.includes(index)
-          return h(ElRadio, {
-            class: 'hide-radio-label',
-            props: {
-              value: this.selected,
+        if (selectionType === 'single') {
+          options.slots.default = ({ $index: index, row, $event }) => {
+          // debugger
+            const disabled = rowIndexDisableSelection.includes(index)
+            return h(ElRadio, {
+              class: 'hide-radio-label',
+              // props: {
+              modelValue: this.selected,
+              'onUpdate:modelValue': value => this.$emit('update:modelValue', value),
               label: index,
-              disabled
-            },
-            nativeOn: {
-              click: event => {
+              disabled,
+              // },
+              // nativeOn: {
+              onChange: () => {
+              // debugger
                 if (!disabled) {
                   this.$emit('row-selection-change', row, index)
                 }
-                event.stopPropagation()
-                event.preventDefault()
+                $event.stopPropagation()
+                $event.preventDefault()
               }
-            }
-          })
+            // }
+            })
+          }
         }
+        const selectionColumn = h(ElTableColumn, options, options.slots)
+        // debugger
+        header.unshift(selectionColumn)
       }
-      const selectionColumn = h(ElTableColumn, options, options.slots)
-      header.unshift(selectionColumn)
 
       return header
     }
@@ -292,11 +345,11 @@ export default {
         ...this.props,
         data: this.data,
         // directives: this.$directives,
-        on: {
-          ...elementUITableEvents,
-          'sort-change': this.handleSortChange,
-          'row-click': this.handleRowClick
-        }
+        // on: {
+        ...elementUITableEvents,
+        'onSortChange': this.handleSortChange,
+        'onRowClick':  this.handleRowClick
+        // }
       },
       // header
       {
