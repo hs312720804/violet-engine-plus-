@@ -38,8 +38,9 @@
   </c-table>
 </template>
 <script>
+import { CTable }  from 'admin-toolkit-plus'
 // import { createOperationRender } from '../lib/utils/component'
-import CTable from '../components/Table.vue'
+// import CTable from '../components/Table.vue'
 export default {
   components: {
     CTable
@@ -96,10 +97,6 @@ export default {
           {
             id: '2',
             name: '名称2'
-          },
-          {
-            id: '33',
-            name: '名称33'
           }
         ],
         selectionType: 'multiple',
