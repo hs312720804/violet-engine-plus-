@@ -7,9 +7,7 @@ export default defineConfig({
   plugins: [vue()],
   resolve: {
     alias: [
-      { find: '/@', replacement: resolve(__dirname, 'src') },
-      { find: '/@ser', replacement: resolve(__dirname, 'src/services') },
-      { find: '/@comp', replacement: resolve(__dirname, 'src/components') }
+      { find: '@', replacement: resolve(__dirname, 'src') }
     ]
   }
 })
