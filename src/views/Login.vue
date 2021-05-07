@@ -4,24 +4,23 @@
       <el-col class="login-form1">
         <div class="log_center">
           <div class="log_logo">
-            <img v-if="logo.login.image" :src="logo.login.image">
-            <img v-else src="../assets/logo.png">
-            <span>{{ siteInfo.siteName }}</span>
+            <img src="../assets/images/logo.png">
+            <span>员工管理系统</span>
           </div>
           <div class="log_bj">
             <div class="formRadio">
-              <el-tabs v-model="loginType" :stretch="true" @tab-click="handleSelectLoginType">
+              <el-tabs v-model="loginType" :stretch="true">
                 <el-tab-pane label="管理员登录" name="admin"></el-tab-pane>
-                <!-- <el-tab-pane label="员工入职登录" name="employee"></el-tab-pane> -->
+                <el-tab-pane label="员工入职登录" name="employee"></el-tab-pane>
               </el-tabs>
             </div>
             <el-form
               v-if="!loginType || loginType === 'admin'"
-              ref="adminForm"
+              ref="adminFormEl"
               :model="adminForm"
               status-icon
               class="demo-adminForm"
-              @keyup.enter.native="handleLogin"
+              @keyup.enter="handleLogin"
             >
               <el-form-item
                 prop="userName"
@@ -53,11 +52,11 @@
               </el-form-item>
               <el-form-item>
                 <div class="formSubmit">
-                  <el-button type="primary" @click="handleLogin">{{ $t('btn.login') }}</el-button>
+                  <el-button type="primary" @click="handleLogin">提交</el-button>
                 </div>
               </el-form-item>
             </el-form>
-            <el-form v-if="loginType === 'employee'" ref="employeeForm" :model="employeeForm">
+            <el-form v-if="loginType === 'employee'" ref="employeeFormEl" :model="employeeForm">
               <el-form-item
                 prop="phone"
                 :rules="[
@@ -91,74 +90,80 @@
       </el-col>
     </el-row>
     <div class="via">
-      Copyright ©{{ year }} {{ siteInfo.copyright }} ·  <template v-if="siteInfo.recordNum">ICP备案证号：<a href="https://beian.miit.gov.cn/" target="_blank">{{ siteInfo.recordNum }}</a></template>
+      <span style="padding-right:20px">Via：深圳酷开网络科技有限公司</span> 技术支持：云技术部
     </div>
   </div>
 </template>
 
-<script>
-import store from '@/store'
+<script lang="ts">
 
-export default {
-  components: {},
-  props: ['schema'],
-  data () {
-    return {
-      loginType: 'admin',
-      adminForm: {
-        userName: 'admin',
-        password: 'admin'
-      },
-      employeeForm: {
-        phone: '',
-        verifyCode: ''
-      }
-    }
-  },
-  computed: {
-    formSchema () {
-      let schema
-      return this.schema || schema
-    },
-    siteInfo () {
-      return this.$store.state.app.site
-    },
-    logo () {
-      return this.$constants.evil(this.$store.state.app.site.logo)
-    },
-    year () {
-      return this.$moment().format('YYYY')
-    }
-  },
-  methods: {
-    handleSelectLoginType (val) {
-      // store.dispatch('toggleLoginType', val)
-    },
-    handleLogin () {
-      if (this.loginType === 'admin') {
-        let submitDate = JSON.parse(JSON.stringify(this.adminForm))
-        this.$login(submitDate)
-          .then(() => {
-            this.$router.push({
-              path: '/' || this.$router.push({ name: 'login' })
-            })
-          })
+import { defineComponent, ref, reactive } from 'vue'
+import { useRouter } from 'vue-router'
+import { ElForm } from 'element-plus'
+
+export default defineComponent({
+  setup(){
+    const $router = useRouter()
+    const loginType = ref('admin')
+    const adminForm = reactive({
+      userName: 'admin',
+      password: 'admin'
+    })
+    const employeeForm = reactive({
+      phone: '',
+      verifyCode: ''
+    })
+    const adminFormEl = ref<InstanceType<typeof ElForm>>()
+    const employeeFormEl = ref<InstanceType<typeof ElForm>>()
+
+    const handleLogin = ()=>{
+      if (loginType.value === 'admin') {
+        // this.$login(adminForm)
+        //   .then(() => {
+        $router.push({ path: '/' })
+        //   })
       } else {
-
+        // let submitDate = JSON.parse(JSON.stringify(employeeForm))
+        // this.$employeeLogin(submitDate)
+        //   .then(data => {
+        //     debugger
+        $router.push({
+          path: '/checkin' || $router.push({ name: 'login' }),
+          query: {
+            id: 2
+          }
+        })
+        //   })
       }
-    },
-    getVerifyCode () {
-      this.$refs.employeeForm.validate(valid => {
-        if (valid) {
-          this.$service.getValidateCode({ phone: this.employeeForm.phone })
+    }
+
+
+    const  getVerifyCode = ()=> {
+      console.log(employeeFormEl.value)
+      employeeFormEl.value?.validate(isValid => {
+        if (isValid) {
+          // this.$service.getValidateCode({ phone: employeeForm.phone }).then(() => {
+          //   debugger
+          // })
         } else {
           console.log('error submit!!')
           return false
         }
       })
     }
+
+
+    return {
+      loginType,
+      adminForm,
+      employeeForm,
+      adminFormEl,
+      employeeFormEl,
+      handleLogin,
+      getVerifyCode
+    }
   }
-}
+})
 </script>
 <style lang="stylus">
 .log_center
@@ -272,18 +277,13 @@ input:-webkit-autofill
   width 100%
   color #ccc
   z-index 15
-  a
-    color #ccc
-    text-decoration none
-    &:hover
-      text-decoration underline
 .login-container
   display flex
   height 100%
   align-items center
   position relative
   justify-content space-around
-  background url("~@/assets/images/lockLogin.png") no-repeat
+  background url("@/assets/images/lockLogin.png") no-repeat
   background-size cover
 .login-container:before
   background rgba(0,0,0,.3)

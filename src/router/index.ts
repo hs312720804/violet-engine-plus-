@@ -1,7 +1,8 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
-import Login from '@/views/Login.vue'
-import Register from '@/views/Register.vue'
-import store from '@/store'
+import { createRouter, createWebHistory } from 'vue-router'
+// import Login from '@/views/Login.vue'
+// import Register from '@/views/Register.vue'
+// import store from '@/store'
+import routes from './routes'
 
 function beforeEach (to, from, next) {
   const app = this.app
@@ -50,33 +51,10 @@ function afterEach (to) {
 }
 
 
-const routes = [
-  // {
-  //   path: '/',
-  //   component: Main,
-  //   children
-  // },
-  {
-    name: 'register',
-    path: '/register',
-    component: Register,
-    constantRoutes: true,
-    meta: {
-      title: '注册'
-    }
-  },
-  {
-    name: 'login',
-    path: '/login',
-    component: Login,
-    meta: {
-      title: '登录'
-    }
-  }
-]
 
-const router = createRouter({ history: createWebHashHistory(), routes })
-router.beforeEach(beforeEach.bind(router))
-router.afterEach(afterEach.bind(router))
+
+const router = createRouter({ history: createWebHistory(), routes })
+// router.beforeEach(beforeEach.bind(router))
+// router.afterEach(afterEach.bind(router))
 
 export default router
