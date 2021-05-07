@@ -39,8 +39,71 @@
 </template>
 <script>
 import { CTable }  from 'admin-toolkit-plus'
+import { ElButton } from 'element-plus'
 // import { createOperationRender } from '../lib/utils/component'
 // import CTable from '../components/Table.vue'
+import { h } from 'vue'
+/** component 为vuejs 对象，
+ *  row为表格一行对象，
+ * actionsAndPermissions ={handleSendAudit: ['送审', 'moviePush:sendAudit']}
+ * add by wanghaihua
+ * */
+function createOperationRender (component, actions, actionsAndPermissions) {
+  // let actions = {}
+  let permissions = {}
+  let disabledMap = {}
+  let keys = Object.keys(actions)
+  // keys.forEach(e => {
+  //   actions[e] = actionsAndPermissions[e][0]
+  //   permissions[e] = actionsAndPermissions[e][1]
+  //   disabledMap[e] = actionsAndPermissions[e][2]
+  // })
+  // const btnsColor = {
+  //   'handleEdit': 'primary',
+  //   'handleSendAudit': 'success',
+  //   'handleAudit': 'success',
+  //   'handleUnAudit': 'danger',
+  //   'handleCopy': 'warning',
+  //   'handleUnpush': 'danger',
+  //   'handlePush': 'success', a1
+  //   'interceptPush': 'danger',
+  //   'handleDelete': 'danger',
+  //   'handleChangeStatus': 'success',
+  //   'handleChangeAppStatus': 'danger',
+  //   'handleChannelOpen': 'warning',
+  //   'handleDicManage': 'success'
+  // }
+  // let h = component.$createElement
+  return function render (params) {
+    return keys.map(key => {
+      return h(
+        ElButton, {
+          directives: [{
+            name: 'permission',
+            value: permissions[key]
+          }],
+          // props: {
+          type: 'text',
+          plain: false,
+          size: 'mini',
+          disabled: disabledMap[key],
+          // },
+          // on: {
+          'onClick': () => {
+            component[key](params)
+          }
+        // }
+        },
+        actions[key]
+      )
+    })
+  }
+  // return h(
+  //   'el-button-group', {},
+  //   btns
+  // )
+}
+
 export default {
   components: {
     CTable
@@ -81,12 +144,12 @@ export default {
             sortable: true
           },
           {
-            label: '操作'
-            // render: createOperationRender(this, {
-            //   handleRead: '查看',
-            //   handleEdit: '编辑',
-            //   handleDelete: '删除'
-            // })
+            label: '操作',
+            render: createOperationRender(this, {
+              handleRead: '查看',
+              handleEdit: '编辑',
+              handleDelete: '删除'
+            })
           }
         ],
         data: [
@@ -112,8 +175,9 @@ export default {
     handleEdit ({ $index: index }) {
       this.$message(`编辑第${index + 1}条记录`)
     },
-    handleRead ({ $index: index }) {
-      this.$message(`阅读第${index + 1}条记录`)
+    handleRead (row) {
+      console.log('row==', row)
+      this.$message(`阅读第${row.$index + 1}条记录`)
     },
     handleDelete ({ $index: index }) {
       this.$message(`删除第${index + 1}条记录`)
