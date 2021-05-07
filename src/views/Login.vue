@@ -16,7 +16,7 @@
             </div>
             <el-form
               v-if="!loginType || loginType === 'admin'"
-              ref="adminForm"
+              ref="adminFormEl"
               :model="adminForm"
               status-icon
               class="demo-adminForm"
@@ -56,7 +56,7 @@
                 </div>
               </el-form-item>
             </el-form>
-            <el-form v-if="loginType === 'employee'" ref="employeeForm" :model="employeeForm">
+            <el-form v-if="loginType === 'employee'" ref="employeeFormEl" :model="employeeForm">
               <el-form-item
                 prop="phone"
                 :rules="[
@@ -97,62 +97,73 @@
 
 <script lang="ts">
 
-export default {
-  components: {},
-  data () {
-    return {
-      loginType: 'admin',
-      adminForm: {
-        userName: 'admin',
-        password: 'admin'
-      },
-      employeeForm: {
-        phone: '',
-        verifyCode: ''
+import { defineComponent, ref, reactive } from 'vue'
+import { useRouter } from 'vue-router'
+import { ElForm } from 'element-plus'
+
+export default defineComponent({
+  setup(){
+    const $router = useRouter()
+    const loginType = ref('admin')
+    const adminForm = reactive({
+      userName: 'admin',
+      password: 'admin'
+    })
+    const employeeForm = reactive({
+      phone: '',
+      verifyCode: ''
+    })
+    const adminFormEl = ref<InstanceType<typeof ElForm>>()
+    const employeeFormEl = ref<InstanceType<typeof ElForm>>()
+
+    const handleLogin = ()=>{
+      if (loginType.value === 'admin') {
+        // this.$login(adminForm)
+        //   .then(() => {
+        $router.push({ path: '/' })
+        //   })
+      } else {
+        // let submitDate = JSON.parse(JSON.stringify(employeeForm))
+        // this.$employeeLogin(submitDate)
+        //   .then(data => {
+        //     debugger
+        $router.push({
+          path: '/checkin' || $router.push({ name: 'login' }),
+          query: {
+            id: 2
+          }
+        })
+        //   })
       }
     }
-  },
-  computed: {
 
-  },
-  methods: {
-    handleLogin () {
-      if (this.loginType === 'admin') {
-        let submitDate = JSON.parse(JSON.stringify(this.adminForm))
-        this.$login(submitDate)
-          .then(() => {
-            this.$router.push({
-              path: '/' || this.$router.push({ name: 'login' })
-            })
-          })
-      } else {
-        let submitDate = JSON.parse(JSON.stringify(this.employeeForm))
-        this.$employeeLogin(submitDate)
-          .then(data => {
-            debugger
-            this.$router.push({
-              path: '/checkin' || this.$router.push({ name: 'login' }),
-              query: {
-                id: 2
-              }
-            })
-          })
-      }
-    },
-    getVerifyCode () {
-      this.$refs.employeeForm.validate(valid => {
-        if (valid) {
-          this.$service.getValidateCode({ phone: this.employeeForm.phone }).then(() => {
-            debugger
-          })
+
+    const  getVerifyCode = ()=> {
+      console.log(employeeFormEl.value)
+      employeeFormEl.value?.validate(isValid => {
+        if (isValid) {
+          // this.$service.getValidateCode({ phone: employeeForm.phone }).then(() => {
+          //   debugger
+          // })
         } else {
           console.log('error submit!!')
           return false
         }
       })
     }
+
+
+    return {
+      loginType,
+      adminForm,
+      employeeForm,
+      adminFormEl,
+      employeeFormEl,
+      handleLogin,
+      getVerifyCode
+    }
   }
-}
+})
 </script>
 <style lang="stylus">
 .log_center
