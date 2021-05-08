@@ -1,25 +1,32 @@
 import qs from 'qs'
-import axios from 'axios'
+import axios, { AxiosRequestConfig } from 'axios'
 // import store from '@/store'
 // import NProgress from 'nprogress'
 import { ElLoading } from 'element-plus'
-import 'nprogress/nprogress.css'
-let loadingInstance
+// import 'nprogress/nprogress.css'
+
+type IfetchArg = {
+  isJSON?: boolean
+  emptyToken?: boolean
+} & AxiosRequestConfig
+
+let loadingInstance: import('element-plus/lib/el-loading/src/loading.type').ILoadingInstance | undefined
+
 export default function fetch ({
   method = 'get',
   url,
-  data,
-  params,
+  data = undefined,
+  params = undefined,
   isJSON = true,
   emptyToken = false // 是否需要token
-}) {
+}: IfetchArg) {
   // NProgress.start()
   // debugger
   if (!loadingInstance) {
     // debugger
-    loadingInstance = ElLoading.service({ target: document.querySelector('.el-main') })
+    loadingInstance = ElLoading.service({ target: document.querySelector('.el-main') as HTMLElement })
   }
-  let option = {
+  const option: AxiosRequestConfig = {
     method,
     url: `violet-api/${url}`,
     data: (isJSON || data instanceof FormData)
@@ -50,7 +57,7 @@ export default function fetch ({
       if (loadingInstance) {
         loadingInstance.close()
       }
-      loadingInstance = ''
+      loadingInstance = undefined
       if (data.success || data.code === '1000' || data.code === 200) {
         if (data.data) {
           return data.data
@@ -70,7 +77,7 @@ export default function fetch ({
       if (loadingInstance) {
         loadingInstance.close()
       }
-      loadingInstance = ''
+      loadingInstance = undefined
       if ('response' in e && e.response.data.code === '403') {
         option.headers = {
           Authorization: ''

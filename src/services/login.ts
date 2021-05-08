@@ -2,7 +2,9 @@ import fetch from './fetch'
 // import axios from 'axios'
 import wrapService from '@/utlis/wrapService'
 
-export const LoginService = wrapService(async data=> {
+export interface LoginArg { userName: string; password: string; }
+
+export const LoginService = wrapService(async (data: LoginArg) => {
   // const user = {
   //   name: 'admin',
   //   password: '123456',

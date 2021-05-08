@@ -1,15 +1,13 @@
 import { ElNotification } from 'element-plus'
-/**
- *
- * @param {Object} service 传入的服务方法集对象
- * @param {Array} noNoteArray 不需要async的方法key数组
- */
-function wrapService (service, noNoteArray= ['app', 'init', 'fetch', 'getUserInfo']) {
+interface Service<Arg, Res> {
+  (arg: Arg): Promise<Res>
+}
+function wrapService<Arg, Res> (service: Service<Arg, Res>) {
   // const $service = {
   //   service
   // }
   // debugger
-  return async (args, message) => {
+  return async (args: Arg, message?: string) => {
     return service(args)
       .then(result => {
         if (message) {

@@ -100,14 +100,14 @@
 import { defineComponent, ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElForm } from 'element-plus'
-import { LoginService } from '@/services/login'
+import { LoginService, LoginArg } from '@/services/login'
 
 console.log('$login===', LoginService)
 export default defineComponent({
   setup(){
     const $router = useRouter()
     const loginType = ref('admin')
-    const adminForm = reactive({
+    const adminForm = reactive<LoginArg>({
       userName: 'admin',
       password: 'admin'
     })
