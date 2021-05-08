@@ -1,5 +1,6 @@
+import fetch from './fetch'
 export function userGetList (params) {
-  return this.fetch({
+  return fetch({
     url: 'sys/user/index',
     params
   }).then(data => {
@@ -12,7 +13,7 @@ export function userGetList (params) {
 }
 
 export function userDelete (data) {
-  return this.fetch({
+  return fetch({
     method: 'post',
     url: 'sys/user/delete',
     isJSON: false,
@@ -24,7 +25,7 @@ export function userDelete (data) {
 
 export function userRoleDel (data) {
   data.roleIds = data.roleIds.join(',')
-  return this.fetch({
+  return fetch({
     method: 'post',
     url: 'sys/user/delete/userRole',
     isJSON: false,
@@ -34,7 +35,7 @@ export function userRoleDel (data) {
 
 export function userRoleAdd (data) {
   data.roleIds = data.roleIds.join(',')
-  return this.fetch({
+  return fetch({
     method: 'post',
     url: 'sys/user/update/userRole',
     isJSON: false,
@@ -46,7 +47,7 @@ export function userUpsert (data) {
   const url = data.id
     ? 'sys/user/update'
     : 'sys/user/add'
-  return this.fetch({
+  return fetch({
     method: 'post',
     isJSON: false,
     url,

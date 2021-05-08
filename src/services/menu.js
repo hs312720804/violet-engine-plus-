@@ -1,3 +1,4 @@
+import fetch from './fetch'
 function removeEmptyChildren (menus) {
   menus.forEach(item => {
     if (item.children) {
@@ -11,7 +12,7 @@ function removeEmptyChildren (menus) {
 }
 
 export function menuGetList (params) {
-  return this.fetch({
+  return fetch({
     url: 'sys/menu/index',
     params
   }).then(data => {
@@ -24,7 +25,7 @@ export function menuUpsert (data) {
   const url = data.id
     ? 'sys/menu/update'
     : 'sys/menu/add'
-  return this.fetch({
+  return fetch({
     method: 'post',
     url,
     isJSON: false,
@@ -33,7 +34,7 @@ export function menuUpsert (data) {
 }
 
 export function menuDelete (data) {
-  return this.fetch({
+  return fetch({
     method: 'post',
     url: 'sys/menu/delete',
     isJSON: false,

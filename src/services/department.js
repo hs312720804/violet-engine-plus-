@@ -1,3 +1,5 @@
+
+import fetch from './fetch'
 function removeEmptyChildren (menus) {
   menus.forEach(item => {
     if (item.children) {
@@ -10,7 +12,7 @@ function removeEmptyChildren (menus) {
   })
 }
 export function departmentGetList (params) {
-  return this.fetch({
+  return fetch({
     url: 'sys/department/index',
     params
   }).then(data => {
@@ -21,7 +23,7 @@ export function departmentGetList (params) {
 
 export function departmentUpsert (data) {
   const url = data.id ? 'sys/department/update' : 'sys/department/add'
-  return this.fetch({
+  return fetch({
     method: 'post',
     url,
     isJSON: false,
@@ -29,7 +31,7 @@ export function departmentUpsert (data) {
   })
 }
 export function departmentDelete (data) {
-  return this.fetch({
+  return fetch({
     method: 'post',
     url: 'sys/department/delete',
     isJSON: false,

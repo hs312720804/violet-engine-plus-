@@ -1,6 +1,7 @@
+import fetch from './fetch'
 
 export function getMenus (params) {
-  return this.fetch({
+  return fetch({
     method: 'post',
     url: 'loginResource',
     params
@@ -9,7 +10,7 @@ export function getMenus (params) {
   })
 }
 export async function getUserInfo () {
-  return this.fetch({
+  return fetch({
     method: 'get',
     url: 'getUserInfo'
   }).then(data => {
@@ -17,7 +18,7 @@ export async function getUserInfo () {
   })
 }
 export function getMenusDetail (params) {
-  return this.fetch({
+  return fetch({
     method: 'get',
     url: 'sys/menu/detail',
     params
@@ -27,7 +28,7 @@ export function getMenusDetail (params) {
  * 获取站点信息
  */
 export function getSiteInfo () {
-  return this.fetch({
+  return fetch({
     method: 'post',
     url: 'website/get',
     emptyToken: true

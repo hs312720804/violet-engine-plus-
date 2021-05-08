@@ -1,8 +1,8 @@
 import qs from 'qs'
 import axios from 'axios'
-import store from '@/store'
+// import store from '@/store'
 // import NProgress from 'nprogress'
-import { Loading } from 'element-ui'
+import { ElLoading } from 'element-plus'
 import 'nprogress/nprogress.css'
 let loadingInstance
 export default function fetch ({
@@ -17,7 +17,7 @@ export default function fetch ({
   // debugger
   if (!loadingInstance) {
     // debugger
-    loadingInstance = Loading.service({ target: document.querySelector('.el-main') })
+    loadingInstance = ElLoading.service({ target: document.querySelector('.el-main') })
   }
   let option = {
     method,
@@ -33,12 +33,12 @@ export default function fetch ({
   if (emptyToken) {
     token = ''
   } else {
-    const user = store.state.user
-    if (user) {
-      token = user.token
-    }
+    // const user = store.state.user
+    // if (user) {
+    //   token = user.token
+    // }
   }
-  const app = this.app
+  // const app = this.app
   option.headers = {
     Authorization: token || ''
   }
@@ -75,9 +75,9 @@ export default function fetch ({
         option.headers = {
           Authorization: ''
         }
-        app.prototype.$logout().then(() => {
-          window.location.reload()
-        })
+        // app.prototype.$logout().then(() => {
+        //   window.location.reload()
+        // })
         throw e
       } else {
         throw e

@@ -1,6 +1,6 @@
-
+import fetch from './fetch'
 export function roleGetList (params) {
-  return this.fetch({
+  return fetch({
     url: 'sys/role/index',
     params
   }).then(data => {
@@ -30,7 +30,7 @@ export function roleUpsert (data) {
   const url = data.id
     ? 'sys/role/update'
     : 'sys/role/add'
-  return this.fetch({
+  return fetch({
     method: 'post',
     url,
     data
@@ -38,7 +38,7 @@ export function roleUpsert (data) {
 }
 
 export function roleAccessUpsert (data) {
-  return this.fetch({
+  return fetch({
     method: 'post',
     url: 'sys/role/update/resource',
     isJSON: false,
@@ -47,7 +47,7 @@ export function roleAccessUpsert (data) {
 }
 
 export function roleMenuUpsert (data) {
-  return this.fetch({
+  return fetch({
     method: 'post',
     url: 'sys/role/update/menu',
     isJSON: false,
@@ -56,7 +56,7 @@ export function roleMenuUpsert (data) {
 }
 
 export function roleDelete (data) {
-  return this.fetch({
+  return fetch({
     method: 'post',
     url: 'sys/role/delete',
     isJSON: false,
@@ -68,7 +68,7 @@ export function roleDelete (data) {
 
 export function roleUserAdd (data) {
   if (data.userIds) {
-    return this.fetch({
+    return fetch({
       method: 'post',
       url: 'sys/role/update/user',
       isJSON: false,
@@ -80,7 +80,7 @@ export function roleUserAdd (data) {
 }
 
 export function roleUserRemove (data) {
-  return this.fetch({
+  return fetch({
     method: 'post',
     url: 'sys/role/delete/user',
     isJSON: false,

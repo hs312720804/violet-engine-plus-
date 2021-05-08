@@ -1,5 +1,8 @@
-import axios from 'axios'
-function login (data) {
+import fetch from './fetch'
+// import axios from 'axios'
+import wrapService from '@/utlis/wrapService'
+
+export const LoginService = wrapService(async data=> {
   // const user = {
   //   name: 'admin',
   //   password: '123456',
@@ -9,30 +12,25 @@ function login (data) {
   //   this.state = user
   //   return user
   // })
-  return this.fetch({
+  const user = await fetch({
     method: 'post',
     url: 'login',
     data,
     isJSON: false
-  }).then((user) => {
-    // this.state = user
-    return user
   })
-}
+  return user
+})
 
-function loginout (data) {
-  return axios.post('logout', data)
-}
-function getValidateCode (data) {
-  return this.fetch({
-    method: 'post',
-    url: 'entry/psndoc/getValidateCode',
-    data,
-    isJSON: false
-  })
-}
-export {
-  login,
-  loginout,
-  getValidateCode
-}
+// function loginout (data) {
+//   return axios.post('logout', data)
+// }
+// function getValidateCode (data) {
+//   return fetch({
+//     method: 'post',
+//     url: 'entry/psndoc/getValidateCode',
+//     data,
+//     isJSON: false
+//   })
+// }
+// export let LoginoutService = wrapService({ loginout })
+// export let GetValidateCodeService = wrapService({ getValidateCode })

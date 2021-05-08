@@ -100,7 +100,9 @@
 import { defineComponent, ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElForm } from 'element-plus'
+import { LoginService } from '@/services/login'
 
+console.log('$login===', LoginService)
 export default defineComponent({
   setup(){
     const $router = useRouter()
@@ -118,10 +120,10 @@ export default defineComponent({
 
     const handleLogin = ()=>{
       if (loginType.value === 'admin') {
-        // this.$login(adminForm)
-        //   .then(() => {
-        $router.push({ path: '/' })
-        //   })
+        LoginService(adminForm)
+          .then(() => {
+            $router.push({ path: '/' })
+          })
       } else {
         // let submitDate = JSON.parse(JSON.stringify(employeeForm))
         // this.$employeeLogin(submitDate)
