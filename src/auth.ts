@@ -6,7 +6,7 @@ import NotFound from '@/views/NotFound.vue'
 import Storage from '@/utlis/storage'
 import { getUserInfoService } from '@/services/common'
 import { LoginService, LoginArg } from '@/services/login'
-import { useRouter } from 'vue-router'
+import router from '@/router'
 const storageName = 'violet'
 
 export const isLoggedIn = async function () {
@@ -22,8 +22,7 @@ export const isLoggedIn = async function () {
     store.dispatch('cacheUserInfo', user)
     return $getInitData().catch(e => {
       Storage.$set(`${storageName}/user`, '')
-      const $router = useRouter()
-      $router.push({ name: 'login' })
+      router.push({ name: 'login' })
     })
   }
   return Promise.reject(new Error('NOT LOGGEDIN'))
@@ -43,9 +42,7 @@ export const login = async function (data: LoginArg) {
     Storage.$set(`${storageName}/user`, user)
     $getInitData().catch(e => {
       Storage.$set(`${storageName}/user`, '')
-      const $router = useRouter()
-      console.log('useRouter===', $router)
-      $router.push({ name: 'login' })
+      router.push({ name: 'login' })
     })
   })
 }
@@ -58,7 +55,6 @@ export const $getInitData = async function () {
 
 
   return new Promise((resolve, reject) => {
-    debugger
     getUserInfoService(null).then(res => {
       const menu = res.menus[0].children
       const accessObj = {}
@@ -119,13 +115,12 @@ export const $getInitData = async function () {
           }
         }
       ]
-      const $router = useRouter()
-      $router.options.routes = filterRoutes // 动态路由
+      router.options.routes = filterRoutes // 动态路由
       filterRoutes.forEach(item => {
         debugger
-        $router.addRoute(item)
+        router.addRoute(item)
       }) // 动态路由
-      console.log('动态路由====', $router.getRoutes())
+      console.log('动态路由====', router.getRoutes())
       // return Promise.resolve()
       resolve()
     }).catch(e => {

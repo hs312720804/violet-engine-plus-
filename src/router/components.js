@@ -1,6 +1,6 @@
 // import E404 from '@/views/error/E404.vue'
 // import Login3 from '@/views/Login3.vue'
-const NotFound = () => import('@/views/NotFound.vue')
+// const NotFound = () => import('@/views/NotFound.vue')
 
 /**
  * {type} 的作用是在菜单编辑时可以自动使用预设配置数据模板，有3种type:list\iframe\custom，可根据项目需要自行增减
@@ -34,7 +34,7 @@ const routerComponents = {
     type: 'list'
   },
   ExternalIframe: {
-    template: () => import('@/views/externalIframe/Index'),
+    template: () => import('@/views/externalIframe/Index.vue'),
     type: 'iframe'
   },
   Dashboard: {
@@ -53,12 +53,12 @@ const routerComponents = {
   },
   // 部门管理
   DepartmentIndex: {
-    template: () => import('@/views/sys/rbac/department/DepartmentIndex'),
+    template: () => import('@/views/sys/rbac/department/DepartmentIndex.vue'),
     type: 'custom'
   },
   // 站点信息
   SiteInfo: {
-    template: () => import('@/views/sys/SiteInfo'),
+    template: () => import('@/views/sys/SiteInfo.vue'),
     type: 'custom'
   }
 }
