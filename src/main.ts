@@ -8,7 +8,7 @@ import App from './App.vue'
 import '../node_modules/admin-toolkit-plus/dist/style.css'
 import router from './router/index'
 // import { use } from 'element-plus/lib/locale'
-// import './services'
+import './auth'
 
 const app = createApp(App)
 installElementPlus(app)

@@ -7,7 +7,7 @@ const { resolve } = require('path')
 // const devHost = '127.0.0.1'
 // const dist = path.resolve('./dist')
 const BACKEND = process.env.BACKEND || '172.20.155.102:8088'
-const PORT = process.env.PORT || '8003'
+const PORT = process.env.PORT || '8002'
 const HOST = process.env.HOST || '127.0.0.1'
 // const baseUrl = ENV === 'production' ? '' : `http://${HOST}:${PORT}`
 

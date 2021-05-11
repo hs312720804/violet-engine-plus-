@@ -1,0 +1,192 @@
+<template>
+  <div>
+    <MainLR
+      v-if="uiSetting.layout === 'default'"
+      ref="mlr"
+      :basic="uiSetting.basic"
+      @set-layout="setLayout"
+    >
+    </MainLR>
+    <MainTLR
+      v-if="uiSetting.layout === 'tlr'"
+      ref="mtlr"
+      :basic="uiSetting.basic"
+      @set-layout="setLayout"
+    >
+    </MainTLR>
+    <MainTB
+      v-if="uiSetting.layout === 'tb'"
+      ref="mtb"
+      :basic="uiSetting.basic"
+      @set-layout="setLayout"
+    >
+    </MainTB>
+    <el-drawer
+      v-model:visible="isShowSetting"
+      title="我是标题"
+      :with-header="false"
+      size="260"
+    >
+      <div v-show="isShowSetting" class="setting_side transition-box">
+        <h5>基础设置</h5>
+        <div class="tagnav_switch">
+          标签导航
+          <el-switch
+            v-model="uiSetting.basic.isShowTagNav"
+            active-color="#13ce66"
+            inactive-color="#ff4949"
+            @change="handleTagNav"
+          >
+          </el-switch>
+          <br>
+          头部菜单
+          <el-switch
+            v-model="uiSetting.basic.topMenu"
+            active-color="#13ce66"
+            inactive-color="#ff4949"
+            @change="handleTagNav"
+          >
+          </el-switch>
+        </div>
+        <h5>布局</h5>
+        <div class="layout">
+          <div class="default" @click="handleSelectLayout('default')">
+            <p>
+              <span></span>
+              <b></b>
+            </p>
+            布局一(响应式)
+          </div>
+          <div class="tlr" @click="handleSelectLayout('tlr')">
+            <p>
+              <span></span>
+              <b>
+                <small></small>
+              </b>
+            </p>
+            布局二
+          </div>
+        </div>
+        <div class="layout">
+          <div class="tb" @click="handleSelectLayout('tb')">
+            <p>
+              <span></span>
+            </p>
+            布局三
+          </div>
+        </div>
+        <el-button @click="handleBackDefault">恢复默认</el-button>
+      </div>
+    </el-drawer>
+  </div>
+</template>
+<script>
+import MainLR from './MainLR.vue'
+import MainTLR from './MainTLR.vue'
+import MainTB from './MainTB.vue'
+export default {
+  components: {
+    MainLR,
+    MainTLR,
+    MainTB
+  },
+  props: ['mode'],
+  data () {
+    return {
+      // layout: this.$appState.setting.layout || 'default',
+      isShowSetting: false,
+      uiSettingDefault: {
+        layout: 'default',
+        basic: {
+          isShowTagNav: true, // 标签导航
+          topMenu: true //  头部菜单
+        }
+      },
+      uiSetting: {
+        layout: this.$store.state.app.site.layout,
+        basic: {
+          isShowTagNav: true, // 标签导航
+          topMenu: true //  头部菜单
+        }
+      },
+      layoutMap: ['default', 'tlr', 'tb']
+    }
+  },
+  created () {
+    const layout = this.$store.state.app.site.layout
+    this.layoutMap.indexOf(layout) > -1 ? this.uiSetting.layout = layout : this.uiSetting.layout = 'default'
+
+    // if (this.$appState.$get('uiSetting')) {
+    //   this.uiSetting = this.$appState.$get('uiSetting')
+    // }
+  },
+  methods: {
+    setLayout (msg) {
+      this.isShowSetting = msg
+    },
+    handleSelectLayout (layout) {
+      this.uiSetting.layout = layout
+      this.$appState.$set('uiSetting', this.uiSetting)
+    },
+    handleTagNav () {
+      // Object.keys(this.$refs).forEach((key) => {
+      //   this.$refs[key].isShowTagNav = !this.$refs[key].isShowTagNav
+      // })
+      this.$appState.$set('uiSetting', this.uiSetting)
+    },
+    handleBackDefault () {
+      this.uiSetting = JSON.parse(JSON.stringify(this.uiSettingDefault))
+      this.$appState.$set('uiSetting', this.uiSettingDefault)
+    }
+  }
+}
+</script>
+<style lang="stylus" scoped>
+.layout
+  display flex
+  font-size 12px
+  margin-bottom 10px
+.layout>div
+  width 50%
+.layout .default p
+  display flex
+  height 60px
+  margin 0 10px 6px 0
+  background #f3f3f3
+  span
+    width 20%
+    background #bbb
+    display block
+  b
+    width 80%
+    display block
+    border 1px solid #eee
+.layout .tlr p
+  height 60px
+  margin 0 10px 6px 0
+  background #f3f3f3
+  span
+    background #bbb
+    display block
+    height 10px
+  b
+    display block
+    small
+      display block
+      width 20px
+      background #ddd
+      height 50px
+.layout .tb p
+  height 60px
+  margin 0 10px 6px 0
+  background #f3f3f3
+  span
+    background #bbb
+    display block
+    height 10px
+.layout p
+  border 1px solid #bbb
+  cursor pointer
+.layout p:hover
+  border-color #999 !important
+</style>

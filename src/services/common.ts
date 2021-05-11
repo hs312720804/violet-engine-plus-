@@ -1,4 +1,5 @@
 import fetch from './fetch'
+import wrapService from '@/utlis/wrapService'
 
 export function getMenus (params) {
   return fetch({
@@ -9,14 +10,22 @@ export function getMenus (params) {
     return data
   })
 }
-export async function getUserInfo () {
+export const getUserInfoService = wrapService(async () => {
+  debugger
+  // const data = await fetch({
+  //   method: 'get',
+  //   url: 'getUserInfo'
+  // })
+  // return data
+
   return fetch({
     method: 'get',
     url: 'getUserInfo'
   }).then(data => {
     return data
   })
-}
+})
+
 export function getMenusDetail (params) {
   return fetch({
     method: 'get',

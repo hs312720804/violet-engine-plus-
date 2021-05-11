@@ -1,6 +1,6 @@
 import qs from 'qs'
 import axios, { AxiosRequestConfig } from 'axios'
-// import store from '@/store'
+import store from '@/store'
 // import NProgress from 'nprogress'
 import { ElLoading } from 'element-plus'
 // import 'nprogress/nprogress.css'
@@ -26,6 +26,7 @@ export default function fetch ({
     // debugger
     loadingInstance = ElLoading.service({ target: document.querySelector('.el-main') as HTMLElement })
   }
+  debugger
   const option: AxiosRequestConfig = {
     method,
     url: `violet-api/${url}`,
@@ -40,10 +41,10 @@ export default function fetch ({
   if (emptyToken) {
     token = ''
   } else {
-    // const user = store.state.user
-    // if (user) {
-    //   token = user.token
-    // }
+    const user = store.state.user
+    if (user) {
+      token = user.token
+    }
   }
   // const app = this.app
   option.headers = {
