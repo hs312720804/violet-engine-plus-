@@ -103,7 +103,8 @@ export default {
         }
       },
       uiSetting: {
-        layout: this.$store.state.app.site.layout,
+        // layout: this.$store.state.app.site.layout,default
+        layout: 'default',
         basic: {
           isShowTagNav: true, // 标签导航
           topMenu: true //  头部菜单

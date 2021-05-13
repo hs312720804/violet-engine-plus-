@@ -123,6 +123,7 @@ export default defineComponent({
       if (loginType.value === 'admin') {
         login(adminForm)
           .then(() => {
+            debugger
             $router.push({ path: '/' })
           })
       } else {

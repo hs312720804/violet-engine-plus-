@@ -29,8 +29,7 @@ export const isLoggedIn = async function () {
 }
 
 export const login = async function (data: LoginArg) {
-
-
+  debugger
   return LoginService(data).then(res => {
     const user = {
       name: res.loginName,
@@ -41,6 +40,7 @@ export const login = async function (data: LoginArg) {
     store.dispatch('cacheUserInfo', user)
     Storage.$set(`${storageName}/user`, user)
     $getInitData().catch(e => {
+      debugger
       Storage.$set(`${storageName}/user`, '')
       router.push({ name: 'login' })
     })
@@ -56,6 +56,7 @@ export const $getInitData = async function () {
 
   return new Promise((resolve, reject) => {
     getUserInfoService(null).then(res => {
+      debugger
       const menu = res.menus[0].children
       const accessObj = {}
       res.resourceOperations.forEach(item => {
@@ -99,6 +100,8 @@ export const $getInitData = async function () {
       //     icon: 'el-icon-odometer'
       //   }
       // })
+      alert('!!')
+      debugger
       const filterRoutes = [
         {
           path: '/',
@@ -115,12 +118,24 @@ export const $getInitData = async function () {
           }
         }
       ]
-      router.options.routes = filterRoutes // 动态路由
-      filterRoutes.forEach(item => {
-        debugger
-        router.addRoute(item)
-      }) // 动态路由
-      console.log('动态路由====', router.getRoutes())
+      // router.options.routes = filterRoutes // 动态路由
+      debugger
+      router.addRoute({
+        path: '/',
+        component: Main,
+        // redirect: '/desktop.html',
+        children
+      })
+      // filterRoutes.forEach(item => {
+      //   // alert(123)
+      //   // alert(router)
+      //   debugger
+      //   router.addRoute(item)
+      // }) // 动态路由
+      debugger
+      // console.log('动态路由====', router.getRoutes())
+      // alert(router)
+      // alert(router.getRoutes())
       // return Promise.resolve()
       resolve()
     }).catch(e => {

@@ -14,6 +14,7 @@ export const LoginService = wrapService(async (data: LoginArg) => {
   //   this.state = user
   //   return user
   // })
+  debugger
   const user = await fetch({
     method: 'post',
     url: 'login',
