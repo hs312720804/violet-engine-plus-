@@ -1,6 +1,18 @@
 // import { loginByUsername, logout, getUserInfo } from '@/api/login'
 // import { getToken, setToken, removeToken } from '@/utils/auth'
 
+
+import { ActionContext } from 'vuex'
+import { RootState } from '@/store/index'
+
+export interface UserModuleState {
+  name: string
+  token: string
+  departmentId: string
+}
+
+type UserActionContext = ActionContext<UserModuleState, RootState>
+
 const user = {
   state: {
     name: '',
@@ -18,13 +30,13 @@ const user = {
   },
 
   mutations: {
-    SET_TOKEN: (state, token) => {
+    SET_TOKEN: (state: UserModuleState, token: string) => {
       state.token = token
     },
-    SET_NAME: (state, name) => {
+    SET_NAME: (state: UserModuleState, name: string) => {
       state.name = name
     },
-    SET_DEPARTMENT: (state, id) => {
+    SET_DEPARTMENT: (state: UserModuleState, id: string) => {
       state.departmentId = id
     }
     // SET_INTRODUCTION: (state, introduction) => {
@@ -59,12 +71,12 @@ const user = {
     //     })
     //   })
     // },
-    cacheUserInfo ({ commit }, user) {
+    cacheUserInfo ({ commit }: UserActionContext, user: UserModuleState) {
       commit('SET_NAME', user.name)
       commit('SET_TOKEN', user.token)
       commit('SET_DEPARTMENT', user.departmentId)
     },
-    clearUserInfo ({ commit }) {
+    clearUserInfo ({ commit }: UserActionContext) {
       commit('SET_NAME', '')
       commit('SET_TOKEN', '')
       commit('SET_DEPARTMENT', '')
