@@ -80,67 +80,123 @@
     </el-drawer>
   </div>
 </template>
-<script>
+<script lang="ts">
+import { defineComponent, ref, reactive } from 'vue'
+import { useStore } from '@/store'
+// import { useStore } from 'vuex'
 import MainLR from './MainLR.vue'
 import MainTLR from './MainTLR.vue'
 import MainTB from './MainTB.vue'
-export default {
+
+export default defineComponent({
   components: {
     MainLR,
     MainTLR,
     MainTB
   },
-  props: ['mode'],
-  data () {
-    return {
-      // layout: this.$appState.setting.layout || 'default',
-      isShowSetting: false,
-      uiSettingDefault: {
-        layout: 'default',
-        basic: {
-          isShowTagNav: true, // 标签导航
-          topMenu: true //  头部菜单
-        }
-      },
-      uiSetting: {
-        // layout: this.$store.state.app.site.layout,default
-        layout: 'default',
-        basic: {
-          isShowTagNav: true, // 标签导航
-          topMenu: true //  头部菜单
-        }
-      },
-      layoutMap: ['default', 'tlr', 'tb']
+  props: {
+    mode: {
+      type: String,
+      default: ''
     }
   },
-  created () {
-    const layout = this.$store.state.app.site.layout
-    this.layoutMap.indexOf(layout) > -1 ? this.uiSetting.layout = layout : this.uiSetting.layout = 'default'
+  setup() {
+    const store = useStore()
+    let isShowSetting = reactive(false)
+    let uiSettingDefault = reactive({
+      layout: 'default',
+      basic: {
+        isShowTagNav: true, // 标签导航
+        topMenu: true //  头部菜单
+      }
+    })
+    let uiSetting = reactive({
+      layout: 'default',
+      basic: {
+        isShowTagNav: true, // 标签导航
+        topMenu: true //  头部菜单
+      }
+    })
+    let layoutMap = reactive(['default', 'tlr', 'tb'])
 
-    // if (this.$appState.$get('uiSetting')) {
-    //   this.uiSetting = this.$appState.$get('uiSetting')
-    // }
-  },
-  methods: {
-    setLayout (msg) {
-      this.isShowSetting = msg
-    },
-    handleSelectLayout (layout) {
-      this.uiSetting.layout = layout
-      this.$appState.$set('uiSetting', this.uiSetting)
-    },
-    handleTagNav () {
-      // Object.keys(this.$refs).forEach((key) => {
-      //   this.$refs[key].isShowTagNav = !this.$refs[key].isShowTagNav
-      // })
-      this.$appState.$set('uiSetting', this.uiSetting)
-    },
-    handleBackDefault () {
-      this.uiSetting = JSON.parse(JSON.stringify(this.uiSettingDefault))
-      this.$appState.$set('uiSetting', this.uiSettingDefault)
+    const layout = store.state.app.site.layout
+    layoutMap.indexOf(layout) > -1 ? uiSetting.layout = layout : uiSetting.layout = 'default'
+
+    const setLayout = (msg: boolean) => {
+      isShowSetting = msg
+    }
+    const handleSelectLayout = (layout: string) => {
+      uiSetting.layout = layout
+      $appState.$set('uiSetting', this.uiSetting)
+    }
+    const handleTagNav = () =>{
+      $appState.$set('uiSetting', this.uiSetting)
+    }
+    const handleBackDefault = ()=> {
+      uiSetting = JSON.parse(JSON.stringify(uiSettingDefault))
+      $appState.$set('uiSetting', uiSettingDefault)
+    }
+    return {
+      isShowSetting,
+      uiSettingDefault,
+      uiSetting,
+      layoutMap,
+      setLayout,
+      handleSelectLayout,
+      handleTagNav,
+      handleBackDefault
     }
   }
-}
+  // data () {
+  //   return {
+  //     // layout: this.$appState.setting.layout || 'default',
+  //     isShowSetting: false,
+  //     uiSettingDefault: {
+  //       layout: 'default',
+  //       basic: {
+  //         isShowTagNav: true, // 标签导航
+  //         topMenu: true //  头部菜单
+  //       }
+  //     },
+  //     uiSetting: {
+  //       // layout: this.$store.state.app.site.layout,default
+  //       layout: 'default',
+  //       basic: {
+  //         isShowTagNav: true, // 标签导航
+  //         topMenu: true //  头部菜单
+  //       }
+  //     },
+  //     layoutMap: ['default', 'tlr', 'tb']
+  //   }
+  // },
+  // created () {
+  //   const layout = this.$store.state.app.site.layout
+  //   this.layoutMap.indexOf(layout) > -1 ? this.uiSetting.layout = layout : this.uiSetting.layout = 'default'
+
+  //   // if (this.$appState.$get('uiSetting')) {
+  //   //   this.uiSetting = this.$appState.$get('uiSetting')
+  //   // }
+  // },
+  // methods: {
+  //   setLayout (msg: boolean) {
+  //     this.isShowSetting = msg
+  //   },
+  //   handleSelectLayout (layout: string) {
+  //     this.uiSetting.layout = layout
+  //     this.$appState.$set('uiSetting', this.uiSetting)
+  //   },
+  //   handleTagNav () {
+  //     // Object.keys(this.$refs).forEach((key) => {
+  //     //   this.$refs[key].isShowTagNav = !this.$refs[key].isShowTagNav
+  //     // })
+  //     this.$appState.$set('uiSetting', this.uiSetting)
+  //   },
+  //   handleBackDefault () {
+  //     this.uiSetting = JSON.parse(JSON.stringify(this.uiSettingDefault))
+  //     this.$appState.$set('uiSetting', this.uiSettingDefault)
+  //   }
+  // }
+})
 </script>
 <style lang="stylus" scoped>
 .layout

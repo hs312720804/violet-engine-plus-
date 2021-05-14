@@ -1,9 +1,9 @@
-import store from '@/store'
+import { store } from '@/store'
 import Wrapper from '@/components/Wrapper.vue'
 import Main from '@/components/layout/Index.vue'
 import routerComponents from '@/router/components'
 import NotFound from '@/views/NotFound.vue'
-import Storage from '@/utlis/storage'
+import Storage from '@/store/storage'
 import { getUserInfoService } from '@/services/common'
 import { LoginService, LoginArg } from '@/services/login'
 import router from '@/router'
@@ -120,12 +120,12 @@ export const $getInitData = async function () {
       ]
       // router.options.routes = filterRoutes // 动态路由
       debugger
-      router.addRoute({
-        path: '/',
-        component: Main,
-        // redirect: '/desktop.html',
-        children
-      })
+      // router.addRoute({
+      //   path: '/',
+      //   component: Main,
+      //   // redirect: '/desktop.html',
+      //   children
+      // })
       // filterRoutes.forEach(item => {
       //   // alert(123)
       //   // alert(router)

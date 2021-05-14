@@ -1,6 +1,6 @@
 import qs from 'qs'
 import axios, { AxiosRequestConfig } from 'axios'
-import store from '@/store'
+import { store } from '@/store'
 // import NProgress from 'nprogress'
 import { ElLoading } from 'element-plus'
 // import 'nprogress/nprogress.css'
