@@ -1,21 +1,16 @@
-
+import { RootState } from './index'
 export default {
-  sidebar: state => state.app.sidebar,
-  language: state => state.app.language,
-  size: state => state.app.size,
-  device: state => state.app.device,
-  access: state => state.app.access,
-  site: state => state.app.site,
-  visitedViews: state => state.tagsView.visitedViews,
-  cachedViews: state => state.tagsView.cachedViews,
-  token: state => state.user.token,
-  avatar: state => state.user.avatar,
-  name: state => state.user.name,
-  introduction: state => state.user.introduction,
-  status: state => state.user.status,
-  roles: state => state.user.roles,
-  setting: state => state.user.setting,
-  permission_routers: state => state.permission.routers,
-  addRouters: state => state.permission.addRouters,
-  errorLogs: state => state.errorLog.logs
+  sidebar: (state: RootState) => state.app.sidebar,
+  language: (state: RootState) => state.app.language,
+  size: (state: RootState) => state.app.size,
+  device: (state: RootState) => state.app.device,
+  access: (state: RootState) => state.app.access,
+  site: (state: RootState) => state.app.site,
+  visitedViews: (state: RootState) => state.tagsView.visitedViews,
+  cachedViews: (state: RootState) => state.tagsView.cachedViews,
+  token: (state: RootState) => state.user.token,
+  name: (state: RootState) => state.user.name,
+  permission_routers: (state: RootState) => state.permission.routers,
+  addRouters: (state: RootState) => state.permission.addRouters,
+  errorLogs: (state: RootState) => state.errorLog.logs
 }
