@@ -20,11 +20,11 @@ export default defineConfig({
     ]
   },
   server: {
-    public: `${HOST}:${PORT}`,
-    port: PORT,
-    headers: {
-      'Access-Control-Allow-Origin': '*'
-    },
+    host: HOST,
+    port: Number(PORT),
+    // headers: {
+    //   'Access-Control-Allow-Origin': '*'
+    // },
     proxy: {
       '/violet-api': {
         target: 'http://' + BACKEND,

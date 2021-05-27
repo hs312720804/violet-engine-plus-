@@ -99,6 +99,7 @@
 
 import { defineComponent, ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
+
 import { ElForm } from 'element-plus'
 import { LoginArg } from '@/services/login'
 import { login } from '@/auth'
@@ -120,6 +121,8 @@ export default defineComponent({
     const employeeFormEl = ref<InstanceType<typeof ElForm>>()
 
     const handleLogin = ()=>{
+      let store222
+      // console.log(store222)
       if (loginType.value === 'admin') {
         login(adminForm)
           .then(() => {

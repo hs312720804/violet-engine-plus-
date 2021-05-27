@@ -83,7 +83,6 @@
 <script lang="ts">
 import { defineComponent, ref, reactive } from 'vue'
 import { useStore } from '@/store'
-// import { useStore } from 'vuex'
 import MainLR from './MainLR.vue'
 import MainTLR from './MainTLR.vue'
 import MainTB from './MainTB.vue'
@@ -102,7 +101,7 @@ export default defineComponent({
   },
   setup() {
     const store = useStore()
-    let isShowSetting = reactive(false)
+    let isShowSetting = ref(false)
     let uiSettingDefault = reactive({
       layout: 'default',
       basic: {
@@ -123,7 +122,7 @@ export default defineComponent({
     layoutMap.indexOf(layout) > -1 ? uiSetting.layout = layout : uiSetting.layout = 'default'
 
     const setLayout = (msg: boolean) => {
-      isShowSetting = msg
+      isShowSetting.value = msg
     }
     const handleSelectLayout = (layout: string) => {
       uiSetting.layout = layout
@@ -147,55 +146,6 @@ export default defineComponent({
       handleBackDefault
     }
   }
-  // data () {
-  //   return {
-  //     // layout: this.$appState.setting.layout || 'default',
-  //     isShowSetting: false,
-  //     uiSettingDefault: {
-  //       layout: 'default',
-  //       basic: {
-  //         isShowTagNav: true, // 标签导航
-  //         topMenu: true //  头部菜单
-  //       }
-  //     },
-  //     uiSetting: {
-  //       // layout: this.$store.state.app.site.layout,default
-  //       layout: 'default',
-  //       basic: {
-  //         isShowTagNav: true, // 标签导航
-  //         topMenu: true //  头部菜单
-  //       }
-  //     },
-  //     layoutMap: ['default', 'tlr', 'tb']
-  //   }
-  // },
-  // created () {
-  //   const layout = this.$store.state.app.site.layout
-  //   this.layoutMap.indexOf(layout) > -1 ? this.uiSetting.layout = layout : this.uiSetting.layout = 'default'
-
-  //   // if (this.$appState.$get('uiSetting')) {
-  //   //   this.uiSetting = this.$appState.$get('uiSetting')
-  //   // }
-  // },
-  // methods: {
-  //   setLayout (msg: boolean) {
-  //     this.isShowSetting = msg
-  //   },
-  //   handleSelectLayout (layout: string) {
-  //     this.uiSetting.layout = layout
-  //     this.$appState.$set('uiSetting', this.uiSetting)
-  //   },
-  //   handleTagNav () {
-  //     // Object.keys(this.$refs).forEach((key) => {
-  //     //   this.$refs[key].isShowTagNav = !this.$refs[key].isShowTagNav
-  //     // })
-  //     this.$appState.$set('uiSetting', this.uiSetting)
-  //   },
-  //   handleBackDefault () {
-  //     this.uiSetting = JSON.parse(JSON.stringify(this.uiSettingDefault))
-  //     this.$appState.$set('uiSetting', this.uiSettingDefault)
-  //   }
-  // }
 })
 </script>
 <style lang="stylus" scoped>
