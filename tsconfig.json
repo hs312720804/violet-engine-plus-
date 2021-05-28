@@ -9,10 +9,11 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "lib": ["esnext", "dom"],
+    // "isolatedModules": true,
+    "skipLibCheck": true,
+    "allowJs": true,
     "types": [
-      "vite/client",
-      "node",
-      "./types"
+      "vite/client"
     ],
     "plugins": [
       {
@@ -24,13 +25,15 @@
       "@/*": [
         "src/*",
       ]
-    },
+    }
   },
   "include": [
-    "types/**/*",
     "src/**/*.ts",
     "src/**/*.d.ts",
     "src/**/*.tsx",
     "src/**/*.vue"
+  ],
+  "exclude": [
+    "node_modules",
   ]
 }

@@ -2,13 +2,20 @@
 // import Login3 from '@/views/Login3.vue'
 // const NotFound = () => import('@/views/NotFound.vue')
 
+interface RouterComponents {
+  [key: string]: {
+    template: any
+    type: string
+  }
+}
+
 /**
  * {type} 的作用是在菜单编辑时可以自动使用预设配置数据模板，有3种type:list\iframe\custom，可根据项目需要自行增减
  * 列表：list
  * 外部网页：iframe
  * 自定义可使用custom或者为空
  */
-const routerComponents = {
+const routerComponents: RouterComponents = {
   // ConferenceManagement: {
   //   template: () => import('@/views/single/ConferenceManagement.vue'),
   //   type: 'single'

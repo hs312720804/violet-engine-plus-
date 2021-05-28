@@ -6,18 +6,20 @@ import { ActionContext } from 'vuex'
 import { RootState } from '@/store/index'
 
 export interface UserModuleState {
-  name: string
-  token: string
-  departmentId: string
+  id?: string
+  loginName?: string
+  token?: string
+  departmentId?: string
 }
 
 type UserActionContext = ActionContext<UserModuleState, RootState>
 
 const user = {
   state: {
-    name: '',
-    token: '',
-    departmentId: ''
+    id: undefined,
+    loginName: undefined,
+    token: undefined,
+    departmentId: undefined
     // status: '',
     // code: '',
     // name: '',
@@ -33,8 +35,8 @@ const user = {
     SET_TOKEN: (state: UserModuleState, token: string) => {
       state.token = token
     },
-    SET_NAME: (state: UserModuleState, name: string) => {
-      state.name = name
+    SET_LOGIN_NAME: (state: UserModuleState, name: string) => {
+      state.loginName = name
     },
     SET_DEPARTMENT: (state: UserModuleState, id: string) => {
       state.departmentId = id
@@ -72,12 +74,12 @@ const user = {
     //   })
     // },
     cacheUserInfo ({ commit }: UserActionContext, user: UserModuleState) {
-      commit('SET_NAME', user.name)
+      commit('SET_LOGIN_NAME', user.loginName)
       commit('SET_TOKEN', user.token)
       commit('SET_DEPARTMENT', user.departmentId)
     },
     clearUserInfo ({ commit }: UserActionContext) {
-      commit('SET_NAME', '')
+      commit('SET_LOGIN_NAME', '')
       commit('SET_TOKEN', '')
       commit('SET_DEPARTMENT', '')
     }
@@ -97,7 +99,7 @@ const user = {
     //         reject('getInfo: roles must be a non-null array!')
     //       }
 
-    //       commit('SET_NAME', data.name)
+    //       commit('SET_LOGIN_NAME', data.name)
     //       commit('SET_AVATAR', data.avatar)
     //       commit('SET_INTRODUCTION', data.introduction)
     //       resolve(response)
@@ -152,7 +154,7 @@ const user = {
     //     getUserInfo(role).then(response => {
     //       const data = response.data
     //       commit('SET_ROLES', data.roles)
-    //       commit('SET_NAME', data.name)
+    //       commit('SET_LOGIN_NAME', data.name)
     //       commit('SET_AVATAR', data.avatar)
     //       commit('SET_INTRODUCTION', data.introduction)
     //       dispatch('GenerateRoutes', data) // 动态修改权限后 重绘侧边菜单

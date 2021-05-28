@@ -3,7 +3,7 @@ import { ActionContext } from 'vuex'
 import { RootState } from '@/store/index'
 
 export interface AppSidebar { opened?: boolean; withoutAnimation: boolean; }
-export interface AppSite { copyright?: string; layout: string; recordNum?: string; siteName: string; }
+export interface AppSite { copyright?: string; layout: string; recordNum?: string; siteName?: string; }
 export interface AppAccess { [key: string]: boolean; }
 
 export interface AppModuleState {
@@ -27,7 +27,7 @@ const app = {
     language: Cookies.get('language') || 'en',
     size: Cookies.get('size') || 'medium',
     access: {},
-    site: { layout: 'default', siteName: '站点名称' }
+    site: { layout: 'default' }
   },
   mutations: {
     TOGGLE_SIDEBAR: (state: AppModuleState) => {

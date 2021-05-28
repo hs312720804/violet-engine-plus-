@@ -7,6 +7,7 @@ import { ElLoading } from 'element-plus'
 
 type IfetchArg = {
   isJSON?: boolean
+  /** 是否清空token */
   emptyToken?: boolean
 } & AxiosRequestConfig
 
@@ -18,7 +19,7 @@ export default function fetch ({
   data = undefined,
   params = undefined,
   isJSON = true,
-  emptyToken = false // 是否需要token
+  emptyToken = false
 }: IfetchArg) {
   // NProgress.start()
   // debugger
@@ -26,7 +27,6 @@ export default function fetch ({
     // debugger
     loadingInstance = ElLoading.service({ target: document.querySelector('.el-main') as HTMLElement })
   }
-  debugger
   const option: AxiosRequestConfig = {
     method,
     url: `violet-api/${url}`,

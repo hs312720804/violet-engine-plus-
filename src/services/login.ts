@@ -1,27 +1,22 @@
+import { store } from '@/store'
+import { UserModuleState } from '@/store/modules/user'
 import fetch from './fetch'
-// import axios from 'axios'
 import wrapService from '@/utlis/wrapService'
 
 export interface LoginArg { userName: string; password: string; }
 
-export const LoginService = wrapService(async (data: LoginArg) => {
-  // const user = {
-  //   name: 'admin',
-  //   password: '123456',
-  //   token: 'abcde'
-  // }
-  // return Promise.resolve().then(() => {
-  //   this.state = user
-  //   return user
-  // })
-  debugger
-  const user = await fetch({
+export const LoginService = wrapService<LoginArg, UserModuleState>(async data => {
+
+  return fetch({
     method: 'post',
     url: 'login',
     data,
-    isJSON: false
+    isJSON: false,
+    emptyToken: true
+  }).then(res => {
+    store.dispatch('cacheUserInfo', res)
+    return res
   })
-  return user
 })
 
 // function loginout (data) {

@@ -5,7 +5,7 @@ import createPersistedState from 'vuex-persistedstate'
 import SecureLS from 'secure-ls'
 import app, { AppModuleState } from './modules/app'
 import errorLog, { ErrorLogModuleState } from './modules/errorLog'
-import permission, { PermissionModuleState } from './modules/permission'
+// import permission, { PermissionModuleState } from './modules/permission'
 import tagsView, { TagModuleState } from './modules/tagsView'
 import user, { UserModuleState } from './modules/user'
 import getters from './getters'
@@ -17,7 +17,7 @@ const ls = new SecureLS({ encodingType: 'aes', encryptionSecret: 'dmlvbGV0LXNlY3
 export interface RootState {
   app: AppModuleState
   errorLog: ErrorLogModuleState
-  permission: PermissionModuleState
+  // permission: PermissionModuleState
   tagsView: TagModuleState
   user: UserModuleState
 }
@@ -30,7 +30,7 @@ export const storeOptions = {
     app,
     user,
     errorLog,
-    permission,
+    // permission,
     tagsView
   },
   getters,

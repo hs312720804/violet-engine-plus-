@@ -32,7 +32,7 @@
         </el-scrollbar>
       </div>
     </div>
-    <el-container direction="vertical">
+    <el-container direction="vertical" class="right-main">
       <el-header
         class="header"
       >
@@ -44,18 +44,20 @@
         >
         </el-button>
         <SiteName :name="siteInfo.siteName"></SiteName>
-        <c-menu
-          v-if="basic.topMenu"
+        <!-- <c-menu
           :default-active="$route.name"
           :items="menu || horizontalMenu"
+          v-if="basic.topMenu"
           mode="horizontal"
         >
-        </c-menu>
-        <!-- <span>&nbsp;&nbsp;/</span>
-        <Breadcrumb
+        </c-menu> -->
+        <div class="c-breadcrumb">
+          <span>&nbsp;&nbsp;/</span>
+          <c-breadcrumb
             class="breadcrumb"
             :items="breadcrumb"
-        /> -->
+          ></c-breadcrumb>
+        </div>
         <Screenfull></Screenfull>
         <div class="user-info">
           <el-dropdown :hide-on-click="false" @command="handleDropdownCommand">
@@ -75,6 +77,7 @@
       </el-header>
       <c-tag-nav
         v-show="basic.isShowTagNav"
+        v-if="device !== 'mobile'"
         ref="tag"
         :init-tags="initTags"
         theme="gray-tab"
@@ -93,9 +96,6 @@
 import SiteName from '@/components/SiteName.vue'
 import Screenfull from '@/components/Screenfull/index.vue'
 import ResizeMixin from './mixin/ResizeHandler'
-// import Wrapper from '@/components/Wrapper.vue'
-// import Dashboard from '@/views/Dashboard.vue'
-// import { Main } from 'element-plus'
 export default {
   components: {
     Screenfull,
@@ -127,7 +127,8 @@ export default {
       return meta && meta.isCache !== false
     },
     initTags () {
-      return this.$appState.$storage(this.$store.state.user.name).$get('tags') || []
+      return []
+      // return this.$appState.$storage(this.$store.state.user.name).$get('tags') || []
     },
     defaultMenu () {
       const mainRoute = this.$router.options.routes.find(item => {
@@ -178,6 +179,7 @@ export default {
           return currentMenuItem
         }
       }
+
       const items = gen(mainRoute).children
       // console.log(JSON.stringify(items))
       return items.splice(0, 5)
@@ -187,10 +189,10 @@ export default {
     device: 'responsiveMenu'
   },
   created () {
-    this.isCollapseMenu = !!this.$appState.$get('isCollapseMenu')
-    this.$bus.$on('breadcrumb-change', breadcrumb => {
-      this.breadcrumb = breadcrumb
-    })
+    // this.isCollapseMenu = !!this.$appState.$get('isCollapseMenu')
+    // this.$bus.$on('breadcrumb-change', breadcrumb => {
+    //   this.breadcrumb = breadcrumb
+    // })
   },
   mounted () {
     window.addEventListener('beforeunload', this.saveTags)
@@ -200,7 +202,6 @@ export default {
   },
   methods: {
     handleSelect (name) {
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
       this.$router.push({ name }).catch(() => {})
     },
     handleDropdownCommand (command) {
@@ -215,13 +216,13 @@ export default {
       if (device === 'miniScreen') {
         this.isShowMenu = true
         const isCollapseMenu = !this.isCollapseMenu ? !this.isCollapseMenu : this.isCollapseMenu
-        this.$appState.$set('isCollapseMenu', isCollapseMenu)
+        // this.$appState.$set('isCollapseMenu', isCollapseMenu)
         this.isCollapseMenu = isCollapseMenu
       } else if (device === 'mobile') {
         const isShowMenu = this.isShowMenu ? !this.isShowMenu : this.isShowMenu
-        this.$appState.$set('isShowMenu', isShowMenu)
+        // this.$appState.$set('isShowMenu', isShowMenu)
         this.isShowMenu = isShowMenu
-        this.$appState.$set('isCollapseMenu', true)
+        // this.$appState.$set('isCollapseMenu', true)
         this.isCollapseMenu = true
       } else {
         this.isShowMenu = true
@@ -233,23 +234,20 @@ export default {
         this.isCollapseMenu = false
       } else {
         const isCollapseMenu = !this.isCollapseMenu
-        this.$appState.$set('isCollapseMenu', isCollapseMenu)
+        // this.$appState.$set('isCollapseMenu', isCollapseMenu)
         this.isCollapseMenu = isCollapseMenu
         // this.$store.dispatch('closeSideBar', { withoutAnimation: false })
       }
     },
     saveTags () {
-      const tags = this.$refs.tag.tags
-      this.$appState.$storage(this.$store.state.user.name).$set('tags', tags)
+      // const tags = this.$refs.tag.tags
+      // this.$appState.$storage(this.$store.state.user.name).$set('tags', tags)
     }
   }
 }
 </script>
 
 <style lang="stylus">
-.breadcrumb
-  margin-left 10px
-  padding-top 8px
 .user-info
   margin-left 20px
 .aside__menu
@@ -363,4 +361,27 @@ export default {
     font-size 24px
   .collpase-btn:hover, .collpase-btn:focus
     padding 13px 15px
+.c-breadcrumb
+  display flex
+  color #C0C4CC
+  margin-left 10px
+  line-height 1
+  padding-top 5px
+  font-size 14px
+  >>>.breadcrumb
+    padding-top 0
+  >>>.el-breadcrumb__inner.is-link
+    font-weight normal
+.right-main
+  height 100vh
+@media screen and (max-width:992px)
+  .c-breadcrumb,.system-setting
+    display none
+  .c-fullscreen
+    display none
+  .user-info
+    margin-left auto
+    padding-right 10px
+  .logo
+    display none
 </style>

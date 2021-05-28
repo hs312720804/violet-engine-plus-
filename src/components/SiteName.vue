@@ -14,6 +14,7 @@
   </div>
 </template>
 <script>
+import $constants from '@/utlis/consts'
 export default {
   props: {
     name: {
@@ -27,7 +28,7 @@ export default {
   },
   computed: {
     logo () {
-      return this.$constants.evil(this.$store.state.app.site.logo)
+      return $constants.evil(this.$store.state.app.site.logo)
     }
   }
 }
@@ -43,7 +44,7 @@ export default {
       display inline-block
       width 180px
       height 50px
-      background url(../assets/logo-red.png) no-repeat center
+      background url(@/assets/images/logo-red.png) no-repeat center
       background-size 100%
       float left
     .site-name

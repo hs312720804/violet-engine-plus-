@@ -11,11 +11,14 @@ export default [
     // redirect: '/desktop.html',
     // children
   },
-  {
-    path: '/table',
-    name: 'Table',
-    component: () => import('@/views/Table.vue')
-  },
+  // {
+  //   path: '/register',
+  //   name: 'register',
+  //   component: () => import('@/views/Register.vue'),
+  //   meta: {
+  //     title: '登录'
+  //   }
+  // },
   {
     path: '/login',
     name: 'login',

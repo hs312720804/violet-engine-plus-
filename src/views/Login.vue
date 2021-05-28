@@ -101,8 +101,8 @@ import { defineComponent, ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 
 import { ElForm } from 'element-plus'
-import { LoginArg } from '@/services/login'
-import { login } from '@/auth'
+import { LoginService, LoginArg } from '@/services/login'
+import { getInitData } from '@/auth'
 
 // console.log('$login===', LoginService)
 export default defineComponent({
@@ -121,26 +121,15 @@ export default defineComponent({
     const employeeFormEl = ref<InstanceType<typeof ElForm>>()
 
     const handleLogin = ()=>{
-      let store222
-      // console.log(store222)
+
       if (loginType.value === 'admin') {
-        login(adminForm)
-          .then(() => {
-            debugger
-            $router.push({ path: '/' })
+        LoginService(adminForm)
+          .then(getInitData)
+          .then(()=>{
+            $router.push('/')
           })
       } else {
-        // let submitDate = JSON.parse(JSON.stringify(employeeForm))
-        // this.$employeeLogin(submitDate)
-        //   .then(data => {
-        //     debugger
-        $router.push({
-          path: '/checkin' || $router.push({ name: 'login' }),
-          query: {
-            id: 2
-          }
-        })
-        //   })
+
       }
     }
 
