@@ -22,7 +22,7 @@
     >
     </MainTB>
     <el-drawer
-      v-model:visible="isShowSetting"
+      v-model="isShowSetting"
       title="我是标题"
       :with-header="false"
       size="260"
