@@ -17,4 +17,4 @@ import i18n from '@/i18n'
 const app = createApp(App)
 
 installElementPlus(app)
-app.use(i18n).use(store, key).use(router).use(adminToolkitPlus).mount('#app')
+app.use(store, key).use(router).use(adminToolkitPlus).use(i18n).mount('#app')
