@@ -104,7 +104,7 @@ export async function getInitData () {
           }
         }
       ]
-      // router.options.routes = filterRoutes // 动态路由
+      router.options.routes = filterRoutes // 动态路由
       filterRoutes.forEach(route => router.addRoute(route))  // 动态路由
       // router.addRoutes(filterRoutes) // 动态路由
       resolve(undefined)

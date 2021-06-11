@@ -10,7 +10,7 @@ import { getSiteInfo } from '@/services/common'
 const router = createRouter({ history: createWebHistory(), routes })
 
 router.beforeEach((to, from, next) => {
-  console.log(store.state.app.site)
+
   if (router.currentRoute.value.matched.length === 0) {
     getSiteInfo().then(data => {
       store.dispatch('setSite', data)// ('setSite', data)

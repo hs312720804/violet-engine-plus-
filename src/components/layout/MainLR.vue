@@ -2,7 +2,7 @@
   <el-container>
     <el-drawer
       v-if="!isShowMenu"
-      v-model:visible="drawer"
+      v-model="drawer"
       direction="ltr"
       size="200"
       :with-header="false"
@@ -66,9 +66,11 @@
               {{ $store.state.user.name }}
               <i class="el-icon-arrow-down el-icon--right"></i>
             </span>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="logout">{{ $t('btn.logout') }}</el-dropdown-item>
-            </el-dropdown-menu>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item command="logout">{{ $t('btn.logout') }}</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
           </el-dropdown>
         </div>
         <div class="system-setting" @click="$emit('set-layout', true)">
@@ -179,7 +181,6 @@ export default {
           return currentMenuItem
         }
       }
-
       const items = gen(mainRoute).children
       // console.log(JSON.stringify(items))
       return items.splice(0, 5)
@@ -214,28 +215,36 @@ export default {
     responsiveMenu () {
       const device = this.device
       if (device === 'miniScreen') {
-        this.isShowMenu = true
-        const isCollapseMenu = !this.isCollapseMenu ? !this.isCollapseMenu : this.isCollapseMenu
+        // this.isShowMenu = true
+        this.$store.commit('OPEN_MENU')
+        // const isCollapseMenu = !this.isCollapseMenu ? !this.isCollapseMenu : this.isCollapseMenu
         // this.$appState.$set('isCollapseMenu', isCollapseMenu)
-        this.isCollapseMenu = isCollapseMenu
+        // this.isCollapseMenu = isCollapseMenu
       } else if (device === 'mobile') {
-        const isShowMenu = this.isShowMenu ? !this.isShowMenu : this.isShowMenu
+        // const isShowMenu = this.isShowMenu ? !this.isShowMenu : this.isShowMenu
         // this.$appState.$set('isShowMenu', isShowMenu)
-        this.isShowMenu = isShowMenu
+        // this.isShowMenu = isShowMenu
+
         // this.$appState.$set('isCollapseMenu', true)
-        this.isCollapseMenu = true
+        // this.isCollapseMenu = true
+        this.$store.commit('SET_MENU_COLLAPSE', true)
       } else {
-        this.isShowMenu = true
+
+        this.$store.commit('OPEN_MENU')
+        // this.isShowMenu = true
       }
     },
     toggleMenu () {
       if (this.device === 'mobile') {
         this.drawer = true
-        this.isCollapseMenu = false
+        // this.isCollapseMenu = false
+        this.$store.commit('SET_MENU_COLLAPSE', false)
       } else {
-        const isCollapseMenu = !this.isCollapseMenu
+
+        this.$store.commit('TOGGLE_MENU')
+        // const isCollapseMenu = !this.isCollapseMenu
         // this.$appState.$set('isCollapseMenu', isCollapseMenu)
-        this.isCollapseMenu = isCollapseMenu
+        // this.isCollapseMenu = isCollapseMenu
         // this.$store.dispatch('closeSideBar', { withoutAnimation: false })
       }
     },
@@ -252,7 +261,7 @@ export default {
   margin-left 20px
 .aside__menu
   min-height 100vh
-  background #222a35
+  background $--side-menu-bg
 .aside__menu:not(.aside__menu_collapse)
   width 200px
 .aside__menu-main
@@ -269,7 +278,7 @@ export default {
   overflow hidden
 .aside__menu .menu:not(.el-menu--collapse)
   width 200px
-  background #222a35
+  background $--side-menu-bg
 .menu li
   position relative
 .el-submenu__title
@@ -296,7 +305,7 @@ export default {
   height 40px
   line-height 40px
 .el-menu.el-menu--collapse,.el-menu--vertical .el-menu
-  background #222a35
+  background $--side-menu-bg
 .aside__menu .el-submenu__title:hover,.el-menu--vertical .el-submenu__title:hover, .aside__menu .el-menu-item:hover,.el-menu--vertical .el-menu-item:hover
   background #253245
 .el-menu--vertical .el-submenu.is-opened .el-submenu__title
@@ -385,3 +394,4 @@ export default {
   .logo
     display none
 </style>
+
