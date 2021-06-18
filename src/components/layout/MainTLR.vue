@@ -81,43 +81,50 @@
 </template>
 
 <script>
+import { defineComponent, ref, reactive, computed } from 'vue'
+import { useStore } from '@/store'
+import { useRouter, useRoute } from 'vue-router'
+
 import SiteName from '@/components/SiteName.vue'
 import Screenfull from '@/components/Screenfull/index.vue'
 
-export default {
+export default defineComponent({
   components: {
     Screenfull,
     SiteName
   },
   props: ['menu', 'basic'],
-  data () {
-    return {
-      breadcrumb: [],
-      isCollapseMenu: false,
-      isShowSetting: false
-      // isShowTagNav: true
-    }
-  },
-  computed: {
-    isKeepAlive () {
-      const meta = this.$route.meta
+  setup() {
+    const $store = useStore()
+    const $router = useRouter()
+    const $route = useRoute()
+
+    let breadcrumb = reactive([])
+    let isCollapseMenu = ref(false)
+    let isShowSetting = ref(false)
+
+    const isKeepAlive = computed(() => {
+      const meta = $route.meta
       return meta && meta.isCache !== false
-    },
-    initTags () {
-      return this.$appState.$storage(this.$store.state.user.name).$get('tags') || []
-    },
-    siteInfo () {
-      return this.$store.state.app.site
-    },
-    defaultMenu () {
-      const mainRoute = this.$router.options.routes.find(item => {
+    })
+
+    const initTags = computed(() => {
+      return $appState.$storage(this.$store.state.user.name).$get('tags') || []
+    })
+
+    const siteInfo = computed(() => {
+      return $store.state.app.site
+    })
+
+    const defaultMenu = computed(() => {
+      const mainRoute = $router.options.routes.find(item => {
         return item.path === '/'
       })
       function gen ({ name, meta = {}, children }) {
         if (!meta.hideInMenu) {
           const currentMenuItem = {
             title: meta.title,
-            icon: meta.icon,
+            // icon: meta.icon,
             route: name
           }
           if (children) {
@@ -133,11 +140,11 @@ export default {
         }
       }
       const items = gen(mainRoute).children
-      console.log(JSON.stringify(items))
       return items
-    },
-    horizontalMenu () {
-      const mainRoute = this.$router.options.routes.find(item => {
+    })
+
+    const horizontalMenu = computed(() => {
+      const mainRoute = $router.options.routes.find(item => {
         return item.path === '/'
       })
       function gen ({ name, meta = {}, children }) {
@@ -161,39 +168,58 @@ export default {
       const items = gen(mainRoute).children
       // console.log(JSON.stringify(items))
       return items.splice(0, 5)
-    }
-  },
-  created () {
-    this.isCollapseMenu = !!this.$appState.$get('isCollapseMenu')
-    this.$bus.$on('breadcrumb-change', breadcrumb => {
-      this.breadcrumb = breadcrumb
     })
-  },
-  mounted () {
-    window.addEventListener('beforeunload', this.saveTags)
-  },
-  destroyed () {
-    window.removeEventListener('beforeunload', this.saveTags)
-  },
-  methods: {
-    handleDropdownCommand (command) {
+
+    const handleDropdownCommand = command => {
       if (command === 'logout') {
         this.$logout().then(() => {
-          this.$router.push({ name: 'login' })
+          $router.push({ name: 'login' })
         })
       }
-    },
-    toggleMenu () {
-      const isCollapseMenu = !this.isCollapseMenu
-      this.$appState.$set('isCollapseMenu', isCollapseMenu)
-      this.isCollapseMenu = isCollapseMenu
-    },
-    saveTags () {
-      const tags = this.$refs.tag.tags
-      this.$appState.$storage(this.$store.state.user.name).$set('tags', tags)
     }
+
+    const toggleMenu = () => {
+      const isCollapseMenu = !isCollapseMenu
+      $appState.$set('isCollapseMenu', isCollapseMenu)
+      isCollapseMenu = isCollapseMenu
+    }
+
+    const saveTags = () => {
+      const tags = this.$refs.tag.tags
+      $appState.$storage($store.state.user.name).$set('tags', tags)
+    }
+
+    isCollapseMenu.value = !!$appState.$get('isCollapseMenu')
+    this.$bus.$on('breadcrumb-change', breadcrumb1 => {
+      breadcrumb = breadcrumb1
+    })
+
+    onMounted(() => {
+      window.addEventListener('beforeunload', saveTags())
+    })
+    onUnmounted(() => {
+      window.removeEventListener('beforeunload', saveTags())
+    })
+
+    return {
+      breadcrumb,
+      isCollapseMenu,
+      isShowSetting,
+      isKeepAlive,
+      initTags,
+      siteInfo,
+      defaultMenu,
+      horizontalMenu,
+      handleDropdownCommand,
+      toggleMenu,
+      saveTags,
+      $route,
+      $store
+    }
+
   }
-}
+
+})
 </script>
 
 <style lang="stylus">
