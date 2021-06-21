@@ -95,45 +95,55 @@
 </template>
 
 <script>
+import { defineComponent, ref, reactive, computed, watch, onMounted, onUnmounted } from 'vue'
+import { useStore } from '@/store'
+import { useRouter, useRoute } from 'vue-router'
+
 import SiteName from '@/components/SiteName.vue'
 import Screenfull from '@/components/Screenfull/index.vue'
 import ResizeMixin from './mixin/ResizeHandler'
-export default {
+
+export default defineComponent({
   components: {
     Screenfull,
     SiteName
   },
   mixins: [ResizeMixin],
   props: ['menu', 'basic'],
-  data () {
-    return {
-      breadcrumb: [],
-      isCollapseMenu: false,
-      isShowMenu: true,
-      drawer: false
-      // isShowTagNav: true
-    }
-  },
-  computed: {
-    sidebar () {
-      return this.$store.state.app.sidebar
-    },
-    device () {
-      return this.$store.state.app.device
-    },
-    siteInfo () {
-      return this.$store.state.app.site
-    },
-    isKeepAlive () {
-      const meta = this.$route.meta
+  setup() {
+    const $store = useStore()
+    const $router = useRouter()
+    const $route = useRoute()
+
+    let breadcrumb = reactive([])
+    let isCollapseMenu = ref(false)
+    let isShowMenu = ref(true)
+    let drawer = ref(false)
+
+    const sidebar = computed(() => {
+      return $store.state.app.sidebar
+    })
+
+    const device = computed(() => {
+      return $store.state.app.device
+    })
+
+    const siteInfo = computed (() => {
+      return $store.state.app.site
+    })
+
+    const isKeepAlive = computed(() => {
+      const meta = $route.meta
       return meta && meta.isCache !== false
-    },
-    initTags () {
+    })
+
+    const initTags = computed(() => {
       return []
       // return this.$appState.$storage(this.$store.state.user.name).$get('tags') || []
-    },
-    defaultMenu () {
-      const mainRoute = this.$router.options.routes.find(item => {
+    })
+
+    const defaultMenu = computed(() => {
+      const mainRoute = $router.options.routes.find(item => {
         return item.path === '/'
       })
       function gen ({ name, meta = {}, children }) {
@@ -158,9 +168,10 @@ export default {
       const items = gen(mainRoute).children
       // console.log(JSON.stringify(items))
       return items
-    },
-    horizontalMenu () {
-      const mainRoute = this.$router.options.routes.find(item => {
+    })
+
+    const horizontalMenu = computed(() => {
+      const mainRoute = $router.options.routes.find(item => {
         return item.path === '/'
       })
       function gen ({ name, meta = {}, children }) {
@@ -184,39 +195,30 @@ export default {
       const items = gen(mainRoute).children
       // console.log(JSON.stringify(items))
       return items.splice(0, 5)
+    })
+
+    watch(() => device,
+      () => {
+        responsiveMenu()
+      })
+
+    const handleSelect = name => {
+      $router.push({ name }).catch(() => {})
     }
-  },
-  watch: {
-    device: 'responsiveMenu'
-  },
-  created () {
-    // this.isCollapseMenu = !!this.$appState.$get('isCollapseMenu')
-    // this.$bus.$on('breadcrumb-change', breadcrumb => {
-    //   this.breadcrumb = breadcrumb
-    // })
-  },
-  mounted () {
-    window.addEventListener('beforeunload', this.saveTags)
-  },
-  unmounted () {
-    window.removeEventListener('beforeunload', this.saveTags)
-  },
-  methods: {
-    handleSelect (name) {
-      this.$router.push({ name }).catch(() => {})
-    },
-    handleDropdownCommand (command) {
+
+    const handleDropdownCommand = command => {
       if (command === 'logout') {
         this.$logout().then(() => {
-          this.$router.push({ name: 'login' })
+          $router.push({ name: 'login' })
         })
       }
-    },
-    responsiveMenu () {
-      const device = this.device
+    }
+
+    const responsiveMenu = () => {
+      const device = device
       if (device === 'miniScreen') {
         // this.isShowMenu = true
-        this.$store.commit('OPEN_MENU')
+        $store.commit('OPEN_MENU')
         // const isCollapseMenu = !this.isCollapseMenu ? !this.isCollapseMenu : this.isCollapseMenu
         // this.$appState.$set('isCollapseMenu', isCollapseMenu)
         // this.isCollapseMenu = isCollapseMenu
@@ -227,33 +229,70 @@ export default {
 
         // this.$appState.$set('isCollapseMenu', true)
         // this.isCollapseMenu = true
-        this.$store.commit('SET_MENU_COLLAPSE', true)
+        $store.commit('SET_MENU_COLLAPSE', true)
       } else {
 
-        this.$store.commit('OPEN_MENU')
+        $store.commit('OPEN_MENU')
         // this.isShowMenu = true
       }
-    },
-    toggleMenu () {
-      if (this.device === 'mobile') {
-        this.drawer = true
+    }
+
+    const toggleMenu = () => {
+      if (device.value === 'mobile') {
+        drawer.value = true
         // this.isCollapseMenu = false
-        this.$store.commit('SET_MENU_COLLAPSE', false)
+        $store.commit('SET_MENU_COLLAPSE', false)
       } else {
 
-        this.$store.commit('TOGGLE_MENU')
+        $store.commit('TOGGLE_MENU')
         // const isCollapseMenu = !this.isCollapseMenu
         // this.$appState.$set('isCollapseMenu', isCollapseMenu)
         // this.isCollapseMenu = isCollapseMenu
         // this.$store.dispatch('closeSideBar', { withoutAnimation: false })
       }
-    },
-    saveTags () {
+    }
+
+    const saveTags = () => {
       // const tags = this.$refs.tag.tags
       // this.$appState.$storage(this.$store.state.user.name).$set('tags', tags)
     }
+
+    // this.isCollapseMenu = !!this.$appState.$get('isCollapseMenu')
+    // this.$bus.$on('breadcrumb-change', breadcrumb => {
+    //   this.breadcrumb = breadcrumb
+    // })
+
+    onMounted(() => {
+      window.addEventListener('beforeunload', saveTags())
+    })
+    onUnmounted(() => {
+      window.removeEventListener('beforeunload', saveTags())
+    })
+
+    return {
+      breadcrumb,
+      isCollapseMenu,
+      isShowMenu,
+      drawer,
+      sidebar,
+      device,
+      siteInfo,
+      isKeepAlive,
+      initTags,
+      defaultMenu,
+      horizontalMenu,
+      handleSelect,
+      handleDropdownCommand,
+      responsiveMenu,
+      toggleMenu,
+      saveTags,
+      $route,
+      $store
+    }
+
   }
-}
+
+})
 </script>
 
 <style lang="stylus">
