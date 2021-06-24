@@ -102,6 +102,7 @@ import { useRouter, useRoute } from 'vue-router'
 import SiteName from '@/components/SiteName.vue'
 import Screenfull from '@/components/Screenfull/index.vue'
 import ResizeMixin from './mixin/ResizeHandler'
+import { $logout } from '@/auth'
 
 export default defineComponent({
   components: {
@@ -110,6 +111,7 @@ export default defineComponent({
   },
   mixins: [ResizeMixin],
   props: ['menu', 'basic'],
+  emits: ['click', 'set-layout', 'command'],
   setup() {
     const $store = useStore()
     const $router = useRouter()
@@ -208,7 +210,7 @@ export default defineComponent({
 
     const handleDropdownCommand = command => {
       if (command === 'logout') {
-        this.$logout().then(() => {
+        $logout().then(() => {
           $router.push({ name: 'login' })
         })
       }

@@ -68,6 +68,7 @@ import { useRouter, useRoute } from 'vue-router'
 
 import SiteName from '@/components/SiteName.vue'
 import Screenfull from '@/components/Screenfull/index.vue'
+import { $logout } from '@/auth'
 
 export default defineComponent({
   components: {
@@ -75,6 +76,7 @@ export default defineComponent({
     SiteName
   },
   props: ['menu', 'basic'],
+  emits: ['click', 'set-layout', 'command'],
   setup() {
     const $store = useStore()
     const $router = useRouter()
@@ -90,7 +92,7 @@ export default defineComponent({
     })
 
     const initTags = computed(() => {
-      return $appState.$storage($store.state.user.name).$get('tags') || []
+      // return $appState.$storage($store.state.user.name).$get('tags') || []
     })
 
     const siteInfo = computed(() => {
@@ -130,7 +132,7 @@ export default defineComponent({
 
     const handleDropdownCommand = command => {
       if (command === 'logout') {
-        this.$logout().then(() => {
+        $logout().then(() => {
           $router.push({ name: 'login' })
         })
       }
@@ -138,19 +140,19 @@ export default defineComponent({
 
     const toggleMenu = () => {
       const isCollapseMenu = !isCollapseMenu
-      $appState.$set('isCollapseMenu', isCollapseMenu)
+      // $appState.$set('isCollapseMenu', isCollapseMenu)
       isCollapseMenu = isCollapseMenu
     }
 
     const saveTags = () => {
-      const tags = this.$refs.tag.tags
-      $appState.$storage($store.state.user.name).$set('tags', tags)
+      // const tags = this.$refs.tag.tags
+      // $appState.$storage($store.state.user.name).$set('tags', tags)
     }
 
-    isCollapseMenu.value = !!$appState.$get('isCollapseMenu')
-    this.$bus.$on('breadcrumb-change', breadcrumb1 => {
-      breadcrumb = breadcrumb1
-    })
+    // isCollapseMenu.value = !!$appState.$get('isCollapseMenu')
+    // this.$bus.$on('breadcrumb-change', breadcrumb1 => {
+    //   breadcrumb = breadcrumb1
+    // })
 
     onMounted(() => {
       window.addEventListener('beforeunload', saveTags())

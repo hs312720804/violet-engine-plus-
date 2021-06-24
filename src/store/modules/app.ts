@@ -6,6 +6,15 @@ export interface AppMenu { isShow: boolean; isCollapse: boolean; }
 export interface AppSidebar { opened?: boolean; withoutAnimation: boolean; }
 export interface AppSite { copyright?: string; layout: string; recordNum?: string; siteName?: string; }
 export interface AppAccess { [key: string]: boolean; }
+export interface UserModuleState {
+  id?: number
+  loginName: string
+  token?: string
+  departmentId?: string
+}
+export interface AppUsers {
+  [key: string]: UserModuleState
+}
 
 export interface AppModuleState {
   sidebar: AppSidebar
@@ -15,10 +24,10 @@ export interface AppModuleState {
   size: string
   access: AppAccess
   site: AppSite
+  users: AppUsers
 }
 
 type AppActionContext = ActionContext<AppModuleState, RootState>
-
 const app = {
   state: {
     sidebar: {
@@ -33,7 +42,8 @@ const app = {
     language: 'zh',
     size: 'medium',
     access: {},
-    site: { layout: 'default' }
+    site: { layout: 'default' },
+    users: {}
   },
   mutations: {
     TOGGLE_MENU: (state: AppModuleState) => {
@@ -53,6 +63,7 @@ const app = {
       state.sidebar.withoutAnimation = false
     },
     CLOSE_SIDEBAR: (state: AppModuleState, withoutAnimation: boolean) => {
+      debugger
       state.sidebar.opened = false
       state.sidebar.withoutAnimation = withoutAnimation
     },
@@ -73,7 +84,28 @@ const app = {
     },
     SET_SITE: (state: AppModuleState, site: AppSite) => {
       state.site = site
+    },
+    SET_TOKEN: (state: AppModuleState, user: UserModuleState) => {
+      // state.users[user.loginName].token = user.token
+      // state.users = {
+      //   [user.loginName]: {
+      //     loginName: user.loginName,
+      //     token: user.token,
+      //     departmentId: user.departmentId
+      //   }
+      // }
+      state.users[user.loginName].loginName = user.loginName
+      state.users[user.loginName].token = user.loginName
+      state.users[user.loginName].id = user.id
     }
+    // SET_LOGIN_NAME: (state: AppModuleState, user: UserModuleState) => {
+    //   // state.users[user.loginName].loginName = user.loginName
+    //   // state.usersloginName = user.loginName
+    // },
+    // SET_DEPARTMENT: (state: AppModuleState, user: UserModuleState) => {
+    //   state.users[user.loginName].departmentId = user.departmentId
+    //   // state.users.departmentId = user.departmentId
+    // }
   },
   actions: {
     toggleSideBar ({ commit }: AppActionContext) {
@@ -99,6 +131,17 @@ const app = {
     },
     setSite ({ commit }: AppActionContext, site: AppSite) {
       commit('SET_SITE', site)
+    },
+    cacheUserInfo ({ commit }: AppActionContext, user: UserModuleState) {
+      debugger
+      commit('SET_TOKEN', user)
+      // commit('SET_DEPARTMENT', user)
+      // commit('SET_LOGIN_NAME', user)
+    },
+    clearUserInfo ({ commit }: AppActionContext) {
+    //   commit('SET_LOGIN_NAME', '')
+    //   commit('SET_TOKEN', '')
+    //   commit('SET_DEPARTMENT', '')
     }
   }
 }

@@ -28,11 +28,12 @@ import { RouteRecordRaw } from 'vue-router'
 //   // return Promise.reject(new Error('NOT LOGGEDIN'))
 // }
 
-// export async function $logout () {
-//   Storage.$remove(`${storageName}/user`)
-//   store.dispatch('clearAccess')
-//   store.dispatch('clearUserInfo')
-// }
+export async function $logout () {
+  // Storage.$remove(`${storageName}/user`)
+  store.dispatch('clearAccess')
+  store.dispatch('clearUserInfo')
+}
+
 export async function getInitData () {
   return new Promise((resolve, reject) => {
     getUserInfoService().then(res => {
