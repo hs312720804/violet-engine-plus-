@@ -13,7 +13,8 @@
     "skipLibCheck": true,
     "allowJs": true,
     "types": [
-      "vite/client"
+      "vite/client",
+      "node"
     ],
     "plugins": [
       {
@@ -28,6 +29,7 @@
     }
   },
   "include": [
+    "types",
     "src/**/*.ts",
     "src/**/*.d.ts",
     "src/**/*.tsx",

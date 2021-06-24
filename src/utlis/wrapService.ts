@@ -1,6 +1,6 @@
 import { ElNotification } from 'element-plus'
 interface Service<Arg, Res> {
-  (arg: Arg): Promise<Res>
+  (arg?: Arg): Promise<Res>
 }
 function wrapService<Arg, Res> (service: Service<Arg, Res>) {
   // const $service = {
