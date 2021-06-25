@@ -139,7 +139,7 @@ export default defineComponent({
     }
 
     const toggleMenu = () => {
-      const isCollapseMenu = !isCollapseMenu
+      let isCollapseMenu = !isCollapseMenu
       // $appState.$set('isCollapseMenu', isCollapseMenu)
       isCollapseMenu = isCollapseMenu
     }
