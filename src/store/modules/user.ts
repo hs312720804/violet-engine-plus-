@@ -73,10 +73,11 @@ const user = {
     //     })
     //   })
     // },
-    cacheUserInfo ({ commit }: UserActionContext, user: UserModuleState) {
+    cacheUserInfo ({ commit, dispatch }: UserActionContext, user: UserModuleState) {
       commit('SET_LOGIN_NAME', user.loginName)
       commit('SET_TOKEN', user.token)
       commit('SET_DEPARTMENT', user.departmentId)
+      dispatch('cacheAppUserInfo', user)
     },
     clearUserInfo ({ commit }: UserActionContext) {
       commit('SET_LOGIN_NAME', '')

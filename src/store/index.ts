@@ -22,10 +22,9 @@ export interface RootState {
 export const key: InjectionKey<Store<RootState>> = Symbol()
 
 export const storeOptions = {
-  // mutations: {},
   modules: {
     app,
-    // user,
+    user,
     errorLog
   },
   getters,

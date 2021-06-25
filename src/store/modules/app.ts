@@ -85,27 +85,13 @@ const app = {
     SET_SITE: (state: AppModuleState, site: AppSite) => {
       state.site = site
     },
-    SET_TOKEN: (state: AppModuleState, user: UserModuleState) => {
+    SET_APPUSERINFO: (state: AppModuleState, user: UserModuleState) => {
+      state.users[user.loginName] = user
+      console.log(state.users)
+      // state.users[user.loginName].loginName = user.loginName
       // state.users[user.loginName].token = user.token
-      // state.users = {
-      //   [user.loginName]: {
-      //     loginName: user.loginName,
-      //     token: user.token,
-      //     departmentId: user.departmentId
-      //   }
-      // }
-      state.users[user.loginName].loginName = user.loginName
-      state.users[user.loginName].token = user.loginName
-      state.users[user.loginName].id = user.id
+      // state.users[user.loginName].id = user.id
     }
-    // SET_LOGIN_NAME: (state: AppModuleState, user: UserModuleState) => {
-    //   // state.users[user.loginName].loginName = user.loginName
-    //   // state.usersloginName = user.loginName
-    // },
-    // SET_DEPARTMENT: (state: AppModuleState, user: UserModuleState) => {
-    //   state.users[user.loginName].departmentId = user.departmentId
-    //   // state.users.departmentId = user.departmentId
-    // }
   },
   actions: {
     toggleSideBar ({ commit }: AppActionContext) {
@@ -132,13 +118,12 @@ const app = {
     setSite ({ commit }: AppActionContext, site: AppSite) {
       commit('SET_SITE', site)
     },
-    cacheUserInfo ({ commit }: AppActionContext, user: UserModuleState) {
-      debugger
-      commit('SET_TOKEN', user)
+    cacheAppUserInfo ({ commit }: AppActionContext, user: UserModuleState) {
+      commit('SET_APPUSERINFO', user)
       // commit('SET_DEPARTMENT', user)
       // commit('SET_LOGIN_NAME', user)
     },
-    clearUserInfo ({ commit }: AppActionContext) {
+    clearAppUserInfo ({ commit }: AppActionContext) {
     //   commit('SET_LOGIN_NAME', '')
     //   commit('SET_TOKEN', '')
     //   commit('SET_DEPARTMENT', '')
