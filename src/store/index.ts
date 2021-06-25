@@ -6,7 +6,6 @@ import SecureLS from 'secure-ls'
 import app, { AppModuleState } from './modules/app'
 import errorLog, { ErrorLogModuleState } from './modules/errorLog'
 // import permission, { PermissionModuleState } from './modules/permission'
-import tagsView, { TagModuleState } from './modules/tagsView'
 import user, { UserModuleState } from './modules/user'
 import getters from './getters'
 
@@ -17,9 +16,7 @@ const ls = new SecureLS({ encodingType: 'aes', encryptionSecret: 'dmlvbGV0LXNlY3
 export interface RootState {
   app: AppModuleState
   errorLog: ErrorLogModuleState
-  // permission: PermissionModuleState
-  tagsView: TagModuleState
-  user: UserModuleState
+  // user: UserModuleState
 }
 
 export const key: InjectionKey<Store<RootState>> = Symbol()
@@ -28,24 +25,23 @@ export const storeOptions = {
   // mutations: {},
   modules: {
     app,
-    user,
-    errorLog,
-    // permission,
-    tagsView
+    // user,
+    errorLog
   },
   getters,
   plugins: [
     // store 持久化 https://github.com/robinvdvleuten/vuex-persistedstate#createpersistedstateoptions
-    createPersistedState({
-      key: 'violet',
-      // paths: ['app'], // 要持久化的的状态
-      // 使用 secure-ls 对持久化的 store 进行加密 https://github.com/robinvdvleuten/vuex-persistedstate#encrypted-local-storage
-      storage: {
-        getItem: key => ls.get(key),
-        setItem: (key, value) => ls.set(key, value),
-        removeItem: key => ls.remove(key)
-      }
-    })
+    createPersistedState()
+    // createPersistedState({
+    //   key: 'violet',
+    //   // paths: ['app'], // 要持久化的的状态
+    //   // 使用 secure-ls 对持久化的 store 进行加密 https://github.com/robinvdvleuten/vuex-persistedstate#encrypted-local-storage
+    //   storage: {
+    //     getItem: key => ls.get(key),
+    //     setItem: (key, value) => ls.set(key, value),
+    //     removeItem: key => ls.remove(key)
+    //   }
+    // })
   ]
 }
 

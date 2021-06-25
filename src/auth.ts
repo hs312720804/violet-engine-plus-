@@ -28,11 +28,12 @@ import { RouteRecordRaw } from 'vue-router'
 //   // return Promise.reject(new Error('NOT LOGGEDIN'))
 // }
 
-// export async function $logout () {
-//   Storage.$remove(`${storageName}/user`)
-//   store.dispatch('clearAccess')
-//   store.dispatch('clearUserInfo')
-// }
+export async function $logout () {
+  // Storage.$remove(`${storageName}/user`)
+  store.dispatch('clearAccess')
+  store.dispatch('clearUserInfo')
+}
+
 export async function getInitData () {
   return new Promise((resolve, reject) => {
     getUserInfoService().then(res => {
@@ -104,7 +105,7 @@ export async function getInitData () {
           }
         }
       ]
-      // router.options.routes = filterRoutes // 动态路由
+      router.options.routes = filterRoutes // 动态路由
       filterRoutes.forEach(route => router.addRoute(route))  // 动态路由
       // router.addRoutes(filterRoutes) // 动态路由
       resolve(undefined)

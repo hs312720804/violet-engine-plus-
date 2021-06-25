@@ -2,7 +2,7 @@
   <el-container>
     <el-drawer
       v-if="!isShowMenu"
-      v-model:visible="drawer"
+      v-model="drawer"
       direction="ltr"
       size="200"
       :with-header="false"
@@ -66,9 +66,11 @@
               {{ $store.state.user.name }}
               <i class="el-icon-arrow-down el-icon--right"></i>
             </span>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item command="logout">{{ $t('btn.logout') }}</el-dropdown-item>
-            </el-dropdown-menu>
+            <template #dropdown>
+              <el-dropdown-menu>
+                <el-dropdown-item command="logout">{{ $t('btn.logout') }}</el-dropdown-item>
+              </el-dropdown-menu>
+            </template>
           </el-dropdown>
         </div>
         <div class="system-setting" @click="$emit('set-layout', true)">
@@ -93,45 +95,57 @@
 </template>
 
 <script>
+import { defineComponent, ref, reactive, computed, watch, onMounted, onUnmounted } from 'vue'
+import { useStore } from '@/store'
+import { useRouter, useRoute } from 'vue-router'
+
 import SiteName from '@/components/SiteName.vue'
 import Screenfull from '@/components/Screenfull/index.vue'
 import ResizeMixin from './mixin/ResizeHandler'
-export default {
+import { $logout } from '@/auth'
+
+export default defineComponent({
   components: {
     Screenfull,
     SiteName
   },
   mixins: [ResizeMixin],
   props: ['menu', 'basic'],
-  data () {
-    return {
-      breadcrumb: [],
-      isCollapseMenu: false,
-      isShowMenu: true,
-      drawer: false
-      // isShowTagNav: true
-    }
-  },
-  computed: {
-    sidebar () {
-      return this.$store.state.app.sidebar
-    },
-    device () {
-      return this.$store.state.app.device
-    },
-    siteInfo () {
-      return this.$store.state.app.site
-    },
-    isKeepAlive () {
-      const meta = this.$route.meta
+  emits: ['click', 'set-layout', 'command'],
+  setup() {
+    const $store = useStore()
+    const $router = useRouter()
+    const $route = useRoute()
+
+    let breadcrumb = reactive([])
+    let isCollapseMenu = ref(false)
+    let isShowMenu = ref(true)
+    let drawer = ref(false)
+
+    const sidebar = computed(() => {
+      return $store.state.app.sidebar
+    })
+
+    const device = computed(() => {
+      return $store.state.app.device
+    })
+
+    const siteInfo = computed (() => {
+      return $store.state.app.site
+    })
+
+    const isKeepAlive = computed(() => {
+      const meta = $route.meta
       return meta && meta.isCache !== false
-    },
-    initTags () {
+    })
+
+    const initTags = computed(() => {
       return []
       // return this.$appState.$storage(this.$store.state.user.name).$get('tags') || []
-    },
-    defaultMenu () {
-      const mainRoute = this.$router.options.routes.find(item => {
+    })
+
+    const defaultMenu = computed(() => {
+      const mainRoute = $router.options.routes.find(item => {
         return item.path === '/'
       })
       function gen ({ name, meta = {}, children }) {
@@ -156,9 +170,10 @@ export default {
       const items = gen(mainRoute).children
       // console.log(JSON.stringify(items))
       return items
-    },
-    horizontalMenu () {
-      const mainRoute = this.$router.options.routes.find(item => {
+    })
+
+    const horizontalMenu = computed(() => {
+      const mainRoute = $router.options.routes.find(item => {
         return item.path === '/'
       })
       function gen ({ name, meta = {}, children }) {
@@ -179,72 +194,107 @@ export default {
           return currentMenuItem
         }
       }
-
       const items = gen(mainRoute).children
       // console.log(JSON.stringify(items))
       return items.splice(0, 5)
+    })
+
+    watch(() => device,
+      () => {
+        responsiveMenu()
+      })
+
+    const handleSelect = name => {
+      $router.push({ name }).catch(() => {})
     }
-  },
-  watch: {
-    device: 'responsiveMenu'
-  },
-  created () {
+
+    const handleDropdownCommand = command => {
+      if (command === 'logout') {
+        $logout().then(() => {
+          $router.push({ name: 'login' })
+        })
+      }
+    }
+
+    const responsiveMenu = () => {
+      const device = device
+      if (device === 'miniScreen') {
+        // this.isShowMenu = true
+        $store.commit('OPEN_MENU')
+        // const isCollapseMenu = !this.isCollapseMenu ? !this.isCollapseMenu : this.isCollapseMenu
+        // this.$appState.$set('isCollapseMenu', isCollapseMenu)
+        // this.isCollapseMenu = isCollapseMenu
+      } else if (device === 'mobile') {
+        // const isShowMenu = this.isShowMenu ? !this.isShowMenu : this.isShowMenu
+        // this.$appState.$set('isShowMenu', isShowMenu)
+        // this.isShowMenu = isShowMenu
+
+        // this.$appState.$set('isCollapseMenu', true)
+        // this.isCollapseMenu = true
+        $store.commit('SET_MENU_COLLAPSE', true)
+      } else {
+
+        $store.commit('OPEN_MENU')
+        // this.isShowMenu = true
+      }
+    }
+
+    const toggleMenu = () => {
+      if (device.value === 'mobile') {
+        drawer.value = true
+        // this.isCollapseMenu = false
+        $store.commit('SET_MENU_COLLAPSE', false)
+      } else {
+
+        $store.commit('TOGGLE_MENU')
+        // const isCollapseMenu = !this.isCollapseMenu
+        // this.$appState.$set('isCollapseMenu', isCollapseMenu)
+        // this.isCollapseMenu = isCollapseMenu
+        // this.$store.dispatch('closeSideBar', { withoutAnimation: false })
+      }
+    }
+
+    const saveTags = () => {
+      // const tags = this.$refs.tag.tags
+      // this.$appState.$storage(this.$store.state.user.name).$set('tags', tags)
+    }
+
     // this.isCollapseMenu = !!this.$appState.$get('isCollapseMenu')
     // this.$bus.$on('breadcrumb-change', breadcrumb => {
     //   this.breadcrumb = breadcrumb
     // })
-  },
-  mounted () {
-    window.addEventListener('beforeunload', this.saveTags)
-  },
-  unmounted () {
-    window.removeEventListener('beforeunload', this.saveTags)
-  },
-  methods: {
-    handleSelect (name) {
-      this.$router.push({ name }).catch(() => {})
-    },
-    handleDropdownCommand (command) {
-      if (command === 'logout') {
-        this.$logout().then(() => {
-          this.$router.push({ name: 'login' })
-        })
-      }
-    },
-    responsiveMenu () {
-      const device = this.device
-      if (device === 'miniScreen') {
-        this.isShowMenu = true
-        const isCollapseMenu = !this.isCollapseMenu ? !this.isCollapseMenu : this.isCollapseMenu
-        // this.$appState.$set('isCollapseMenu', isCollapseMenu)
-        this.isCollapseMenu = isCollapseMenu
-      } else if (device === 'mobile') {
-        const isShowMenu = this.isShowMenu ? !this.isShowMenu : this.isShowMenu
-        // this.$appState.$set('isShowMenu', isShowMenu)
-        this.isShowMenu = isShowMenu
-        // this.$appState.$set('isCollapseMenu', true)
-        this.isCollapseMenu = true
-      } else {
-        this.isShowMenu = true
-      }
-    },
-    toggleMenu () {
-      if (this.device === 'mobile') {
-        this.drawer = true
-        this.isCollapseMenu = false
-      } else {
-        const isCollapseMenu = !this.isCollapseMenu
-        // this.$appState.$set('isCollapseMenu', isCollapseMenu)
-        this.isCollapseMenu = isCollapseMenu
-        // this.$store.dispatch('closeSideBar', { withoutAnimation: false })
-      }
-    },
-    saveTags () {
-      // const tags = this.$refs.tag.tags
-      // this.$appState.$storage(this.$store.state.user.name).$set('tags', tags)
+
+    onMounted(() => {
+      window.addEventListener('beforeunload', saveTags())
+    })
+    onUnmounted(() => {
+      window.removeEventListener('beforeunload', saveTags())
+    })
+
+    return {
+      breadcrumb,
+      isCollapseMenu,
+      isShowMenu,
+      drawer,
+      sidebar,
+      device,
+      siteInfo,
+      isKeepAlive,
+      initTags,
+      defaultMenu,
+      horizontalMenu,
+      handleSelect,
+      handleDropdownCommand,
+      responsiveMenu,
+      toggleMenu,
+      saveTags,
+      $route,
+      $store
     }
+
   }
-}
+
+})
 </script>
 
 <style lang="stylus">
@@ -252,7 +302,7 @@ export default {
   margin-left 20px
 .aside__menu
   min-height 100vh
-  background #222a35
+  background $--side-menu-bg
 .aside__menu:not(.aside__menu_collapse)
   width 200px
 .aside__menu-main
@@ -269,7 +319,7 @@ export default {
   overflow hidden
 .aside__menu .menu:not(.el-menu--collapse)
   width 200px
-  background #222a35
+  background $--side-menu-bg
 .menu li
   position relative
 .el-submenu__title
@@ -296,7 +346,7 @@ export default {
   height 40px
   line-height 40px
 .el-menu.el-menu--collapse,.el-menu--vertical .el-menu
-  background #222a35
+  background $--side-menu-bg
 .aside__menu .el-submenu__title:hover,.el-menu--vertical .el-submenu__title:hover, .aside__menu .el-menu-item:hover,.el-menu--vertical .el-menu-item:hover
   background #253245
 .el-menu--vertical .el-submenu.is-opened .el-submenu__title
@@ -385,3 +435,4 @@ export default {
   .logo
     display none
 </style>
+

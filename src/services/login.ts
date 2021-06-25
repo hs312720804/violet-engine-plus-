@@ -3,7 +3,7 @@ import { UserModuleState } from '@/store/modules/user'
 import fetch from './fetch'
 import wrapService from '@/utlis/wrapService'
 
-export interface LoginArg { userName: string; password: string; }
+export interface LoginArg { userName: string; password: string; loginType?: string; }
 
 export const LoginService = wrapService<LoginArg, UserModuleState>(async data => {
 

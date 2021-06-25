@@ -62,37 +62,45 @@
 </template>
 
 <script>
+import { defineComponent, ref, reactive, computed, onMounted, onUnmounted } from 'vue'
+import { useStore } from '@/store'
+import { useRouter, useRoute } from 'vue-router'
+
 import SiteName from '@/components/SiteName.vue'
 import Screenfull from '@/components/Screenfull/index.vue'
+import { $logout } from '@/auth'
 
-export default {
+export default defineComponent({
   components: {
-    // Breadcrumb,
     Screenfull,
     SiteName
   },
   props: ['menu', 'basic'],
-  data () {
-    return {
-      breadcrumb: [],
-      isCollapseMenu: false,
-      isShowSetting: false
-      // isShowTagNav: true
-    }
-  },
-  computed: {
-    isKeepAlive () {
-      const meta = this.$route.meta
+  emits: ['click', 'set-layout', 'command'],
+  setup() {
+    const $store = useStore()
+    const $router = useRouter()
+    const $route = useRoute()
+
+    let breadcrumb = reactive([])
+    let isCollapseMenu = ref(false)
+    let isShowMenu = ref(true)
+
+    const isKeepAlive = computed(() => {
+      const meta = $route.meta
       return meta && meta.isCache !== false
-    },
-    initTags () {
-      return this.$appState.$storage(this.$store.state.user.name).$get('tags') || []
-    },
-    siteInfo () {
-      return this.$store.state.app.site
-    },
-    defaultMenu () {
-      const mainRoute = this.$router.options.routes.find(item => {
+    })
+
+    const initTags = computed(() => {
+      // return $appState.$storage($store.state.user.name).$get('tags') || []
+    })
+
+    const siteInfo = computed(() => {
+      return $store.state.app.site
+    })
+
+    const defaultMenu = computed(() => {
+      const mainRoute = $router.options.routes.find(item => {
         return item.path === '/'
       })
       function gen ({ name, meta = {}, children }) {
@@ -116,42 +124,61 @@ export default {
       }
       const items = gen(mainRoute).children
       return items
-    }
-  },
-  created () {
-    this.isCollapseMenu = !!this.$appState.$get('isCollapseMenu')
-    this.$bus.$on('breadcrumb-change', breadcrumb => {
-      this.breadcrumb = breadcrumb
     })
-  },
-  mounted () {
-    window.addEventListener('beforeunload', this.saveTags)
-  },
-  destroyed () {
-    window.removeEventListener('beforeunload', this.saveTags)
-  },
-  methods: {
-    handleSelect (name) {
-      this.$router.push({ name }).catch(() => {})
-    },
-    handleDropdownCommand (command) {
+
+    const handleSelect = name => {
+      $router.push({ name }).catch(() => {})
+    }
+
+    const handleDropdownCommand = command => {
       if (command === 'logout') {
-        this.$logout().then(() => {
-          this.$router.push({ name: 'login' })
+        $logout().then(() => {
+          $router.push({ name: 'login' })
         })
       }
-    },
-    toggleMenu () {
-      const isCollapseMenu = !this.isCollapseMenu
-      this.$appState.$set('isCollapseMenu', isCollapseMenu)
-      this.isCollapseMenu = isCollapseMenu
-    },
-    saveTags () {
-      const tags = this.$refs.tag.tags
-      this.$appState.$storage(this.$store.state.user.name).$set('tags', tags)
+    }
+
+    const toggleMenu = () => {
+      const isCollapseMenu = !isCollapseMenu
+      // $appState.$set('isCollapseMenu', isCollapseMenu)
+      isCollapseMenu = isCollapseMenu
+    }
+
+    const saveTags = () => {
+      // const tags = this.$refs.tag.tags
+      // $appState.$storage($store.state.user.name).$set('tags', tags)
+    }
+
+    // isCollapseMenu.value = !!$appState.$get('isCollapseMenu')
+    // this.$bus.$on('breadcrumb-change', breadcrumb1 => {
+    //   breadcrumb = breadcrumb1
+    // })
+
+    onMounted(() => {
+      window.addEventListener('beforeunload', saveTags())
+    })
+    onUnmounted(() => {
+      window.removeEventListener('beforeunload', saveTags())
+    })
+
+    return {
+      breadcrumb,
+      isCollapseMenu,
+      isShowMenu,
+      isKeepAlive,
+      initTags,
+      siteInfo,
+      defaultMenu,
+      handleSelect,
+      handleDropdownCommand,
+      toggleMenu,
+      saveTags,
+      $route,
+      $store
     }
   }
-}
+
+})
 </script>
 
 <style lang="stylus">

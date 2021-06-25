@@ -22,7 +22,7 @@
     >
     </MainTB>
     <el-drawer
-      v-model:visible="isShowSetting"
+      v-model="isShowSetting"
       title="我是标题"
       :with-header="false"
       size="260"
@@ -126,14 +126,14 @@ export default defineComponent({
     }
     const handleSelectLayout = (layout: string) => {
       uiSetting.layout = layout
-      $appState.$set('uiSetting', this.uiSetting)
+      // $appState.$set('uiSetting', this.uiSetting)
     }
-    const handleTagNav = () =>{
-      $appState.$set('uiSetting', this.uiSetting)
+    const handleTagNav = () => {
+      // $appState.$set('uiSetting', this.uiSetting)
     }
-    const handleBackDefault = ()=> {
+    const handleBackDefault = () => {
       uiSetting = JSON.parse(JSON.stringify(uiSettingDefault))
-      $appState.$set('uiSetting', uiSettingDefault)
+      // $appState.$set('uiSetting', uiSettingDefault)
     }
     return {
       isShowSetting,
