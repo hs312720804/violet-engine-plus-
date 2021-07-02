@@ -1,9 +1,11 @@
 import qs from 'qs'
-import axios, { AxiosRequestConfig } from 'axios'
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { store } from '@/store'
 // import NProgress from 'nprogress'
 import { ElLoading } from 'element-plus'
 // import 'nprogress/nprogress.css'
+
+interface Res {code:number|string;success:boolean;data:any;}
 
 type IfetchArg = {
   isJSON?: boolean
@@ -51,9 +53,8 @@ export default function fetch ({
     Authorization: token || ''
   }
   return axios(option)
-    .then(function ({
-      data
-    }) {
+    .then(function ({ data }:AxiosResponse<Res>) {
+      // const data = xxx.data
       // NProgress.done()
       if (loadingInstance) {
         loadingInstance.close()

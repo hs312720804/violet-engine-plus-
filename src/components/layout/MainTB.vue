@@ -100,6 +100,7 @@ export default defineComponent({
     })
 
     const defaultMenu = computed(() => {
+      debugger
       const mainRoute = $router.options.routes.find(item => {
         return item.path === '/'
       })

@@ -169,6 +169,7 @@ export default defineComponent({
       }
       const items = gen(mainRoute).children
       // console.log(JSON.stringify(items))
+      console.log('items==>', items)
       return items
     })
 

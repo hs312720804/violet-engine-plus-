@@ -125,7 +125,7 @@ export default defineComponent({
       if (loginType.value === 'admin') {
         LoginService(adminForm)
           .then(getInitData)
-          .then(()=>{
+          .then(()=> {
             $router.push('/')
           })
       } else {

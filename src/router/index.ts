@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, createWebHashHistory } from 'vue-router'
 // import Login from '@/views/Login.vue'
 // import Register from '@/views/Register.vue'
 import { store } from '@/store'
@@ -7,13 +7,16 @@ import { getInitData } from '@/auth'
 import { isInLoginFreeList } from './routeAuthList'
 import { getSiteInfo } from '@/services/common'
 
-const router = createRouter({ history: createWebHistory(), routes })
+const router = createRouter({
+  history: createWebHashHistory(),
+  routes
+})
 
 router.beforeEach((to, from, next) => {
 
   if (router.currentRoute.value.matched.length === 0) {
     getSiteInfo().then(data => {
-      store.dispatch('setSite', data)// ('setSite', data)
+      store.dispatch('setSite', data) // ('setSite', data)
     }).catch(e => {
       console.log(e)
     })

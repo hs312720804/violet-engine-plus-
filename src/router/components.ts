@@ -24,10 +24,10 @@ const routerComponents: RouterComponents = {
   //   template: () => import('@/views/treeSideList/Index.vue'),
   //   type: 'list'
   // },
-  // BaseList: {
-  //   template: () => import('@/views/baseList/Index.vue'),
-  //   type: 'list'
-  // },
+  BaseList: {
+    template: () => import('@/views/baseList/Index.vue'),
+    type: 'list'
+  },
   // TabPage: {
   //   template: () => import('@/views/tabPage/Index.vue'),
   //   type: 'tab'
@@ -47,17 +47,17 @@ const routerComponents: RouterComponents = {
   Dashboard: {
     template: () => import('@/views/Dashboard.vue'),
     type: 'custom'
-  }
+  },
   // 用户管理
   // UserIndex: {
   //   template: () => import('@/views/sys/rbac/user/UserIndex.vue'),
   //   type: 'custom'
   // },
-  // // 菜单管理
-  // MenuIndex: {
-  //   template: () => import('@/views/sys/rbac/menu/MenuIndex.vue'),
-  //   type: 'custom'
-  // },
+  // 菜单管理
+  MenuIndex: {
+    template: () => import('@/views/sys/rbac/menu/MenuIndex.vue'),
+    type: 'custom'
+  }
   // 部门管理
   // DepartmentIndex: {
   //   template: () => import('@/views/sys/rbac/department/DepartmentIndex.vue'),

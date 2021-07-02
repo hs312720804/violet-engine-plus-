@@ -1,8 +1,8 @@
 import { createApp } from 'vue'
 import installElementPlus from './plugins/element'
-
-import adminToolkitPlus from '../node_modules/admin-toolkit-plus/dist/admin-toolkit-plus.es.js'
-import '../node_modules/admin-toolkit-plus/dist/style.css'
+import adminToolkitPlus from '@ccprivate/admin-toolkit-plus'
+// import adminToolkitPlus from '../node_modules/admin-toolkit-plus/dist/admin-toolkit-plus.es.js'
+import '../node_modules/@ccprivate/admin-toolkit-plus/dist/style.css'
 import '@/assets/global.styl'
 
 

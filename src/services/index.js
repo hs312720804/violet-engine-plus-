@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import fetch from './fetch'
-import wrapService from '@/utlis/wrapService'
+// import wrapService from '@/utlis/wrapService'
 // import * as login from './login'
 // import * as common from './common'
 // import * as department from './department'
@@ -25,4 +25,4 @@ const service = {
   ...menu,
   ...dataResource
 }
-Vue.prototype.$service = wrapService(service, ['app', 'init', 'fetch', 'getUserInfo'])
+// Vue.prototype.$service = wrapService(service, ['app', 'init', 'fetch', 'getUserInfo'])

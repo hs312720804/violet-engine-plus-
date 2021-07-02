@@ -25,8 +25,8 @@ export function getMenus (params) {
     return data
   })
 }
-export const getUserInfoService = wrapService<undefined, UserInfo>(async () => {
 
+export const getUserInfoService = wrapService<undefined, UserInfo>(async () => {
   return fetch({
     method: 'get',
     url: 'getUserInfo'
