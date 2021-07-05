@@ -2,14 +2,14 @@
   <div class="page-code--child">
     <c-card
       :title="title"
-      @go-back="$emit('go-back')"
       class="c-normal"
+      @go-back="$emit('go-back')"
     >
       <div slot="actions"></div>
       <c-form
+        ref="form"
         label-width="90px"
         :model="form"
-        ref="form"
         :rules="rules"
         :readonly="isReadonly"
       >
@@ -17,18 +17,18 @@
           <c-form-string
             v-if="item.inputType === 'string' || !item.inputType"
             :key="key"
+            v-model="form[item.prop]"
             :label="item.label"
             :placeholder="'请填写' + item.label"
             :rules="rules[item.prop]"
             :prop="item.prop"
-            v-model="form[item.prop]"
             class="el-item-width"
           ></c-form-string>
           <c-form-enum
             v-if="item.inputType === 'enum'"
-            :label="item.label"
             :key="key"
             v-model="form[item.prop]"
+            :label="item.label"
             type="radio"
             :prop="item.prop"
             :rules="rules.noEmpty"
@@ -53,9 +53,9 @@
               :class="isReadonly ? 'c-layout c-layout-nopoint' : 'c-layout'"
             >
               <el-radio-group
+                v-if="isReadonly"
                 v-model="form.layout"
                 :disabled="isReadonly"
-                v-if="isReadonly"
                 @change="handleLayoutSelect"
               >
                 <div v-if="form.layout === 'default'">
@@ -87,7 +87,7 @@
                   </span>
                 </div>
               </el-radio-group>
-              <el-radio-group v-model="form.layout" v-else @change="handleLayoutSelect">
+              <el-radio-group v-else v-model="form.layout" @change="handleLayoutSelect">
                 <el-radio label="default">
                   <span class="c-layout-item default">
                     <p>
@@ -125,8 +125,8 @@
           >
             <div v-for="(obj, index) in form.logo" :key="index" class="c-logo">
               <div class="c-site-logo">
-                <div class="c-logo-img" v-if="obj.image">
-                  <img :src="obj.image" class="avatar" />
+                <div v-if="obj.image" class="c-logo-img">
+                  <img :src="obj.image" class="avatar">
                 </div>
                 <el-upload
                   v-if="!isReadonly"
@@ -145,7 +145,7 @@
                 <div>
                   <template v-if="isReadonly">Key：{{ obj.key }}</template>
                   <el-input v-else v-model="obj.key" disabled>
-                    <template slot="prepend">Key</template>
+                    <template #prepend>Key</template>
                   </el-input>
                 </div>
                 <div style="margin-left:10px">
@@ -153,8 +153,8 @@
                     <div v-if="obj.width">宽：{{ obj.width }}PX</div>
                   </template>
                   <el-input v-else v-model="obj.width">
-                    <template slot="prepend">宽</template>
-                    <template slot="append">PX</template>
+                    <template #prepend>宽</template>
+                    <template #append>PX</template>
                   </el-input>
                 </div>
                 <div style="margin-left:10px">
@@ -162,8 +162,8 @@
                     <div v-if="obj.height">高：{{ obj.height }}PX</div>
                   </template>
                   <el-input v-else v-model="obj.height">
-                    <template slot="prepend">高</template>
-                    <template slot="append">PX</template>
+                    <template #prepend>高</template>
+                    <template #append>PX</template>
                   </el-input>
                 </div>
               </div>
@@ -177,9 +177,9 @@
         </el-form-item>
         <el-form-item v-else>
           <el-button
+            v-permission="'normal:update'"
             type="primary"
             @click="isReadonly = false"
-            v-permission="'normal:update'"
           >
             修改
           </el-button>
@@ -250,12 +250,16 @@ export default {
       menuDetail: {}
     }
   },
+  created () {
+    this.initData()
+    this.fetchMenuData()
+  },
   methods: {
     initData () {
       this.form = { ...this.form, ...this.$store.state.app.site }
       if (this.form.logo) {
         const logo = this.$constants.evil(this.form.logo)
-        this.form.logo = Object.keys(logo).map((key) => {
+        this.form.logo = Object.keys(logo).map(key => {
           return {
             key,
             image: logo[key].image,
@@ -300,7 +304,7 @@ export default {
       return isJPG && isLt2M
     },
     fetchMenuData () {
-      this.$service.getMenusDetail({ id: this.menuId }).then((data) => {
+      this.$service.getMenusDetail({ id: this.menuId }).then(data => {
         this.menuDetail = data
       })
     },
@@ -332,10 +336,6 @@ export default {
         }, 500)
       })
     }
-  },
-  created () {
-    this.initData()
-    this.fetchMenuData()
   }
 }
 </script>

@@ -44,7 +44,7 @@ import consts from '../../../../utlis/consts'
 const RESOURCE = 'menu'
 const { CREATE, UPDATE, DELETE } = consts.commonOperation
 const commonOperationEvent = consts.commonOperationEvent
-import { menuGetListService } from '@/services/login'
+import { menuGetListService } from '@/services/menu'
 import { useI18n } from 'vue-i18n'
 
 export default {
