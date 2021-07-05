@@ -1,5 +1,4 @@
 <template>
-  {{ $t('btn.copy') }}
   <PageWrapper>
     <PageContentWrapper class="menu-page">
       <ListLayout>
