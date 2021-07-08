@@ -1,8 +1,15 @@
 <template>
-  <el-dialog :title="$t('advancedSettings')" :visible.sync="dialogRenderVisible">
+  <el-dialog v-model:visible="dialogRenderVisible" :title="$t('advancedSettings')">
     <el-form :model="extendForm" label-width="80px">
       <el-form-item :label="$t('columnWidth')">
         <el-input v-model="extendForm.width" :placeholder="$t('placeholder.columnWidth')"></el-input>
+      </el-form-item>
+      <el-form-item :label="$t('align')">
+        <el-select v-model="extendForm.align" :placeholder="$t('pleaseSelect',[$t('align')])" clearable>
+          <el-option :label="$t('leftAlign')" value="left"></el-option>
+          <el-option :label="$t('centerAlign')" value="center"></el-option>
+          <el-option :label="$t('rightAlign')" value="right"></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item :label="$t('setPrimaryKey')">
         <el-switch
@@ -50,11 +57,11 @@
         </div>
         <el-input
           v-if="renderForm.render"
+          v-model="renderForm.arg"
           type="textarea"
           :autosize="{ minRows: 5, maxRows: 10}"
           :rows="5"
           :placeholder="$t('placeholder.renderArg')"
-          v-model="renderForm.arg"
         >
         </el-input>
       </el-form-item>
@@ -81,9 +88,6 @@ export default {
       default: false
     }
   },
-  watch: {
-    'row': 'initValue'
-  },
   data () {
     return {
       dialogRenderVisible: false,
@@ -108,7 +112,7 @@ export default {
   computed: {
     renderMap () {
       const options = []
-      Object.keys(renderMap).forEach((key) => {
+      Object.keys(renderMap).forEach(key => {
         options.push({
           label: renderMap[key],
           value: '_this.' + key
@@ -116,6 +120,13 @@ export default {
       })
       return options
     }
+  },
+  watch: {
+    'row': 'initValue'
+  },
+  created () {
+    // this.extendForm = JSON.parse(JSON.stringify(this.row))
+    // this.disabled = this.hasPrimaryKey && this.row.primaryKey
   },
   methods: {
     initValue (val) {
@@ -135,7 +146,8 @@ export default {
       if (this.renderForm.render) {
         this.renderForm.arg = this.renderForm.arg.trim()
         if (this.renderForm.arg) {
-          this.extendForm.render = this.renderForm.render + '(' + this.renderForm.arg + ')'
+          const isJSON = this.$cUtils.validate.isJSON(this.renderForm.arg)
+          isJSON ? this.extendForm.render = this.renderForm.render + '(' + this.renderForm.arg + ')' : this.extendForm.render = this.renderForm.render + '(' + this.renderForm.arg + ')'
         } else {
           this.extendForm.render = this.renderForm.render + '()'
         }
@@ -143,16 +155,16 @@ export default {
       } else {
         this.row.render = ''
       }
-      this.row.width = this.extendForm.width
-      this.row.sortable = this.extendForm.sortable
-      this.row.primaryKey = this.extendForm.primaryKey
-      this.row.required = this.extendForm.required
+      const attribute = ['width', 'sortable', 'primaryKey', 'required', 'align']
+      attribute.forEach(item => {
+        if (this.extendForm[item]) {
+          this.row[item] = this.extendForm[item]
+        } else {
+          if (item in this.row) delete this.row[item]
+        }
+      })
       this.dialogRenderVisible = false
     }
-  },
-  created () {
-    // this.extendForm = JSON.parse(JSON.stringify(this.row))
-    // this.disabled = this.hasPrimaryKey && this.row.primaryKey
   }
 
 }

@@ -6,7 +6,7 @@ export default function useSelection (options) {
   const selected = ref([])
   const tableSelected = ref([])
 
-  const getId = (item) => {
+  const getId = item => {
     return typeof idField === 'string'
       ? item[idField]
       : idField(item)
@@ -25,11 +25,11 @@ export default function useSelection (options) {
       return result
     }, [])
   }
-  const handleRowSelectionAdd = (targetItem) => {
+  const handleRowSelectionAdd = targetItem => {
     selected.value.push(targetItem)
     updateTableSelected()
   }
-  const handleRowSelectionRemove = (targetItem) => {
+  const handleRowSelectionRemove = targetItem => {
     const targetId = getId(targetItem)
     selected.value = selected.value.filter(item => {
       const id = getId(item)
@@ -41,7 +41,7 @@ export default function useSelection (options) {
     selected.value = [item]
     tableSelected.value = [index]
   }
-  const handleAllRowSelectionChange = (value) => {
+  const handleAllRowSelectionChange = value => {
     if (value) {
       tableData.value.forEach(handleRowSelectionAdd)
     } else {

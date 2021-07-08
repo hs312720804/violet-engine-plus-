@@ -1,17 +1,17 @@
 <template>
   <div class="page-code--child">
     <ResourceList
+      v-if="menuDetail"
       ref="list"
       :style="{'visibility': isShowList ? 'visible' : 'hidden'}"
       :menu="menuDetail"
-      v-if="menuDetail"
       @option="handleOption"
       @action="handleAction"
     ></ResourceList>
     <ResourceContent
       v-if="!isShowList || optionType === 'Confirm'"
-      :mode="mode"
       :id="id"
+      :mode="mode"
       :menu-id="menuId"
       :menu="menuDetail"
       :template="template"
@@ -23,16 +23,16 @@
       @go-back="goBack"
     ></ResourceContent>
     <el-dialog
+      v-model:visible="dialogVisible"
       :title="title"
-      :visible.sync="dialogVisible"
       width="50%"
       @close="hiddenDialog"
     >
       <component
-        v-if="id"
         :is="`${template}Dialog`"
-        :mode="mode"
+        v-if="id"
         :id="id"
+        :mode="mode"
         :row="row"
         :menu-id="menuId"
         :menu="menuDetail"
@@ -49,19 +49,19 @@
   </div>
 </template>
 <script>
-import ResourceContent from './Page'
-import ResourceList from './List'
+import ResourceContent from './Page.vue'
+import ResourceList from './List.vue'
 import DialogPage from './dialog/index.js'
 export default {
-  provide () {
-    return {
-      baseIndex: this
-    }
-  },
   components: {
     ResourceList,
     ResourceContent,
     ...DialogPage
+  },
+  provide () {
+    return {
+      baseIndex: this
+    }
   },
   props: {
     menuId: {
@@ -102,11 +102,17 @@ export default {
       }
     }
   },
+  created () {
+    this.fetchMenuData(this.menuId)
+    this.$bus.$on('go-back', () => {
+      this.isShowList = true
+    })
+  },
   methods: {
     disposalField (fields, useType) {
-      return fields.filter((item) => {
+      return fields.filter(item => {
         if ('use' in item && item.use.length > 0) {
-          const bool = item.use.some((num) => {
+          const bool = item.use.some(num => {
             return num === useType
           })
           if (bool) {
@@ -118,10 +124,10 @@ export default {
       })
     },
     fetchMenuData (id) {
-      this.$service.getMenusDetail({ id }).then((data) => {
+      this.$service.getMenusDetail({ id }).then(data => {
         this.menuDetail = data
         const fields = this.$constants.evil(this.menuDetail.fields)
-        const primaryField = fields.filter((field) => {
+        const primaryField = fields.filter(field => {
           return 'primaryKey' in field && field.primaryKey === 1
         })
         this.primaryKey = primaryField.length > 0 ? primaryField[0].prop : 'id'
@@ -187,12 +193,6 @@ export default {
     handleDialogChange (msg) {
       this.dialogChang = msg
     }
-  },
-  created () {
-    this.fetchMenuData(this.menuId)
-    this.$bus.$on('go-back', () => {
-      this.isShowList = true
-    })
   }
 }
 </script>

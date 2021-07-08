@@ -24,6 +24,90 @@ export default {
   computed: {
     primaryKey () {
       return this.baseIndex.primaryKey
+    },
+    tableHeader () {
+      let header = JSON.parse(JSON.stringify(this.table.header))
+      this.table.header.forEach((item, key) => {
+        const _this = this
+        if (typeof item.render === 'string') {
+          if (item.render) {
+            // eslint-disable-next-line no-eval
+            header[key].render = eval('(' + item.render + ')')
+          }
+        }
+        if (!('render' in item) || !item.render) {
+          const renderMap = {
+            enum: function (h, { row }) {
+              let options = {}
+              const tagType = ['', 'success', 'info', 'warning', 'danger', 'danger', 'warning', 'success', 'info']
+              let type = ''
+              item.options.forEach((option, index) => {
+                options[option.value] = option.label
+                let optionsValue
+                if (typeof (row[item.prop]) === 'number') {
+                  optionsValue = Number(option.value)
+                } else {
+                  optionsValue = option.value
+                }
+                if (row[item.prop] === optionsValue) {
+                  type = tagType[index]
+                }
+              })
+              return h(
+                'el-tag',
+                {
+                  attrs: {
+                    type: type
+                  }
+                },
+                options[row[item.prop]]
+              )
+            },
+            image: function (h, { row }) {
+              return h(
+                'el-image',
+                {
+                  attrs: {
+                    src: row[item.prop],
+                    fit: 'contain'
+                  },
+                  style: {
+                    height: '50px'
+                  }
+                },
+                ''
+              )
+            },
+            date: function (h, { row }) {
+              return h(
+                'span',
+                {},
+                _this.$moment(row[item.prop]).format(item.format)
+              )
+            },
+            number: function (h, { row }) {
+              return h(
+                'span',
+                {},
+                _this.$cUtils.format.fillNumber(row[item.prop], 3, ','))
+            }
+          }
+          header[key].render = renderMap[item.inputType]
+        }
+      })
+      return header
+    },
+    api () {
+      return this.$constants.evil(this.menu.api)
+    },
+    resource () { // 权限资源
+      return this.$constants.evil(this.menu.extra).resource
+    },
+    listDataMap () { // 列表数据映射
+      return this.$constants.evil(this.menu.extra).listDataMap
+    },
+    selectionType () {
+      return this.$constants.evil(this.menu.extra).selectionType
     }
   },
   methods: {
@@ -130,7 +214,7 @@ export default {
     }
   },
   created () {
-    document.onkeypress = (e) => {
+    document.onkeypress = e => {
       this.disabled = false
       if (e.keyCode === 13) {
         if (typeof (this.fetchData) !== 'undefined') {

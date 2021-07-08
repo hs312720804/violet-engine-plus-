@@ -41,6 +41,12 @@ export default {
   ],
   setup (props, ctx) {
     const $store = useStore()
+
+    /**
+     * 该处采用高阶函数形式返回 拿到自定义指令引用函数参数
+     * @param item
+     * @returns {Function}
+     */
     function handleDoAction (item) {
       ctx.emit('do-action', item.value)
     }

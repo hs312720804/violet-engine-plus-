@@ -4,23 +4,24 @@
       <el-col class="login-form1">
         <div class="log_center">
           <div class="log_logo">
-            <img src="../assets/images/logo.png">
-            <span>员工管理系统</span>
+            <img v-if="image" :src="image">
+            <img v-else src="../assets/logo.png">
+            <span>{{ siteInfo.siteName }}</span>
           </div>
           <div class="log_bj">
             <div class="formRadio">
-              <el-tabs v-model="loginType" :stretch="true">
+              <el-tabs v-model="loginType" :stretch="true" @tab-click="handleSelectLoginType">
                 <el-tab-pane label="管理员登录" name="admin"></el-tab-pane>
-                <el-tab-pane label="员工入职登录" name="employee"></el-tab-pane>
+                <!-- <el-tab-pane label="员工入职登录" name="employee"></el-tab-pane> -->
               </el-tabs>
             </div>
             <el-form
               v-if="!loginType || loginType === 'admin'"
-              ref="adminFormEl"
+              ref="adminForm"
               :model="adminForm"
               status-icon
               class="demo-adminForm"
-              @keyup.enter="handleLogin"
+              @keyup.enter.native="handleLogin"
             >
               <el-form-item
                 prop="userName"
@@ -52,11 +53,14 @@
               </el-form-item>
               <el-form-item>
                 <div class="formSubmit">
-                  <el-button type="primary" @click="handleLogin">提交</el-button>
+                  <el-row :gutter="14">
+                    <el-col :span="12"><el-button type="primary" @click="handleLogin">{{ $t('btn.login') }}</el-button></el-col>
+                    <el-col :span="12"><el-button @click="handleRegister">{{ $t('btn.register') }}</el-button></el-col>
+                  </el-row>
                 </div>
               </el-form-item>
             </el-form>
-            <el-form v-if="loginType === 'employee'" ref="employeeFormEl" :model="employeeForm">
+            <el-form v-if="loginType === 'employee'" ref="employeeForm" :model="employeeForm">
               <el-form-item
                 prop="phone"
                 :rules="[
@@ -90,13 +94,12 @@
       </el-col>
     </el-row>
     <div class="via">
-      <span style="padding-right:20px">Via：深圳酷开网络科技有限公司</span> 技术支持：云技术部
+      Copyright ©{{ year }} {{ siteInfo.copyright }} ·  <template v-if="siteInfo.recordNum">ICP备案证号：<a href="https://beian.miit.gov.cn/" target="_blank">{{ siteInfo.recordNum }}</a></template>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-
 import { defineComponent, ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -104,14 +107,13 @@ import { ElForm } from 'element-plus'
 import { LoginService, LoginArg } from '@/services/login'
 import { getInitData } from '@/auth'
 
-// console.log('$login===', LoginService)
 export default defineComponent({
-  setup(){
+  setup() {
     const $router = useRouter()
     const loginType = ref('admin')
     const adminForm = reactive<LoginArg>({
       userName: 'admin',
-      password: 'admin'
+      password: '12345678'
     })
     const employeeForm = reactive({
       phone: '',
@@ -119,6 +121,11 @@ export default defineComponent({
     })
     const adminFormEl = ref<InstanceType<typeof ElForm>>()
     const employeeFormEl = ref<InstanceType<typeof ElForm>>()
+
+    const formSchema = ref('')
+    const siteInfo = ref('')
+    const image = ref('')
+    const year = ref(2021)
 
     const handleLogin = ()=>{
 
@@ -133,8 +140,7 @@ export default defineComponent({
       }
     }
 
-
-    const  getVerifyCode = ()=> {
+    const getVerifyCode = ()=> {
       console.log(employeeFormEl.value)
       employeeFormEl.value?.validate(isValid => {
         if (isValid) {
@@ -148,6 +154,9 @@ export default defineComponent({
       })
     }
 
+    const handleRegister = () => {
+      $router.push({ name: 'register' })
+    }
 
     return {
       loginType,
@@ -156,9 +165,36 @@ export default defineComponent({
       adminFormEl,
       employeeFormEl,
       handleLogin,
-      getVerifyCode
+      getVerifyCode,
+      handleRegister,
+      formSchema,
+      siteInfo,
+      image,
+      year
     }
+
+    // props: ['schema'],
+
+    // computed: {
+    //   formSchema () {
+    //     let schema
+    //     return this.schema || schema
+    //   },
+    //   siteInfo () {
+    //     return this.$store.state.app.site
+    //   },
+    //   logo () {
+    //     return this.$constants.evil(this.$store.state.app.site.logo)
+    //   },
+    //   year () {
+    //     return this.$moment().format('YYYY')
+    //   }
+    // },
+
   }
+  // created() {
+  //   alert(123)
+  // }
 })
 </script>
 <style lang="stylus">
@@ -223,14 +259,16 @@ input:-webkit-autofill
 .formSubmit
   text-align center
   padding-top 10px
-.formSubmit .el-button--primary
-  width 90%
-  height 50px
+  margin 0 20px
+.formSubmit .el-button
+  height 46px
   margin 0 auto
+  font-size 16px
+  width 100%
+.formSubmit .el-button--primary
   background #fc4c02
   color #ffffff
   border none
-  font-size 18px
 .formSubmit .el-button--primary:hover
   background-color #d84609
 .validateCodeImg
@@ -273,13 +311,18 @@ input:-webkit-autofill
   width 100%
   color #ccc
   z-index 15
+  a
+    color #ccc
+    text-decoration none
+    &:hover
+      text-decoration underline
 .login-container
   display flex
   height 100%
   align-items center
   position relative
   justify-content space-around
-  background url("@/assets/images/lockLogin.png") no-repeat
+  background url("~@/assets/images/lockLogin.png") no-repeat
   background-size cover
 .login-container:before
   background rgba(0,0,0,.3)

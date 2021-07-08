@@ -236,6 +236,7 @@
                       <el-select v-model="api.method" placeholder="method">
                         <el-option label="post" value="post"></el-option>
                         <el-option label="get" value="get"></el-option>
+                        <el-button label="delete" value="delete"></el-button>
                       </el-select>
                     </el-col>
                     <el-col :span="3">
@@ -309,6 +310,27 @@
                         type="text"
                         round
                         @click="handleEditOption(item)"
+                      ></el-button>
+                    </el-col>
+                  </el-row>
+                  <el-row v-else-if="item.inputType==='date'">
+                    <el-col :span="18">
+                      <el-select v-model="item.inputType" :placeholder="$t('pleaseSelect', [$t('type')])" clearable>
+                        <el-option
+                          v-for="type in inputTypeOptions"
+                          :key="type.value"
+                          :label="type.label"
+                          :value="type.value"
+                        >
+                        </el-option>
+                      </el-select>
+                    </el-col>
+                    <el-col :span="6">
+                      <el-button
+                        icon="el-icon-edit"
+                        type="text"
+                        round
+                        @click="handleEditDateFormat(item)"
                       ></el-button>
                     </el-col>
                   </el-row>
@@ -423,6 +445,10 @@
       ref="enumEdit"
       :field="enumOptions"
     ></EnumEdit>
+    <DateEdit
+      ref="dateEdit"
+      :field="dateFormat"
+    ></DateEdit>
     <ExtendEdit
       ref="extendEdit"
       :row="renderx"
@@ -436,6 +462,7 @@
 import ResrouceActions from '../../../../components/ResourceActions.vue'
 import { PageWrapper, PageContentWrapper, ContentLayout } from '../../../../utlis/deps'
 import EnumEdit from './EnumEdit.vue'
+import DateEdit from './DateEdit.vue'
 import ExtendEdit from './ExtendEdit.vue'
 import routerComponents from '@/router/components'
 
@@ -445,7 +472,6 @@ import consts from '../../../../utlis/consts'
 
 import { useI18n } from 'vue-i18n'
 import { menuGetListService, menuUpsertService } from '@/services/menu'
-
 const RESOURCE = 'menu'
 const { CREATE, UPDATE } = consts.commonOperation
 export default {
@@ -455,6 +481,7 @@ export default {
     ContentLayout,
     ResrouceActions,
     EnumEdit,
+    DateEdit,
     ExtendEdit
   },
   props: ['initMode', 'id', 'item'],
@@ -772,6 +799,16 @@ export default {
       ctx.refs.enumEdit.dialogOptionVisible = true
     }
 
+    // Date格式化编辑
+    const dateFormat = ref({})
+    function handleEditDateFormat (item) {
+      if (item.format === undefined) {
+        ctx.root.$set(item, 'format', '')
+      }
+      dateFormat.value = item
+      ctx.refs.dateEdit.dialogVisible = true
+    }
+
     // Render值编辑
     const renderx = ref({})
     const hasPrimaryKey = ref(false)
@@ -836,6 +873,10 @@ export default {
         if (item.inputType !== 'enum') {
           if ('options' in item) {
             item.options = []
+          }
+        } else if (item.inputType !== 'date') {
+          if ('format' in item) {
+            item.format = ''
           }
         }
         if (item.primaryKey < 1) {
@@ -957,6 +998,8 @@ export default {
       handleReduceFiled,
       enumOptions,
       handleEditOption,
+      dateFormat,
+      handleEditDateFormat,
       renderx,
       hasPrimaryKey,
       handleEditExtend,

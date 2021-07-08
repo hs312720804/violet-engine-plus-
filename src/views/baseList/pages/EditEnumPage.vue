@@ -1,9 +1,9 @@
 <template>
   <div>
     <c-form
-      ref="form"
       label-width="100px"
       :model="form"
+      ref="form"
       :rules="rules"
       :readonly="isReadonly"
     >
@@ -12,18 +12,18 @@
           <c-form-string
             v-if="item.inputType === 'string' || !item.inputType"
             :key="key"
-            v-model="form[item.prop]"
             :label="item.label"
             :placeholder="$t('pleaseEnter', [item.label])"
             :rules="setItemRule(item.required)"
             :prop="item.prop"
+            v-model="form[item.prop]"
             class="el-item-width"
           ></c-form-string>
           <c-form-enum
             v-if="item.inputType === 'enum'"
+            :label="item.label"
             :key="key"
             v-model="form[item.prop]"
-            :label="item.label"
             type="radio"
             :prop="item.prop"
             :rules="setItemRule(item.required)"
@@ -45,7 +45,7 @@
       </div>
       <el-form-item v-if="!isReadonly">
         <el-button type="success" @click="$emit('go-back')">{{ $t('btn.cancel') }}</el-button>
-        <el-button type="primary" @click="saveForm()">{{ $t('btn.save') }}</el-button>
+        <el-button type="primary" v-debounce="[saveForm, 'click', 500]">{{ $t('btn.save') }}</el-button>
       </el-form-item>
     </c-form>
   </div>
@@ -72,10 +72,6 @@ export default {
         ]
       }
     }
-  },
-  created () {
-    this.mode === 'read' ? this.isReadonly = true : this.isReadonly = false
-    this.parseFormField(this.menu)
   },
   methods: {
     setItemRule (required) {
@@ -138,6 +134,10 @@ export default {
         }
       })
     }
+  },
+  created () {
+    this.mode === 'read' ? this.isReadonly = true : this.isReadonly = false
+    this.parseFormField(this.menu)
   }
 }
 </script>

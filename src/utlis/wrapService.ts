@@ -2,6 +2,11 @@ import { ElNotification } from 'element-plus'
 interface Service<Arg, Res> {
   (arg: Arg): Promise<Res>
 }
+/**
+ *
+ * @param {Object} service 传入的服务方法集对象
+ * @param {Array} noNoteArray 不需要async的方法key数组
+ */
 function wrapService<Arg, Res> (service: Service<Arg, Res>) {
   // const $service = {
   //   service

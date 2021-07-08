@@ -10,24 +10,38 @@
         >
         </ResrouceActions>
         <div slot="list">
-          <el-tree
-            class="tree-item-list"
+          <el-table
             :data="departmentTree"
-            node-key="id"
+            style="width: 100%;margin-bottom: 20px;"
+            row-key="id"
+            border
             default-expand-all
+            :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
           >
-            <div class="tree-item" slot-scope="{ node, data }">
-              <span class="tree-item__name">{{ data.name }}</span>
-              <el-row class="tree-item__info">
+            <el-table-column
+              prop="name"
+              label="名称"
+            >
+            </el-table-column>
+            <el-table-column
+              prop="remark"
+              label="备注"
+            >
+            </el-table-column>
+            <el-table-column
+              label="操作"
+              width="90px"
+            >
+              <template #default="{row}">
                 <ResrouceActions
                   button-type="text"
                   :actions="itemActions"
-                  @do-action="handleDoAction($event, data)"
+                  @do-action="handleDoAction($event, row)"
                 >
                 </ResrouceActions>
-              </el-row>
-            </div>
-          </el-tree>
+              </template>
+            </el-table-column>
+          </el-table>
         </div>
       </ListLayout>
     </PageContentWrapper>
@@ -95,22 +109,6 @@ export default {
 <style lang="stylus" scoped>
 .menu-page >>> .list-layout > .list
   overflow auto
-.tree-item-list
-  border-top 1px solid #eee
-  font-size 12px
-  line-height 30px
-  >>>
-    .el-tree-node__content
-      border-bottom 1px solid #eee
-      padding 5px 0
-.tree-item
-  width 100%
-  height 100%
-.tree-item__info
-  width 800px
-  float right
-  >>>.el-button
-    padding 0 5px
 .actions
   margin-bottom 14px
 </style>

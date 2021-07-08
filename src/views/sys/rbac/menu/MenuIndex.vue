@@ -10,8 +10,11 @@
       @delete="handleDelete"
     >
     </ListPage>
+
+    <!-- {{ state.isShowList }} -->
+
     <DetailPage
-      v-if="!state.isShowList"
+      v-if="!(state.isShowList)"
       :id="state.id"
       :item="state.item"
       :init-mode="state.mode"

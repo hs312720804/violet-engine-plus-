@@ -15,17 +15,17 @@
           label-width="80px"
         >
           <c-form-string
-            v-model="department.name"
             :label="$t('name')"
             prop="name"
+            v-model="department.name"
             :placeholder="$t('departmentName')"
           >
           </c-form-string>
           <c-form-any prop="parentId" :label="$t('parentDepartment')">
             <div slot="edit">
               <el-cascader
-                v-model="department.parentId"
                 style="width: 400px"
+                v-model="department.parentId"
                 :options="allDepartments"
                 :props="{
                   checkStrictly: true,
@@ -38,10 +38,10 @@
             </div>
           </c-form-any>
           <c-form-string
-            v-model="department.remark"
             :label="$t('remark')"
             prop="remark"
             type="textarea"
+            v-model="department.remark"
           >
           </c-form-string>
         </c-form>
@@ -51,10 +51,10 @@
 </template>
 
 <script>
-import ResrouceActions from '../../../../components/ResourceActions.vue'
-import { ref, computed } from 'vue'
+import ResrouceActions from '../../../../components/ResourceActions'
+import { ref, computed } from '@vue/composition-api'
 import { PageWrapper, PageContentWrapper, ContentLayout } from '../../../../utlis/deps'
-import { ElMessage } from 'element-plus'
+import { Message } from 'element-ui'
 import consts from '../../../../utlis/consts'
 const RESOURCE = 'department'
 const { CREATE, UPDATE } = consts.commonOperation
@@ -75,6 +75,7 @@ export default {
     })
 
     const formRef = ref(null)
+    const originDep = JSON.parse(JSON.stringify(props.item))
     const department = ref(genDepartment(props.item))
     function genDepartment (preset) {
       return {
@@ -109,7 +110,6 @@ export default {
       })
     }
     fetchAllDepartments()
-
     const actions = computed(() => {
       const submit = {
         label: _$t('btn.submit'),
@@ -131,6 +131,10 @@ export default {
       if (Array.isArray(data.parentId)) {
         data.parentId = data.parentId.pop()
       }
+      if (data.parentId === originDep.id) {
+        Message.error('自己不能作为自己的父级，请重新选择！')
+        return
+      }
       service.departmentUpsert(data, _$t('message.saveSuccess'))
         .then(() => {
           ctx.emit('upsert-end')
@@ -138,11 +142,11 @@ export default {
     }
     function handleDoAction (action) {
       if (action === `${RESOURCE}:${UPDATE}` || action === `${RESOURCE}:${CREATE}`) {
-        formRef.value.$refs.form.validate(valid => {
+        formRef.value.$refs.form.validate((valid) => {
           if (valid) {
             handleSave()
           } else {
-            ElMessage.error(_$t('message.completeForm'))
+            Message.error(_$t('message.completeForm'))
           }
         })
       }

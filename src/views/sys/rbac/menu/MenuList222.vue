@@ -8,69 +8,27 @@
           @do-action="handleDoAction"
         >
         </ResrouceActions>
-        234
         <template #list>
-          <el-table
+          <el-tree
+            class="tree-item-list"
             :data="menuTree"
-            style="width: 100%;margin-bottom: 20px;"
-            row-key="id"
-            border
+            node-key="id"
             default-expand-all
-            :tree-props="{children: 'children', hasChildren: 'hasChildren'}"
+            draggable
+            @node-drop="handleDrop"
           >
-            <el-table-column
-              prop="name"
-              label="名称"
-            >
-            </el-table-column>
-            <el-table-column
-              prop="alias"
-              label="别名"
-            >
-            </el-table-column>
-            <el-table-column
-              prop="path"
-              label="路径"
-            >
-            </el-table-column>
-            <el-table-column
-              prop="status"
-              label="启用"
-              width="60px"
-            >
-              <template #default="scope">
-                <el-tag v-if="scope.row.status === 'ENABLE'" type="success">是</el-tag>
-                <el-tag v-else type="danger">否</el-tag>
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="template"
-              label="模板"
-            >
-              <template #default="scope">
-                {{ scope.row.template ? scope.row.template + '-' + scope.row.type : '' }}
-              </template>
-            </el-table-column>
-            <el-table-column
-              prop="sort"
-              label="排序"
-              width="60px"
-            >
-            </el-table-column>
-            <el-table-column
-              label="操作"
-              width="90px"
-            >
-              <template #default="{row}">
+            <template #default="{ data }" class="tree-item">
+              <span>{{ data.name }}</span>
+              <el-row class="tree-item__info">
                 <ResrouceActions
                   button-type="text"
                   :actions="itemActions"
-                  @do-action="handleDoAction($event, row)"
+                  @do-action="handleDoAction($event, data)"
                 >
                 </ResrouceActions>
-              </template>
-            </el-table-column>
-          </el-table>
+              </el-row>
+            </template>
+          </el-tree>
         </template>
       </ListLayout>
     </PageContentWrapper>
@@ -100,47 +58,75 @@ export default {
     // const service = ctx.root.$service
     const { t } = useI18n() // 获取 i18n 的 t
     const _$t = t
+
+    // console.log('useI18n()===', useI18n())
+    // console.log('useI18n()===', useI18n().t)
     const menuTree = ref([])
+    function handleDrop (node, dropNode, dropType, ev) {
+      const menu = node.data
+      const dropMenu = dropNode.data
+      menu.parentId = dropMenu.parentId
+      switch (dropType) {
+        case 'before':
+          menu.sort = dropMenu.sort
+          break
+        case 'after':
+          menu.sort = dropMenu.sort + 1
+          break
+        case 'inner':
+          menu.parentId = dropMenu.id
+      }
+      // service.menuUpsert(menu)
+    }
 
     const actions = [
       {
         label: _$t('btn.create'),
+        // label: '创建',
         value: `${RESOURCE}:${CREATE}`
       }
     ]
     const itemActions = [
       {
         label: _$t('btn.edit'),
+        // label: '编辑',
         value: `${RESOURCE}:${UPDATE}`
       },
       {
         label: _$t('btn.del'),
+        // label: '删除',
         value: `${RESOURCE}:${DELETE}`
       }
     ]
     function handleDoAction (action, item) {
+      debugger
       const eventName = commonOperationEvent[action.split(':')[1]]
       ctx.emit(eventName, { item, selected: [item] })
     }
     function fetchData () {
       menuGetListService().then(result => {
+        console.log('result===', result)
         menuTree.value = result[0].children
       })
     }
     fetchData()
+    let aaa = ref(_$t('btn.copy'))
     return {
       menuTree,
+      handleDrop,
       fetchData,
       actions,
       itemActions,
-      handleDoAction
+      handleDoAction,
+      aaa
     }
   }
   // data () {
   //   return {
   //     actions: [
   //       {
-  //         label: this.$t('btn.create'),
+  //         label: $t('btn.create'),
+  //         // label: '创建',
   //         value: `${RESOURCE}:${CREATE}`
   //       }
   //     ]
@@ -150,8 +136,33 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-.menu-page >>> .list-layout > .list
+.menu-page :deep(.list-layout > .list)
   overflow auto
->>>.actions
+.tree-item-list
+  border-top 1px solid #eee
+  font-size 12px
+  line-height 30px
+  :deep(.el-tree-node__content)
+    border-bottom 1px solid #eee
+    padding 5px 0
+.tree-item
+  width 100%
+  height 100%
+:deep(.actions)
   margin-bottom 14px
+.tree-item
+  width 100%
+  height 100%
+  position relative
+  .tree-item__info
+    position absolute
+    display flex
+    left 200px
+    top 0
+    z-index 100
+    :deep(.el-button)
+      padding 0 5px
+:deep(.el-tree-node__children)
+  .tree-item__info
+    left 182px
 </style>
