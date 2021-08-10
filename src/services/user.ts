@@ -54,3 +54,22 @@ export function userUpsert (data) {
     data
   })
 }
+
+export interface websiteUpdateState {
+  copyright: ''
+  extra: ''
+  id: 0
+  introduction: ''
+  layout: ''
+  logo: ''
+  recordNum: ''
+  siteName: ''
+}
+export const websiteUpdateService = (data: websiteUpdateState)=> {
+  return fetch({
+    method: 'post',
+    url: 'website/update',
+    data
+  })
+}
+

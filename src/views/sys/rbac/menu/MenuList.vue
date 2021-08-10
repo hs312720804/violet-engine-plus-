@@ -2,13 +2,14 @@
   <PageWrapper>
     <PageContentWrapper class="menu-page">
       <ListLayout>
-        <ResrouceActions
-          slot="actions"
-          :actions="actions"
-          @do-action="handleDoAction"
-        >
-        </ResrouceActions>
-        234
+        <template #actions>
+          <ResrouceActions
+            :actions="actions"
+            @do-action="handleDoAction"
+          >
+          </ResrouceActions>
+        </template>
+
         <template #list>
           <el-table
             :data="menuTree"
@@ -95,6 +96,7 @@ export default {
     PageContentWrapper,
     ResrouceActions
   },
+  emits:['edit'],
   setup (props, ctx) {
     // const _$t = ctx.root.$t.bind(ctx.root)
     // const service = ctx.root.$service

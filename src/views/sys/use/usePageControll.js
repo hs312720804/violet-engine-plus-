@@ -1,18 +1,25 @@
-import { reactive } from 'vue'
+import { ref, reactive } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 export default function usePageControll ({ idField = 'id', listRef, deleteService }) {
+  console.log('listRef3==>')
+  console.log(JSON.parse(JSON.stringify(listRef)))
+
   const state = reactive({
     id: undefined,
     item: null,
     mode: 'read',
-    isShowList: true
+    isShowList: true,
+    version: undefined
   })
+
+  let isShowList = ref(true)
 
   function handleCreate () {
     state.id = undefined
     state.mode = 'create'
     state.item = null
     state.isShowList = false
+    isShowList.value = false
   }
 
   function handleEdit ({ item, selected = [] }) {
@@ -21,6 +28,7 @@ export default function usePageControll ({ idField = 'id', listRef, deleteServic
     state.item = item
     state.mode = 'edit'
     state.isShowList = false
+    isShowList.value = false
   }
 
   function handleRead ({ item, version }) {
@@ -29,6 +37,7 @@ export default function usePageControll ({ idField = 'id', listRef, deleteServic
     state.mode = 'read'
     state.version = version
     state.isShowList = false
+    isShowList.value = false
   }
 
   function handleRefreshList () {
@@ -40,6 +49,7 @@ export default function usePageControll ({ idField = 'id', listRef, deleteServic
     state.item = item
     state.mode = 'copy'
     state.isShowList = false
+    isShowList.value = false
   }
 
   function handleDelete ({ item, selected }) {
@@ -62,6 +72,7 @@ export default function usePageControll ({ idField = 'id', listRef, deleteServic
   }
   function handleGoBack () {
     state.isShowList = true
+    isShowList.value = true
     state.mode = 'list'
     state.version = undefined
   }
@@ -80,6 +91,7 @@ export default function usePageControll ({ idField = 'id', listRef, deleteServic
     handleDelete,
     handleRefreshList,
     handleGoBack,
-    handleUpsertEnd
+    handleUpsertEnd,
+    isShowList
   }
 }

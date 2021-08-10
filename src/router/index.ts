@@ -13,7 +13,6 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-
   if (router.currentRoute.value.matched.length === 0) {
     getSiteInfo().then(data => {
       store.dispatch('setSite', data) // ('setSite', data)

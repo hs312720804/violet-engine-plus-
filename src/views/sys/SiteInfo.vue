@@ -5,29 +5,36 @@
       class="c-normal"
       @go-back="$emit('go-back')"
     >
-      <div slot="actions"></div>
+      <template #actions></template>
       <c-form
         ref="form"
-        label-width="90px"
-        :model="form"
+        label-width="100px"
+        :model="infoForm"
         :rules="rules"
         :readonly="isReadonly"
       >
         <div v-for="(item, key) in fields" :key="key">
+          <!-- <el-form-item
+            v-if="item.inputType === 'string' || !item.inputType"
+            :label="item.label"
+          >
+            {{ form[item.prop] }}
+          </el-form-item> -->
           <c-form-string
             v-if="item.inputType === 'string' || !item.inputType"
             :key="key"
-            v-model="form[item.prop]"
+            v-model="infoForm[item.prop]"
             :label="item.label"
             :placeholder="'请填写' + item.label"
             :rules="rules[item.prop]"
             :prop="item.prop"
             class="el-item-width"
-          ></c-form-string>
+          >
+          </c-form-string>
           <c-form-enum
             v-if="item.inputType === 'enum'"
             :key="key"
-            v-model="form[item.prop]"
+            v-model="infoForm[item.prop]"
             :label="item.label"
             type="radio"
             :prop="item.prop"
@@ -39,7 +46,7 @@
             :label="item.label"
           >
             <el-date-picker
-              v-model="form[item.prop]"
+              v-model="infoForm[item.prop]"
               type="date"
               placeholder="选择日期"
             >
@@ -54,11 +61,11 @@
             >
               <el-radio-group
                 v-if="isReadonly"
-                v-model="form.layout"
+                v-model="infoForm.layout"
                 :disabled="isReadonly"
                 @change="handleLayoutSelect"
               >
-                <div v-if="form.layout === 'default'">
+                <div v-if="infoForm.layout === 'default'">
                   <span class="c-layout-item default">
                     <p>
                       <span></span>
@@ -67,7 +74,7 @@
                     布局一(响应式)
                   </span>
                 </div>
-                <div v-if="form.layout === 'tlr'">
+                <div v-if="infoForm.layout === 'tlr'">
                   <span class="c-layout-item tlr">
                     <p>
                       <span></span>
@@ -78,7 +85,7 @@
                     布局二
                   </span>
                 </div>
-                <div v-if="form.layout === 'tb'">
+                <div v-if="infoForm.layout === 'tb'">
                   <span class="c-layout-item tb">
                     <p>
                       <span></span>
@@ -87,7 +94,7 @@
                   </span>
                 </div>
               </el-radio-group>
-              <el-radio-group v-else v-model="form.layout" @change="handleLayoutSelect">
+              <el-radio-group v-else v-model="infoForm.layout" @change="handleLayoutSelect">
                 <el-radio label="default">
                   <span class="c-layout-item default">
                     <p>
@@ -123,7 +130,7 @@
             v-if="item.inputType === 'logoUpload'"
             :label="item.label"
           >
-            <div v-for="(obj, index) in form.logo" :key="index" class="c-logo">
+            <div v-for="(obj, index) in infoForm.logo" :key="index" class="c-logo">
               <div class="c-site-logo">
                 <div v-if="obj.image" class="c-logo-img">
                   <img :src="obj.image" class="avatar">
@@ -176,8 +183,8 @@
           <el-button type="primary" @click="saveForm()">保存</el-button>
         </el-form-item>
         <el-form-item v-else>
+          <!-- v-permission="'normal:update'" -->
           <el-button
-            v-permission="'normal:update'"
             type="primary"
             @click="isReadonly = false"
           >
@@ -190,13 +197,25 @@
 </template>
 
 <script>
-export default {
+import $constants from '@/utlis/consts'
+import { getMenusDetailService } from '@/services/common'
+import { defineComponent, ref, reactive } from 'vue'
+import { useStore } from '@/store'
+import { websiteUpdateService } from '@/services/user'
+import { ElMessage } from 'element-plus'
+
+export default defineComponent({
   props: ['menuId'],
-  data () {
-    return {
-      isReadonly: true,
-      title: '常规设置',
-      fields: [
+  emits: ['go-back'],
+  setup(props, ctx) {
+
+    console.log('slots==>', ctx)
+
+    const $store = useStore()
+    let isReadonly = ref(true)
+    let title = ref('常规设置')
+    let fields = reactive(
+      [
         {
           label: '站点名称',
           prop: 'siteName'
@@ -242,24 +261,23 @@ export default {
         //   label: '百度统计Id',
         //   prop: 'tongjiId'
         // }
-      ],
-      form: {
-        layout: ''
-      },
-      rules: {},
-      menuDetail: {}
-    }
-  },
-  created () {
-    this.initData()
-    this.fetchMenuData()
-  },
-  methods: {
-    initData () {
-      this.form = { ...this.form, ...this.$store.state.app.site }
-      if (this.form.logo) {
-        const logo = this.$constants.evil(this.form.logo)
-        this.form.logo = Object.keys(logo).map(key => {
+      ]
+    )
+    let infoForm = reactive({
+      layout: '',
+      siteName: ''
+    })
+    // const aaa = reactive({ a: 1 })
+    let rules = reactive({})
+    let menuDetail = reactive({})
+
+    const initData = () => {
+      console.log('...$store.state.app.site===>', $store.state.app.site)
+
+      infoForm = reactive({ ...infoForm, ...$store.state.app.site })
+      if (infoForm.logo) {
+        const logo = $constants.evil(infoForm.logo)
+        infoForm.logo = Object.keys(logo).map(key => {
           return {
             key,
             image: logo[key].image,
@@ -268,7 +286,7 @@ export default {
           }
         })
       } else {
-        this.form.logo = [
+        infoForm.logo = [
           {
             key: 'login',
             image: '',
@@ -283,41 +301,46 @@ export default {
           }
         ]
       }
-    },
-    handleLayoutSelect (val) {
+    }
+
+    const handleLayoutSelect = val => {
       // this.$store.dispatch('setLayout', val)
       // this.$set(this.$store.state.app, 'layout', val)
-    },
-    handleAvatarSuccess (res, file) {
-      this.form['logo'] = URL.createObjectURL(file.raw)
-    },
-    beforeAvatarUpload (file) {
+    }
+    const handleAvatarSuccess = (res, file) => {
+      infoForm['logo'] = URL.createObjectURL(file.raw)
+    }
+
+    const beforeAvatarUpload = file => {
       const isJPG = file.type === 'image/jpeg'
       const isLt2M = file.size / 1024 / 1024 < 2
 
       if (!isJPG) {
-        this.$message.error('上传头像图片只能是 JPG 格式!')
+        ElMessage.error('上传头像图片只能是 JPG 格式!')
       }
       if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!')
+        ElMessage.error('上传头像图片大小不能超过 2MB!')
       }
       return isJPG && isLt2M
-    },
-    fetchMenuData () {
-      this.$service.getMenusDetail({ id: this.menuId }).then(data => {
-        this.menuDetail = data
+    }
+
+    const fetchMenuData = () => {
+      getMenusDetailService({ id: props.menuId }).then(data => {
+        menuDetail = reactive(data)
       })
-    },
-    handleCancleEdit () {
-      this.isReadonly = true
-      this.initData()
-    },
-    saveForm () {
-      const saveDate = JSON.parse(JSON.stringify(this.form))
+    }
+
+    const handleCancleEdit = () => {
+      isReadonly.value = true
+      initData()
+    }
+
+    const saveForm = () => {
+      const saveDate = JSON.parse(JSON.stringify(infoForm))
       delete saveDate.createdTime
       delete saveDate.updatedTime
       let logoObj = {}
-      saveDate.logo.forEach((item, index) => {
+      saveDate.logo.forEach(item => {
         logoObj[item.key] = {
           image: item.image,
           width: item.width,
@@ -325,19 +348,36 @@ export default {
         }
       })
       saveDate.logo = JSON.stringify(logoObj)
-      this.$service.fetch({
-        method: 'post',
-        url: 'website/update',
-        data: saveDate
-      }).then(data => {
-        this.$message.success('保存成功')
+
+      websiteUpdateService(saveDate).then(() => {
+        ElMessage.success('保存成功')
         setTimeout(() => {
           location.reload()
         }, 500)
       })
     }
+
+    initData()
+    fetchMenuData()
+
+    return {
+      isReadonly,
+      title,
+      fields,
+      infoForm,
+      rules,
+      menuDetail,
+      initData,
+      handleLayoutSelect,
+      handleAvatarSuccess,
+      beforeAvatarUpload,
+      fetchMenuData,
+      handleCancleEdit,
+      saveForm
+    }
   }
-}
+
+})
 </script>
 
 <style lang="stylus" scoped>

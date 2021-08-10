@@ -5,7 +5,7 @@
         <div class="log_center">
           <div class="log_logo">
             <img v-if="image" :src="image">
-            <img v-else src="../assets/logo.png">
+            <img v-else src="@/assets/logo.png">
             <span>{{ siteInfo.siteName }}</span>
           </div>
           <div class="log_bj">
@@ -77,7 +77,7 @@
               >
                 <div class="formInput">
                   <span class="icon el-icon-key"></span>
-                  <el-input v-model="employeeForm.verifyCode " auto-complete="off" placeholder="请输入验证码"></el-input>
+                  <el-input v-model="employeeForm.verifyCode" auto-complete="off" placeholder="请输入验证码"></el-input>
                   <div class="verify-btn">
                     <el-button @click="getVerifyCode">获取验证码</el-button>
                   </div>
@@ -322,7 +322,7 @@ input:-webkit-autofill
   align-items center
   position relative
   justify-content space-around
-  background url("~@/assets/images/lockLogin.png") no-repeat
+  background url("@/assets/images/lockLogin.png") no-repeat
   background-size cover
 .login-container:before
   background rgba(0,0,0,.3)

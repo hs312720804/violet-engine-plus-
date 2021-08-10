@@ -2,12 +2,14 @@
   <PageWrapper>
     <PageContentWrapper class="menu-page">
       <ListLayout>
-        <ResrouceActions
-          slot="actions"
-          :actions="actions"
-          @do-action="handleDoAction"
-        >
-        </ResrouceActions>
+        <template #actions>
+          <ResrouceActions
+            :actions="actions"
+            @do-action="handleDoAction"
+          >
+          </ResrouceActions>
+        </template>
+
         <template #list>
           <el-tree
             class="tree-item-list"

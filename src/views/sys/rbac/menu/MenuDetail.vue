@@ -1,7 +1,7 @@
 <template>
   <PageWrapper>
     <PageContentWrapper>
-      <ContentLayout :title="title" @go-back="handleGoBack">
+      <ContentLayout :title="title" @go-back="$emit('go-back')">
         <el-form v-if="!menu.id" label-width="80px">
           <el-row :gutter="14">
             <el-col
@@ -466,7 +466,7 @@ import DateEdit from './DateEdit.vue'
 import ExtendEdit from './ExtendEdit.vue'
 import routerComponents from '@/router/components'
 
-import { ref, computed } from 'vue'
+import { ref, computed, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import consts from '../../../../utlis/consts'
 
@@ -485,7 +485,9 @@ export default {
     ExtendEdit
   },
   props: ['initMode', 'id', 'item'],
+  emits: ['go-back'],
   setup (props, ctx) {
+
     const { t } = useI18n()
     const _$t = t
     // const _$t = ctx.root.$t.bind(ctx.root)
@@ -559,10 +561,10 @@ export default {
       ]
     })
 
-    const allMenus = ref([])
+    let allMenus = reactive([])
     function fetchAllMenus () {
       menuGetListService().then(result => {
-        allMenus.value = result
+        allMenus = reactive(result)
         if (!menu.value.parentId) {
           menu.value.parentId = result[0].id
         }
@@ -574,7 +576,7 @@ export default {
       if (value === '') {
         callback(new Error(_$t('message.menuAlias')))
       } else {
-        if (isHasSameValue(allMenus.value, rule.field, value)) {
+        if (isHasSameValue(allMenus, rule.field, value)) {
           callback(new Error(_$t('message.sameAlias')))
         } else {
           callback()
@@ -585,7 +587,7 @@ export default {
       if (value === '') {
         callback(new Error(_$t('pleaseEnter', [_$t('menuPath')])))
       } else {
-        if (isHasSameValue(allMenus.value, rule.field, value)) {
+        if (isHasSameValue(allMenus, rule.field, value)) {
           callback(new Error(_$t('message.samePath')))
         } else {
           callback()
@@ -655,9 +657,9 @@ export default {
         method: ''
       }
     ])
-    let apiArr = ref([])
+    let apiArr = reactive([])
     function apiToArr () {
-      apiArr.value = [] // 复制时重新置空，再赋值
+      apiArr = reactive([]) // 复制时重新置空，再赋值
       let api = ''
       if (menu.value.api) {
         api = evil(menu.value.api)
@@ -666,14 +668,14 @@ export default {
       }
       if (Object.keys(api).length > 0) {
         Object.keys(api).forEach(item => {
-          apiArr.value.push({
+          apiArr.push({
             key: item,
             url: api[item][0],
             method: api[item][1]
           })
         })
       } else {
-        apiArr.value = []
+        apiArr = reactive([])
       }
     }
     apiToArr()
@@ -685,18 +687,18 @@ export default {
       }
     }
     function genApi () {
-      apiArr.value.push({
+      apiArr.push({
         key: '',
         url: '',
         method: ''
       })
     }
     function handleDeleteApi (key) {
-      apiArr.value.splice(key, 1)
+      apiArr.splice(key, 1)
     }
     // extra处理
     // 初始化列表建议的增删查改extra，可根据项目实际进行改动
-    const initialExtra = ref([
+    const initialExtra = reactive([
       {
         key: 'resource', // 模块资源symbol
         value: ''
@@ -714,9 +716,9 @@ export default {
         value: ''
       }
     ])
-    let extraArr = ref([])
+    let extraArr = reactive([])
     function extraToArr () {
-      extraArr.value = [] // 复制时重新置空，再赋值
+      extraArr = reactive([]) // 复制时重新置空，再赋值
       let extra = ''
       if (menu.value.extra) {
         extra = evil(menu.value.extra)
@@ -725,7 +727,7 @@ export default {
       }
       if (Object.keys(extra).length > 0) {
         Object.keys(extra).forEach(item => {
-          extraArr.value.push({
+          extraArr.push({
             key: item,
             value: extra[item]
           })
@@ -735,7 +737,7 @@ export default {
     extraToArr()
     function disabledExtraKey (key) {
       if (menu.value.type === 'list') {
-        return initialExtra.value.some(item => {
+        return initialExtra.some(item => {
           return item.key === key
         })
       }
@@ -744,23 +746,23 @@ export default {
       }
     }
     function genExtra () {
-      extraArr.value.push({
+      extraArr.push({
         key: '',
         value: ''
       })
     }
     function handleDeleteExtra (key) {
-      extraArr.value.splice(key, 1)
+      extraArr.splice(key, 1)
     }
     // 字段Fields JSON的处理
-    let fields = ref([])
+    let fields = reactive([])
     function fieldsToArr () {
-      fields.value = [] // 复制时重新置空，再赋值
+      fields = reactive([]) // 复制时重新置空，再赋值
       if (menu.value.fields) {
-        fields.value = evil(menu.value.fields)
+        fields = evil(menu.value.fields)
       } else {
       // 初始化字段
-        fields.value = [
+        fields = reactive([])
         // {
         //   label: '',
         //   prop: '',
@@ -769,13 +771,13 @@ export default {
         //   use: [],
         //   render: ''
         // }
-        ]
+        // ]
       }
     }
     fieldsToArr()
     // 添加字段
     function handleAddFiled () {
-      fields.value.push({
+      fields.push({
         label: '',
         primaryKey: 0,
         prop: '',
@@ -786,7 +788,7 @@ export default {
     }
     // 删除字段
     function handleReduceFiled (key) {
-      fields.value.splice(key, 1)
+      fields.splice(key, 1)
     }
 
     // Enum值编辑
@@ -819,7 +821,7 @@ export default {
       if (item.primaryKey === undefined) {
         ctx.root.$set(item, 'primaryKey', 0)
       }
-      hasPrimaryKey.value = fields.value.some(field => {
+      hasPrimaryKey.value = fields.some(field => {
         return field.primaryKey === 1
       })
       renderx.value = item
@@ -839,7 +841,7 @@ export default {
         }
       }
       if (id) {
-        getTempItem(allMenus.value, id)
+        getTempItem(allMenus, id)
       }
       let list = Object.assign({}, item)
       delete list.id
@@ -852,7 +854,7 @@ export default {
       const data = JSON.parse(JSON.stringify(menu.value))
       // api转换成对象保存
       const apiObj = {}
-      apiArr.value.forEach(api => {
+      apiArr.forEach(api => {
         if (api.url) {
           apiObj[api.key] = [api.url, api.method]
         } else {
@@ -863,13 +865,13 @@ export default {
 
       // extra转换成对象保存
       const extraObj = {}
-      extraArr.value.forEach(extra => {
+      extraArr.forEach(extra => {
         extraObj[extra.key] = extra.value
       })
       data.extra = JSON.stringify(extraObj)
       // 字段保存
       // 删除切换类型后不是enum类型的值
-      const trimFields = fields.value.map(item => {
+      const trimFields = fields.map(item => {
         if (item.inputType !== 'enum') {
           if ('options' in item) {
             item.options = []
@@ -931,9 +933,9 @@ export default {
          */
         switch (menu.value.type) {
           case 'list':
-            apiArr.value = JSON.parse(JSON.stringify(initialApi.value))
-            extraArr.value = JSON.parse(JSON.stringify(initialExtra.value))
-            fields.value = [
+            apiArr = JSON.parse(JSON.stringify(initialApi.value))
+            extraArr = JSON.parse(JSON.stringify(initialExtra))
+            fields = [
               {
                 label: '',
                 prop: '',
@@ -945,17 +947,17 @@ export default {
             ]
             break
           case 'iframe':
-            apiArr.value = []
-            fields.value = []
-            extraArr.value = [{
+            apiArr = reactive([])
+            fields = reactive([])
+            extraArr = [{
               key: 'src',
               value: ''
             }]
             break
           default:
-            apiArr.value = []
-            fields.value = []
-            extraArr.value = []
+            apiArr = reactive([])
+            fields = reactive([])
+            extraArr = reactive([])
         }
       }
     }

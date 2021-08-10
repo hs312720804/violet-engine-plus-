@@ -26,7 +26,7 @@
 
 <script>
 import { ref } from 'vue'
-import { service, TabPage } from '../../../../utlis/deps'
+import { TabPage } from '../../../../utlis/deps'
 import ListPage from './UserList'
 import DetailPage from './UserDetail'
 import usePageControll from '../../use/usePageControll'

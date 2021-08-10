@@ -22,8 +22,9 @@
 <script>
 export default {
   props: ['title'],
-  setup (props, ctx) {
-  }
+  emits: ['go-back']
+  // setup (props, ctx) {
+  // }
 }
 </script>
 

@@ -1,21 +1,29 @@
 <template>
   <TabPage>
-    <ListPage
-      v-show="state.isShowList"
-      ref="listRef"
-      @create="handleCreate"
-      @read="handleRead"
-      @edit="handleEdit"
-      @copy="handleCopy"
-      @delete="handleDelete"
-    >
-    </ListPage>
+    <!-- {{ state.isShowList }}
+    {{ state.isShowList === true }}
+    {{ !(state.isShowList) === false }} -->
 
-    <!-- {{ state.isShowList }} -->
+    <template v-if="isShowList">
+      <div class="aaa"></div>
+      <el-form></el-form>
+      <ListPage
+        ref="listRef"
+        @create="handleCreate"
+        @read="handleRead"
+        @edit="handleEdit"
+        @copy="handleCopy"
+        @delete="handleDelete"
+      >
+      </ListPage>
+    </template>
+    <!-- <div  class="aaa"> -->
 
+    {{ isShowList }}
     <DetailPage
-      v-if="!(state.isShowList)"
+      v-if="!isShowList"
       :id="state.id"
+      style="color:red;"
       :item="state.item"
       :init-mode="state.mode"
       :version="state.version"
@@ -24,26 +32,29 @@
       @go-back="handleGoBack"
     >
     </DetailPage>
+    <!-- </div> -->
   </TabPage>
 </template>
 
 <script>
-import { ref } from 'vue'
+import { defineComponent, ref, onMounted } from 'vue'
 import ListPage from './MenuList.vue'
 import DetailPage from './MenuDetail.vue'
 import usePageControll from '../../use/usePageControll'
 import { TabPage } from '../../../../utlis/deps'
 import { menuDeleteService } from '@/services/menu'
 
-export default {
+export default defineComponent({
   components: {
     TabPage,
     ListPage,
     DetailPage
   },
   setup (props, ctx) {
-    const listRef = ref(null)
+    const listRef = ref()
+
     const {
+      isShowList,
       state,
       handleCreate,
       handleEdit,
@@ -54,6 +65,7 @@ export default {
       handleGoBack,
       handleUpsertEnd
     } = usePageControll({ idField: 'id', listRef, deleteService: menuDeleteService.bind(ctx.root) })
+
     return {
       listRef,
       state,
@@ -64,13 +76,11 @@ export default {
       handleCopy,
       handleRefreshList,
       handleGoBack,
-      handleUpsertEnd
+      handleUpsertEnd,
+      isShowList
     }
-  },
-  created () {
-    console.log(this.$route)
   }
-}
+})
 </script>
 
 <style>

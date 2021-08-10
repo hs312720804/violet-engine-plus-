@@ -112,3 +112,14 @@ function xx (a:string|number,b:number){
 }
 
 console.log(xx('11',2))
+export const isString = (arg: unknown): arg is string => typeof arg === 'string'
+
+function useIt(numOrStr: number | string) {
+  const aaa = isString(numOrStr)
+  console.log(aaa)
+
+  if (isString(numOrStr)) {
+    console.log(numOrStr.length)
+  }
+}
+useIt(33)

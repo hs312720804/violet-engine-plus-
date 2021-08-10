@@ -49,24 +49,24 @@ const routerComponents: RouterComponents = {
     type: 'custom'
   },
   // 用户管理
-  // UserIndex: {
-  //   template: () => import('@/views/sys/rbac/user/UserIndex.vue'),
-  //   type: 'custom'
-  // },
+  UserIndex: {
+    template: () => import('@/views/sys/rbac/user/UserIndex.vue'),
+    type: 'custom'
+  },
   // 菜单管理
   MenuIndex: {
     template: () => import('@/views/sys/rbac/menu/MenuIndex.vue'),
     type: 'custom'
-  }
+  },
   // 部门管理
   // DepartmentIndex: {
   //   template: () => import('@/views/sys/rbac/department/DepartmentIndex.vue'),
   //   type: 'custom'
   // },
   // 站点信息
-  // SiteInfo: {
-  //   template: () => import('@/views/sys/SiteInfo.vue'),
-  //   type: 'custom'
-  // }
+  SiteInfo: {
+    template: () => import('@/views/sys/SiteInfo.vue'),
+    type: 'custom'
+  }
 }
 export default routerComponents
