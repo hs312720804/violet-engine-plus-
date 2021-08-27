@@ -41,20 +41,6 @@ export function menuGetListService (params: undefined) {
 //   })
 // })
 
-// export const LoginService = wrapService<LoginArg, UserModuleState>(async data => {
-
-//   return fetch({
-//     method: 'post',
-//     url: 'login',
-//     data,
-//     isJSON: false,
-//     emptyToken: true
-//   }).then(res => {
-//     console.log('res==>', res)
-//     store.dispatch('cacheUserInfo', res)
-//     return res
-//   })
-// })
 
 export function menuUpsertService (data) {
   const url = data.id

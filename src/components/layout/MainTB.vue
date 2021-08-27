@@ -190,7 +190,7 @@ export default defineComponent({
   margin-left 20px
 .aside__menu
   min-height 100vh
-  background #222a35
+  background $--side-menu-bg
 .aside__menu:not(.aside__menu_collapse)
   width 200px
 .aside__menu-main
@@ -207,7 +207,7 @@ export default defineComponent({
   overflow hidden
 .aside__menu .menu:not(.el-menu--collapse)
   width 200px
-  background #222a35
+  background $--side-menu-bg
 .menu li
   position relative
 .el-submenu__title
@@ -234,7 +234,7 @@ export default defineComponent({
   height 40px
   line-height 40px
 .el-menu.el-menu--collapse,.el-menu--vertical .el-menu
-  background #222a35
+  background $--side-menu-bg
 .aside__menu .el-submenu__title:hover,.el-menu--vertical .el-submenu__title:hover, .aside__menu .el-menu-item:hover,.el-menu--vertical .el-menu-item:hover
   background #253245
 .el-menu--vertical .el-submenu.is-opened .el-submenu__title

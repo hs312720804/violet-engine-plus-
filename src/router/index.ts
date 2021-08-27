@@ -3,93 +3,90 @@ import { createRouter, createWebHistory, createWebHashHistory } from 'vue-router
 // import Register from '@/views/Register.vue'
 import { store } from '@/store'
 import routes from './routes'
-import { getInitData } from '@/auth'
+import { initUserData } from '@/auth'
 import { isInLoginFreeList } from './routeAuthList'
-import { getSiteInfo } from '@/services/common'
 
 const router = createRouter({
   history: createWebHashHistory(),
   routes
 })
 
-router.beforeEach((to, from, next) => {
-  if (router.currentRoute.value.matched.length === 0) {
-    getSiteInfo().then(data => {
-      store.dispatch('setSite', data) // ('setSite', data)
-    }).catch(e => {
-      console.log(e)
-    })
+// 初始化站点信息
+router.beforeEach(async () => {
+  await store.dispatch('app/initSite')
+  if (store.state.app.site?.siteName) {
+    document.title = store.state.app.site?.siteName
   }
-  next()
-  // if (Object.keys(store.state.app.site).length < 1) { // 判断是否已存在站点信息
-  //   app.$service.getSiteInfo().then(data => {
-  //     store.dispatch('setSite', data)
-  //     routerTo()
-  //   }).catch(e => {
-  //     console.log(e)
-  //   })
-  // } else {
-  //   routerTo()
-  // }
+  return true
 })
-
-router.beforeEach((to, from, next) => {
-  if (isInLoginFreeList(to.path)) {
-    return next()
+// 权限校验
+router.beforeEach(async to => {
+  // 判断当前路由是否需要校验的
+  if (isInLoginFreeList(to.path) || store.getters.isLogin) {
+    return true
   }
-  // const app = this.app
-  function routerTo () { // 路由跳转
-    getInitData().then(() => {
-      document.title = store.state.app.site.siteName as string
-      if (to.name !== 'login') {
-        const xx = router.currentRoute.value.matched.flatMap(record =>
-          Object.values(record.components)
-        )
-        if (to.matched.length === 0 && xx.length > 0) {
-          next({ path: to.fullPath })
-        } else {
-          next()
-        }
-      } else {
-        if (to.query.redirect) {
-          next({ path: to.query.redirect as string })
-        } else {
-          next({ name: 'home' })
-        }
-      }
-
-      // next(to.name !== 'login'
-      //   ? to.matched.length === 0 && app.$router.getMatchedComponents(to.fullPath).length > 0
-      //     ? { path: to.fullPath }
-      //     : undefined
-      //   : to.query.redirect
-      //     ? { path: to.query.redirect }
-      //     : { name: 'home' }
-      // )
-    }).catch(() => {
-      // next(to.name === 'login' || to.name === 'register'
-      //   ? undefined
-      //   : { name: 'login', query: { redirect: to.fullPath } }
-      // )
-      if (to.name === 'login' || to.name === 'register') {
-        next()
-      } else {
-        next({ name: 'login', query: { redirect: to.fullPath } })
-      }
-
-    })
+  // 强制刷新（F5）会导致 isLogin 为空，需重新设置用户信息（权限、用户信息、菜单、动态路由......）
+  try {
+    await initUserData()
+    return to.fullPath
+    // const xx = router.currentRoute.value.matched.flatMap(record =>
+    //   Object.values(record.components)
+    // )
+    // if (to.matched.length === 0 && xx.length > 0) {
+    //   next({ path: to.fullPath })
+    // } else {
+    //   next()
+    // }
+  } catch (error) {
+    return { name: 'login', query: { redirect: to.fullPath } }
   }
-  routerTo()
-  // if (Object.keys(store.state.app.site).length < 1) { // 判断是否已存在站点信息
-  //   app.$service.getSiteInfo().then(data => {
-  //     store.dispatch('setSite', data)
-  //     routerTo()
-  //   }).catch(e => {
-  //     console.log(e)
-  //   })
-  // } else {
-  //   routerTo()
+
+  // try {
+
+  //   const xx = router.currentRoute.value.matched.flatMap(record =>
+  //     Object.values(record.components)
+  //   )
+  //   if (to.matched.length === 0 && xx.length > 0) {
+  //     next({ path: to.fullPath })
+  //   } else {
+  //     next()
+  //   }
+  // } catch (error) {
+  //   next({ name: 'login', query: { redirect: to.fullPath } })
   // }
+
+  // isLoggedIn().then(() => {
+
+
+  //   // if (to.name !== 'login') {
+  //   //   const xx = router.currentRoute.value.matched.flatMap(record =>
+  //   //     Object.values(record.components)
+  //   //   )
+  //   //   if (to.matched.length === 0 && xx.length > 0) {
+  //   //     next({ path: to.fullPath })
+  //   //   } else {
+  //   //     next()
+  //   //   }
+  //   // } else {
+  //   //   if (to.query.redirect) {
+  //   //     next({ path: to.query.redirect as string })
+  //   //   } else {
+  //   //     next({ name: 'home' })
+  //   //   }
+  //   // }
+
+
+  // }).catch(() => {
+
+  //   if (to.name === 'login' || to.name === 'register') {
+  //     next()
+  //   } else {
+  //     next({ name: 'login', query: { redirect: to.fullPath } })
+  //   }
+
+  // })
+
+
 })
 // router.afterEach(to => {
 //   const app = this.app

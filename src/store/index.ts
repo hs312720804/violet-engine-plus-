@@ -4,7 +4,6 @@ import { createStore, useStore as baseUseStore, Store } from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
 import SecureLS from 'secure-ls'
 import app, { AppModuleState } from './modules/app'
-import errorLog, { ErrorLogModuleState } from './modules/errorLog'
 // import permission, { PermissionModuleState } from './modules/permission'
 import user, { UserModuleState } from './modules/user'
 import getters from './getters'
@@ -15,8 +14,7 @@ const ls = new SecureLS({ encodingType: 'aes', encryptionSecret: 'dmlvbGV0LXNlY3
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface RootState {
   app: AppModuleState
-  errorLog: ErrorLogModuleState
-  // user: UserModuleState
+  user: UserModuleState
 }
 
 export const key: InjectionKey<Store<RootState>> = Symbol()
@@ -24,23 +22,22 @@ export const key: InjectionKey<Store<RootState>> = Symbol()
 export const storeOptions = {
   modules: {
     app,
-    user,
-    errorLog
+    user
   },
   getters,
   plugins: [
     // store 持久化 https://github.com/robinvdvleuten/vuex-persistedstate#createpersistedstateoptions
-    createPersistedState()
-    // createPersistedState({
-    //   key: 'violet',
-    //   // paths: ['app'], // 要持久化的的状态
-    //   // 使用 secure-ls 对持久化的 store 进行加密 https://github.com/robinvdvleuten/vuex-persistedstate#encrypted-local-storage
-    //   storage: {
-    //     getItem: key => ls.get(key),
-    //     setItem: (key, value) => ls.set(key, value),
-    //     removeItem: key => ls.remove(key)
-    //   }
-    // })
+    // createPersistedState()
+    createPersistedState({
+      key: 'violet',
+      paths: ['app'] // 要持久化的的状态(不对user进行持久化)
+      // 使用 secure-ls 对持久化的 store 进行加密 https://github.com/robinvdvleuten/vuex-persistedstate#encrypted-local-storage
+      // storage: {
+      //   getItem: key => ls.get(key),
+      //   setItem: (key, value) => ls.set(key, value),
+      //   removeItem: key => ls.remove(key)
+      // }
+    })
   ]
 }
 

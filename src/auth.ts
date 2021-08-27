@@ -9,24 +9,6 @@ import { getUserInfoService } from '@/services/common'
 import { AppAccess } from '@/store/modules/app'
 import { RouteRecordRaw } from 'vue-router'
 // const storageName = 'violet'
-// export async function $isLoggedIn () {
-//   // 判断用户是否登录
-//   if (store.getters.isLogin) {
-//     return Promise.resolve(store.state.user)
-//   }
-//   return getInitData()
-//   // // storage
-//   // const user = Storage.$get(`${storageName}/user`)
-//   // if (user) {
-//   //   // try login
-//   //   store.dispatch('cacheUserInfo', user)
-//   //   return getInitData().catch(e => {
-//   //     Storage.$set(`${storageName}/user`, '')
-//   //     this.$router.push({ name: 'login' })
-//   //   })
-//   // }
-//   // return Promise.reject(new Error('NOT LOGGEDIN'))
-// }
 
 export async function $logout () {
   // Storage.$remove(`${storageName}/user`)
@@ -34,9 +16,12 @@ export async function $logout () {
   store.dispatch('clearUserInfo')
 }
 
-export async function getInitData () {
+export async function initUserData () {
   return new Promise((resolve, reject) => {
     getUserInfoService().then(res => {
+
+      store.dispatch('user/saveUserInfo', res)
+
       const menu = res.menus[0].children
       const accessObj: AppAccess = {}
       res.resourceOperations.forEach(item => {
@@ -108,7 +93,7 @@ export async function getInitData () {
       router.options.routes = filterRoutes // 动态路由
       filterRoutes.forEach(route => router.addRoute(route))  // 动态路由
       // router.addRoutes(filterRoutes) // 动态路由
-      resolve(undefined)
+      resolve(res)
     }).catch(e => {
       reject(e)
     })

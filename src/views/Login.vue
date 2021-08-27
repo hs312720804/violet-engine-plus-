@@ -6,7 +6,7 @@
           <div class="log_logo">
             <img v-if="image" :src="image">
             <img v-else src="@/assets/logo.png">
-            <span>{{ siteInfo.siteName }}</span>
+            <span>{{ siteInfo?.siteName }}</span>
           </div>
           <div class="log_bj">
             <div class="formRadio">
@@ -94,7 +94,7 @@
       </el-col>
     </el-row>
     <div class="via">
-      Copyright ©{{ year }} {{ siteInfo.copyright }} ·  <template v-if="siteInfo.recordNum">ICP备案证号：<a href="https://beian.miit.gov.cn/" target="_blank">{{ siteInfo.recordNum }}</a></template>
+      Copyright ©{{ year }} {{ siteInfo?.copyright }} ·  <template v-if="siteInfo?.recordNum">ICP备案证号：<a href="https://beian.miit.gov.cn/" target="_blank">{{ siteInfo.recordNum }}</a></template>
     </div>
   </div>
 </template>
@@ -102,14 +102,18 @@
 <script lang="ts">
 import { defineComponent, ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
+import { useStore } from '@/store'
 
 import { ElForm } from 'element-plus'
 import { LoginService, LoginArg } from '@/services/login'
-import { getInitData } from '@/auth'
+import { initUserData } from '@/auth'
 
 export default defineComponent({
   setup() {
     const $router = useRouter()
+    const $store = useStore()
+    const siteInfo = $store.state.app.site
+
     const loginType = ref('admin')
     const adminForm = reactive<LoginArg>({
       userName: 'admin',
@@ -123,7 +127,6 @@ export default defineComponent({
     const employeeFormEl = ref<InstanceType<typeof ElForm>>()
 
     const formSchema = ref('')
-    const siteInfo = ref('')
     const image = ref('')
     const year = ref(2021)
 
@@ -131,7 +134,7 @@ export default defineComponent({
 
       if (loginType.value === 'admin') {
         LoginService(adminForm)
-          .then(getInitData)
+          .then(initUserData)
           .then(()=> {
             $router.push('/')
           })
@@ -159,6 +162,7 @@ export default defineComponent({
     }
 
     return {
+      siteInfo,
       loginType,
       adminForm,
       employeeForm,
@@ -168,7 +172,6 @@ export default defineComponent({
       getVerifyCode,
       handleRegister,
       formSchema,
-      siteInfo,
       image,
       year
     }

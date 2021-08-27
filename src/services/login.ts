@@ -14,7 +14,7 @@ export const LoginService = wrapService<LoginArg, UserModuleState>(async data =>
     isJSON: false,
     emptyToken: true
   }).then(res => {
-    store.dispatch('cacheUserInfo', res)
+    store.dispatch('user/saveUserInfo', res)
     return res
   })
 })

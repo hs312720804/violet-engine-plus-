@@ -5,7 +5,7 @@ import { store } from '@/store'
 import { ElLoading } from 'element-plus'
 // import 'nprogress/nprogress.css'
 
-interface Res {code:number|string;success:boolean;data:any;}
+interface Res { code: number | string; success: boolean; data: any; msg: string; }
 
 type IfetchArg = {
   isJSON?: boolean
@@ -43,9 +43,8 @@ export default function fetch ({
   if (emptyToken) {
     token = ''
   } else {
-    const user = store.state.user
-    if (user) {
-      token = user.token
+    if (store.getters.token) {
+      token = store.getters.token
     }
   }
   // const app = this.app

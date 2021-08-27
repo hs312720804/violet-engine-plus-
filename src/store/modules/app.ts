@@ -1,10 +1,11 @@
 // import Cookies from 'js-cookie'
 import { ActionContext } from 'vuex'
 import { RootState } from '@/store/index'
+import { getSiteInfo } from '@/services/common'
 
 export interface AppMenu { isShow: boolean; isCollapse: boolean; }
 export interface AppSidebar { opened?: boolean; withoutAnimation: boolean; }
-export interface AppSite { copyright?: string; layout: string; recordNum?: string; siteName?: string; }
+export interface AppSite { copyright: string; layout: string; recordNum: string; siteName: string; }
 export interface AppAccess { [key: string]: boolean; }
 export interface UserModuleState {
   id?: number
@@ -23,12 +24,14 @@ export interface AppModuleState {
   language: string
   size: string
   access: AppAccess
-  site: AppSite
+  site?: AppSite
   users: AppUsers
+  loginUserToken?: string
 }
 
 type AppActionContext = ActionContext<AppModuleState, RootState>
 const app = {
+  namespaced: true,
   state: {
     sidebar: {
       opened: true,
@@ -42,8 +45,9 @@ const app = {
     language: 'zh',
     size: 'medium',
     access: {},
-    site: { layout: 'default' },
-    users: {}
+    site: undefined,
+    users: {},
+    loginUserToken: undefined
   },
   mutations: {
     TOGGLE_MENU: (state: AppModuleState) => {
@@ -63,7 +67,7 @@ const app = {
       state.sidebar.withoutAnimation = false
     },
     CLOSE_SIDEBAR: (state: AppModuleState, withoutAnimation: boolean) => {
-      debugger
+
       state.sidebar.opened = false
       state.sidebar.withoutAnimation = withoutAnimation
     },
@@ -87,10 +91,9 @@ const app = {
     },
     SET_APPUSERINFO: (state: AppModuleState, user: UserModuleState) => {
       state.users[user.loginName] = user
-      console.log(state.users)
-      // state.users[user.loginName].loginName = user.loginName
-      // state.users[user.loginName].token = user.token
-      // state.users[user.loginName].id = user.id
+    },
+    SET_TOKEN: (state: AppModuleState, token: string) => {
+      state.loginUserToken = token
     }
   },
   actions: {
@@ -115,18 +118,12 @@ const app = {
     clearAccess ({ commit }: AppActionContext) {
       commit('CLEAR_ACCESS')
     },
-    setSite ({ commit }: AppActionContext, site: AppSite) {
-      commit('SET_SITE', site)
-    },
-    cacheAppUserInfo ({ commit }: AppActionContext, user: UserModuleState) {
-      commit('SET_APPUSERINFO', user)
-      // commit('SET_DEPARTMENT', user)
-      // commit('SET_LOGIN_NAME', user)
-    },
-    clearAppUserInfo ({ commit }: AppActionContext) {
-    //   commit('SET_LOGIN_NAME', '')
-    //   commit('SET_TOKEN', '')
-    //   commit('SET_DEPARTMENT', '')
+    async initSite ({ commit, state }: AppActionContext) {
+      if (!state.site) {
+        const siteInfo = await getSiteInfo()
+        commit('SET_SITE', siteInfo)
+      }
+      return state.site
     }
   }
 }
