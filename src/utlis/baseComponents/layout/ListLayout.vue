@@ -20,7 +20,6 @@
 import { ref, onMounted, onBeforeUnmount, onActivated } from 'vue'
 export default {
   setup (props, ctx) {
-    debugger
     const heightRef = ref(undefined)
     const $list = ref(null)
     const setHeight = () => {

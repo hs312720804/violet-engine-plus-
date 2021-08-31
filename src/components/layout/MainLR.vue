@@ -11,7 +11,7 @@
         <div class="aside__menu-main">
           <el-scrollbar wrap-class="scrollbar-wrapper">
             <c-menu
-              :default-active="$route.name"
+              :default-active="route.name"
               :items="menu || defaultMenu"
               :is-collapse="isCollapseMenu"
             >
@@ -24,7 +24,7 @@
       <div class="aside__menu-main">
         <el-scrollbar wrap-class="scrollbar-wrapper">
           <c-menu
-            :default-active="$route.name"
+            :default-active="route.name"
             :items="menu || defaultMenu"
             :is-collapse="isCollapseMenu"
           >
@@ -40,17 +40,12 @@
           class="collpase-btn"
           type="text"
           :icon="isCollapseMenu? 'el-icon-cc-indent' : 'el-icon-cc-outdent'"
-          @click="toggleMenu"
+          @click="handleToggleMenu"
         >
         </el-button>
-        <SiteName :name="siteInfo.siteName"></SiteName>
-        <!-- <c-menu
-          :default-active="$route.name"
-          :items="menu || horizontalMenu"
-          v-if="basic.topMenu"
-          mode="horizontal"
-        >
-        </c-menu> -->
+
+        <SiteName :name="siteInfo?.siteName"></SiteName>
+
         <div class="c-breadcrumb">
           <span>&nbsp;&nbsp;/</span>
           <c-breadcrumb
@@ -63,11 +58,12 @@
           <el-dropdown :hide-on-click="false" @command="handleDropdownCommand">
             <span class="el-dropdown-link">
               <i class="el-icon-cc-user"></i>
-              {{ $store.state.user.name }}
+              {{ store.state.user.name }}
               <i class="el-icon-arrow-down el-icon--right"></i>
             </span>
             <template #dropdown>
               <el-dropdown-menu>
+                <el-dropdown-item command="account">{{ $t('accountInfo') }}</el-dropdown-item>
                 <el-dropdown-item command="logout">{{ $t('btn.logout') }}</el-dropdown-item>
               </el-dropdown-menu>
             </template>
@@ -78,219 +74,157 @@
         </div>
       </el-header>
       <c-tag-nav
-        v-show="basic.isShowTagNav"
+        v-show="basic?.isShowTagNav"
         v-if="device !== 'mobile'"
-        ref="tag"
+        ref="tagRef"
         :init-tags="initTags"
         theme="gray-tab"
       ></c-tag-nav>
       <el-main>
-        <keep-alive>
-          <router-view v-if="isKeepAlive" :key="$route.name"></router-view>
+        <router-view v-slot="{ Component }">
+          <keep-alive v-if="isKeepAlive">
+            <component :is="Component"></component>
+          </keep-alive>
+          <component :is="Component" v-else></component>
+        </router-view>
+        <!-- <keep-alive>
+          <router-view v-if="isKeepAlive" :key="route.name"></router-view>
         </keep-alive>
-        <router-view v-if="!isKeepAlive" :key="$route.name"></router-view>
+        <router-view v-if="!isKeepAlive" :key="route.name"></router-view> -->
       </el-main>
     </el-container>
   </el-container>
 </template>
 
-<script>
-import { defineComponent, ref, reactive, computed, watch, onMounted, onUnmounted } from 'vue'
+<script lang="ts">
+import { defineComponent, ref, computed, PropType  } from 'vue'
+import { useRouter, useRoute, RouteRecordRaw } from 'vue-router'
+import { CMenuItems, CTagNav } from '@ccprivate/admin-toolkit-plus'
+
 import { useStore } from '@/store'
-import { useRouter, useRoute } from 'vue-router'
+import { $logout } from '@/auth'
 
 import SiteName from '@/components/SiteName.vue'
 import Screenfull from '@/components/Screenfull/index.vue'
-import ResizeMixin from './mixin/ResizeHandler'
-import { $logout } from '@/auth'
+import { UIBasic } from './Index.vue'
+
+import useMainWindowResize,{ HeaderDropdownCommand, DeviceChangeMethods } from '@/hooks/useMainWindowResize'
+import useUserSiteInfo from '@/hooks/useUserSiteInfo'
 
 export default defineComponent({
   components: {
     Screenfull,
     SiteName
   },
-  mixins: [ResizeMixin],
-  props: ['menu', 'basic'],
+  props:{
+    menu: {
+      type: Array as PropType<Array<CMenuItems>>,
+      default(){
+        return undefined
+      }
+    },
+    basic:{
+      type: Object as PropType<UIBasic>,
+      default(){
+        return undefined
+      }
+    }
+  },
   emits: ['click', 'set-layout', 'command'],
   setup() {
-    const $store = useStore()
+
+    const store = useStore()
+    const route = useRoute()
     const $router = useRouter()
-    const $route = useRoute()
 
-    let breadcrumb = reactive([])
-    let isCollapseMenu = ref(false)
-    let isShowMenu = ref(true)
-    let drawer = ref(false)
-
-    const sidebar = computed(() => {
-      return $store.state.app.sidebar
-    })
-
-    const device = computed(() => {
-      return $store.state.app.device
-    })
-
-    const siteInfo = computed (() => {
-      return $store.state.app.site
-    })
-
+    const siteInfo = computed (() => store.state.app.site)
     const isKeepAlive = computed(() => {
-      const meta = $route.meta
+      const meta = route.meta
       return meta && meta.isCache !== false
     })
-
-    const initTags = computed(() => {
-      return []
-      // return this.$appState.$storage(this.$store.state.user.name).$get('tags') || []
-    })
-
     const defaultMenu = computed(() => {
       const mainRoute = $router.options.routes.find(item => {
         return item.path === '/'
       })
-      function gen ({ name, meta = {}, children }) {
-        if (!meta.hideInMenu) {
-          const currentMenuItem = {
-            title: meta.title,
-            icon: meta.icon,
-            route: name
+      let items
+
+      if(mainRoute){
+        function gen ({ name, meta = {}, children }: RouteRecordRaw ) {
+          if (!meta.hideInMenu) {
+            const currentMenuItem: CMenuItems = {
+              title: meta.title as string,
+              icon: meta.icon as string,
+              route: name as string
+            }
+            if (children) {
+              currentMenuItem.children = children.reduce((result: Array<CMenuItems>, item) => {
+                const menuItem = gen(item)
+                if (menuItem) {
+                  result.push(menuItem)
+                }
+                return result
+              }, [])
+            }
+            return currentMenuItem
           }
-          if (children) {
-            currentMenuItem.children = children.reduce((result, item) => {
-              const menuItem = gen(item)
-              if (menuItem) {
-                result.push(menuItem)
-              }
-              return result
-            }, [])
-          }
-          return currentMenuItem
         }
+        items = gen(mainRoute)?.children
       }
-      const items = gen(mainRoute).children
-      // console.log(JSON.stringify(items))
-      console.log('items==>', items)
+
       return items
     })
 
-    const horizontalMenu = computed(() => {
-      const mainRoute = $router.options.routes.find(item => {
-        return item.path === '/'
-      })
-      function gen ({ name, meta = {}, children }) {
-        if (!meta.hideInMenu) {
-          const currentMenuItem = {
-            title: meta.title,
-            route: name
-          }
-          if (children) {
-            currentMenuItem.children = children.reduce((result, item) => {
-              const menuItem = gen(item)
-              if (menuItem) {
-                result.push(menuItem)
-              }
-              return result
-            }, [])
-          }
-          return currentMenuItem
-        }
+
+    const deviceChangeMethods: DeviceChangeMethods = device => {
+      if (device === 'miniScreen') {
+        store.commit('app/OPEN_MENU')
+        store.commit('app/SET_MENU_COLLAPSE', true)
+      } else if (device === 'mobile') {
+        store.commit('app/CLOSE_MENU')
+        store.commit('app/SET_MENU_COLLAPSE', true)
+      } else {
+        store.commit('app/OPEN_MENU')
       }
-      const items = gen(mainRoute).children
-      // console.log(JSON.stringify(items))
-      return items.splice(0, 5)
-    })
+    }
+    const { isCollapseMenu, isShowMenu, device } = useMainWindowResize({ deviceChangeMethods })
+    const tagRef = ref<InstanceType<CTagNav>>()
+    const { breadcrumb, initTags } = useUserSiteInfo({ tagRef })
 
-    watch(() => device,
-      () => {
-        responsiveMenu()
-      })
-
-    const handleSelect = name => {
-      $router.push({ name }).catch(() => {})
+    let drawer = ref(false)
+    const handleToggleMenu = () => {
+      if (device.value === 'mobile') {
+        drawer.value = true
+        store.commit('app/SET_MENU_COLLAPSE', false)
+      } else {
+        store.commit('app/TOGGLE_MENU')
+      }
     }
 
-    const handleDropdownCommand = command => {
+    const handleDropdownCommand = (command:HeaderDropdownCommand) => {
       if (command === 'logout') {
         $logout().then(() => {
           $router.push({ name: 'login' })
         })
       }
+      $router.push({ name: command })
     }
 
-    const responsiveMenu = () => {
-      const device = device
-      if (device === 'miniScreen') {
-        // this.isShowMenu = true
-        $store.commit('OPEN_MENU')
-        // const isCollapseMenu = !this.isCollapseMenu ? !this.isCollapseMenu : this.isCollapseMenu
-        // this.$appState.$set('isCollapseMenu', isCollapseMenu)
-        // this.isCollapseMenu = isCollapseMenu
-      } else if (device === 'mobile') {
-        // const isShowMenu = this.isShowMenu ? !this.isShowMenu : this.isShowMenu
-        // this.$appState.$set('isShowMenu', isShowMenu)
-        // this.isShowMenu = isShowMenu
-
-        // this.$appState.$set('isCollapseMenu', true)
-        // this.isCollapseMenu = true
-        $store.commit('SET_MENU_COLLAPSE', true)
-      } else {
-
-        $store.commit('OPEN_MENU')
-        // this.isShowMenu = true
-      }
-    }
-
-    const toggleMenu = () => {
-      if (device.value === 'mobile') {
-        drawer.value = true
-        // this.isCollapseMenu = false
-        $store.commit('SET_MENU_COLLAPSE', false)
-      } else {
-
-        $store.commit('TOGGLE_MENU')
-        // const isCollapseMenu = !this.isCollapseMenu
-        // this.$appState.$set('isCollapseMenu', isCollapseMenu)
-        // this.isCollapseMenu = isCollapseMenu
-        // this.$store.dispatch('closeSideBar', { withoutAnimation: false })
-      }
-    }
-
-    const saveTags = () => {
-      // const tags = this.$refs.tag.tags
-      // this.$appState.$storage(this.$store.state.user.name).$set('tags', tags)
-    }
-
-    // this.isCollapseMenu = !!this.$appState.$get('isCollapseMenu')
-    // this.$bus.$on('breadcrumb-change', breadcrumb => {
-    //   this.breadcrumb = breadcrumb
-    // })
-
-    onMounted(() => {
-      window.addEventListener('beforeunload', saveTags())
-    })
-    onUnmounted(() => {
-      window.removeEventListener('beforeunload', saveTags())
-    })
 
     return {
       breadcrumb,
       isCollapseMenu,
       isShowMenu,
       drawer,
-      sidebar,
       device,
       siteInfo,
       isKeepAlive,
       initTags,
       defaultMenu,
-      horizontalMenu,
-      handleSelect,
       handleDropdownCommand,
-      responsiveMenu,
-      toggleMenu,
-      saveTags,
-      $route,
-      $store
+      handleToggleMenu,
+      route,
+      store,
+      tagRef
     }
 
   }

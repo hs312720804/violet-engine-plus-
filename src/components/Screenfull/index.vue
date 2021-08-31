@@ -1,5 +1,5 @@
 <template>
-  <div class="cc-fullscreen" @click="click">
+  <div class="c-fullscreen" @click="click">
     <i :class="isFullscreen ? 'el-icon-cc-fullscreen-exit' : 'el-icon-full-screen'"></i>
   </div>
 </template>
@@ -48,13 +48,13 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-.cc-fullscreen
+.c-fullscreen
   font-size 20px
   height 60px
   width 20px
   line-height 60px
   margin-left auto
   cursor pointer
-.cc-fullscreen:hover
+.c-fullscreen:hover
   color #000
 </style>

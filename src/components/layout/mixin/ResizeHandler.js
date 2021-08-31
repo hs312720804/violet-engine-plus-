@@ -7,7 +7,7 @@ export default {
   watch: {
     $route (route) {
       if (this.device === 'mobile' && this.sidebar.opened) {
-        store.dispatch('closeSideBar', { withoutAnimation: false })
+        store.dispatch('app/closeSideBar', { withoutAnimation: false })
       }
     }
   },
@@ -18,12 +18,12 @@ export default {
     const isMobile = this.isMobile()
     const isMiniScreen = this.isMiniScreen()
     if (isMiniScreen) {
-      store.dispatch('toggleDevice', 'miniScreen')
-      store.dispatch('closeSideBar', { withoutAnimation: true })
+      store.dispatch('app/toggleDevice', 'miniScreen')
+      store.dispatch('app/closeSideBar', { withoutAnimation: true })
     }
     if (isMobile) {
-      store.dispatch('toggleDevice', 'mobile')
-      store.dispatch('closeSideBar', { withoutAnimation: true })
+      store.dispatch('app/toggleDevice', 'mobile')
+      store.dispatch('app/closeSideBar', { withoutAnimation: true })
     }
   },
   methods: {
@@ -48,11 +48,11 @@ export default {
           device = 'desktop'
         }
 
-        store.dispatch('toggleDevice', device)
+        store.dispatch('app/toggleDevice', device)
         if (isMiniScreen) {
-          store.dispatch('closeSideBar', { withoutAnimation: true })
+          store.dispatch('app/closeSideBar', { withoutAnimation: true })
         } else if (isMobile) {
-          store.dispatch('closeSideBar', { withoutAnimation: true })
+          store.dispatch('app/closeSideBar', { withoutAnimation: true })
         }
       }
     }

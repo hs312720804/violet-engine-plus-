@@ -5,12 +5,12 @@
         <div class="log_center">
           <div class="log_logo">
             <img v-if="image" :src="image">
-            <img v-else src="@/assets/logo.png">
+            <img v-else src="@/assets/images/logo.png">
             <span>{{ siteInfo?.siteName }}</span>
           </div>
           <div class="log_bj">
             <div class="formRadio">
-              <el-tabs v-model="loginType" :stretch="true" @tab-click="handleSelectLoginType">
+              <el-tabs v-model="loginType" :stretch="true">
                 <el-tab-pane label="管理员登录" name="admin"></el-tab-pane>
                 <!-- <el-tab-pane label="员工入职登录" name="employee"></el-tab-pane> -->
               </el-tabs>
@@ -21,7 +21,7 @@
               :model="adminForm"
               status-icon
               class="demo-adminForm"
-              @keyup.enter.native="handleLogin"
+              @keyup.enter="handleLogin"
             >
               <el-form-item
                 prop="userName"

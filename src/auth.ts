@@ -27,7 +27,7 @@ export async function initUserData () {
       res.resourceOperations.forEach(item => {
         accessObj[item] = true
       })
-      store.dispatch('setAccess', accessObj)
+      store.dispatch('app/setAccess', accessObj)
       if (menu.length === 0) {
         throw new Error('not login')
       }

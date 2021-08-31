@@ -83,9 +83,21 @@
 <script lang="ts">
 import { defineComponent, ref, reactive } from 'vue'
 import { useStore } from '@/store'
+import { AppUILayout } from '@/store/modules/app'
+
 import MainLR from './MainLR.vue'
 import MainTLR from './MainTLR.vue'
 import MainTB from './MainTB.vue'
+
+export interface UIBasic  {
+  isShowTagNav: boolean
+  topMenu: boolean
+}
+
+interface UISetting {
+  layout: AppUILayout
+  basic: UIBasic
+}
 
 export default defineComponent({
   components: {
@@ -102,7 +114,7 @@ export default defineComponent({
   setup() {
     const store = useStore()
     let isShowSetting = ref(false)
-    let uiSettingDefault = reactive({
+    let uiSettingDefault = reactive<UISetting>({
       layout: 'default',
       basic: {
         isShowTagNav: true, // 标签导航
@@ -116,9 +128,9 @@ export default defineComponent({
         topMenu: true //  头部菜单
       }
     })
-    let layoutMap = reactive(['default', 'tlr', 'tb'])
+    let layoutMap = reactive<Array<AppUILayout>>(['default', 'tlr', 'tb'])
 
-    const layout = store.state.app.site.layout
+    const layout = store.state.app.site?.layout ?? 'default'
     layoutMap.indexOf(layout) > -1 ? uiSetting.layout = layout : uiSetting.layout = 'default'
 
     const setLayout = (msg: boolean) => {
@@ -137,9 +149,7 @@ export default defineComponent({
     }
     return {
       isShowSetting,
-      uiSettingDefault,
       uiSetting,
-      layoutMap,
       setLayout,
       handleSelectLayout,
       handleTagNav,

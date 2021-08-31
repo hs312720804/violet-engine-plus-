@@ -1,31 +1,31 @@
 // import Cookies from 'js-cookie'
 import { ActionContext } from 'vuex'
+import { CBreadcrumbItems, CTagNavInitTags } from '@ccprivate/admin-toolkit-plus'
 import { RootState } from '@/store/index'
 import { getSiteInfo } from '@/services/common'
 
+export type AppDeviceType = 'desktop' | 'miniScreen' | 'mobile'
+export type AppUILayout = 'default' | 'tlr' | 'tb'
 export interface AppMenu { isShow: boolean; isCollapse: boolean; }
 export interface AppSidebar { opened?: boolean; withoutAnimation: boolean; }
-export interface AppSite { copyright: string; layout: string; recordNum: string; siteName: string; }
+export interface AppSite { copyright: string; layout: AppUILayout; recordNum: string; siteName: string; }
 export interface AppAccess { [key: string]: boolean; }
-export interface UserModuleState {
-  id?: number
-  loginName: string
-  token?: string
-  departmentId?: string
-}
-export interface AppUsers {
-  [key: string]: UserModuleState
-}
-
+/**
+ * 用户的操作信息: 面包屑, 打开的菜单
+ */
+export interface UserOptLog { breadcrumb: CBreadcrumbItems; tagNavs: CTagNavInitTags; }
+/**
+ * 记录各个用户的操作信息
+ */
+export interface AppUsersOptLog { [loginName: string]: UserOptLog; }
 export interface AppModuleState {
   sidebar: AppSidebar
   menu: AppMenu
-  device: string
+  device: AppDeviceType
   language: string
-  size: string
   access: AppAccess
   site?: AppSite
-  users: AppUsers
+  usersOptLog: AppUsersOptLog
   loginUserToken?: string
 }
 
@@ -43,10 +43,9 @@ const app = {
     },
     device: 'desktop',
     language: 'zh',
-    size: 'medium',
-    access: {},
     site: undefined,
-    users: {},
+    access: {},
+    usersOptLog: {},
     loginUserToken: undefined
   },
   mutations: {
@@ -67,18 +66,14 @@ const app = {
       state.sidebar.withoutAnimation = false
     },
     CLOSE_SIDEBAR: (state: AppModuleState, withoutAnimation: boolean) => {
-
       state.sidebar.opened = false
       state.sidebar.withoutAnimation = withoutAnimation
     },
-    TOGGLE_DEVICE: (state: AppModuleState, device: string) => {
+    TOGGLE_DEVICE: (state: AppModuleState, device: AppDeviceType) => {
       state.device = device
     },
     SET_LANGUAGE: (state: AppModuleState, language: string) => {
       state.language = language
-    },
-    SET_SIZE: (state: AppModuleState, size: string) => {
-      state.size = size
     },
     SET_ACCESS: (state: AppModuleState, access: AppAccess) => {
       state.access = access
@@ -89,11 +84,28 @@ const app = {
     SET_SITE: (state: AppModuleState, site: AppSite) => {
       state.site = site
     },
-    SET_APPUSERINFO: (state: AppModuleState, user: UserModuleState) => {
-      state.users[user.loginName] = user
-    },
     SET_TOKEN: (state: AppModuleState, token: string) => {
       state.loginUserToken = token
+    },
+    SET_BREADCRUMB (state: AppModuleState, userBreadcrumb: { loginName: string; breadcrumb: CBreadcrumbItems; }) {
+
+      const { loginName, breadcrumb } = userBreadcrumb
+      console.log('SET_BREADCRUMB=======>', state.usersOptLog[loginName])
+      if (loginName) {
+        const usersOptLog = state.usersOptLog[loginName] || {}
+        usersOptLog.breadcrumb = breadcrumb
+        state.usersOptLog[loginName] = usersOptLog
+      }
+    },
+    SET_TAG_NAVS (state: AppModuleState, userTagNavs: { loginName: string; tagNavs: CTagNavInitTags; }) {
+
+      const { loginName, tagNavs } = userTagNavs
+      console.log('SET_TAG_NAVS=======>', state.usersOptLog[loginName])
+      if (loginName) {
+        const usersOptLog = state.usersOptLog[loginName] || {}
+        usersOptLog.tagNavs = tagNavs
+        state.usersOptLog[loginName] = usersOptLog
+      }
     }
   },
   actions: {
@@ -109,9 +121,6 @@ const app = {
     setLanguage ({ commit }: AppActionContext, language: string) {
       commit('SET_LANGUAGE', language)
     },
-    setSize ({ commit }: AppActionContext, size: string) {
-      commit('SET_SIZE', size)
-    },
     setAccess ({ commit }: AppActionContext, access: AppAccess) {
       commit('SET_ACCESS', access)
     },
@@ -124,6 +133,14 @@ const app = {
         commit('SET_SITE', siteInfo)
       }
       return state.site
+    },
+    setBreadcrumb: ({ commit, rootState }: AppActionContext, breadcrumb: CBreadcrumbItems) => {
+      const user = rootState.user
+      commit('SET_BREADCRUMB', { loginName: user.loginName, breadcrumb })
+    },
+    setTagNavs: ({ commit, rootState }: AppActionContext, tagNavs: CTagNavInitTags) => {
+      const user = rootState.user
+      commit('SET_TAG_NAVS', { loginName: user.loginName, tagNavs })
     }
   }
 }

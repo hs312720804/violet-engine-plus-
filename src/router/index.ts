@@ -1,6 +1,6 @@
-import { createRouter, createWebHistory, createWebHashHistory } from 'vue-router'
-// import Login from '@/views/Login.vue'
-// import Register from '@/views/Register.vue'
+
+import { CBreadcrumbItems } from '@ccprivate/admin-toolkit-plus'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import { store } from '@/store'
 import routes from './routes'
 import { initUserData } from '@/auth'
@@ -19,6 +19,7 @@ router.beforeEach(async () => {
   }
   return true
 })
+
 // 权限校验
 router.beforeEach(async to => {
   // 判断当前路由是否需要校验的
@@ -27,81 +28,25 @@ router.beforeEach(async to => {
   }
   // 强制刷新（F5）会导致 isLogin 为空，需重新设置用户信息（权限、用户信息、菜单、动态路由......）
   try {
-    await initUserData()
+    await initUserData()  // 会重新添加路由
+    // https://next.router.vuejs.org/zh/guide/advanced/dynamic-routing.html#在导航守卫中添加路由
     return to.fullPath
-    // const xx = router.currentRoute.value.matched.flatMap(record =>
-    //   Object.values(record.components)
-    // )
-    // if (to.matched.length === 0 && xx.length > 0) {
-    //   next({ path: to.fullPath })
-    // } else {
-    //   next()
-    // }
   } catch (error) {
     return { name: 'login', query: { redirect: to.fullPath } }
   }
 
-  // try {
-
-  //   const xx = router.currentRoute.value.matched.flatMap(record =>
-  //     Object.values(record.components)
-  //   )
-  //   if (to.matched.length === 0 && xx.length > 0) {
-  //     next({ path: to.fullPath })
-  //   } else {
-  //     next()
-  //   }
-  // } catch (error) {
-  //   next({ name: 'login', query: { redirect: to.fullPath } })
-  // }
-
-  // isLoggedIn().then(() => {
-
-
-  //   // if (to.name !== 'login') {
-  //   //   const xx = router.currentRoute.value.matched.flatMap(record =>
-  //   //     Object.values(record.components)
-  //   //   )
-  //   //   if (to.matched.length === 0 && xx.length > 0) {
-  //   //     next({ path: to.fullPath })
-  //   //   } else {
-  //   //     next()
-  //   //   }
-  //   // } else {
-  //   //   if (to.query.redirect) {
-  //   //     next({ path: to.query.redirect as string })
-  //   //   } else {
-  //   //     next({ name: 'home' })
-  //   //   }
-  //   // }
-
-
-  // }).catch(() => {
-
-  //   if (to.name === 'login' || to.name === 'register') {
-  //     next()
-  //   } else {
-  //     next({ name: 'login', query: { redirect: to.fullPath } })
-  //   }
-
-  // })
-
-
 })
-// router.afterEach(to => {
-//   const app = this.app
-//   const breadcrumb = to.matched.slice(1).map(({ name, meta }) => {
-//     return {
-//       name: meta.title,
-//       to: name
-//         ? { name }
-//         : undefined
-//     }
-//   })
-//   app.$nextTick(() => {
-//     app.$bus.$emit('breadcrumb-change', breadcrumb)
-//   })
-// })
+
+// 记录用户打开页面的路径，用于面包屑
+router.afterEach(to => {
+  const breadcrumb: CBreadcrumbItems = to.matched.slice(1).map(({ meta }) => {
+    return {
+      name: meta.title as string,
+      to: undefined
+    }
+  })
+  store.dispatch('app/setBreadcrumb', breadcrumb)
+})
 
 
 export default router
