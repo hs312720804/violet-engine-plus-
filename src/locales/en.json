@@ -118,6 +118,7 @@
     "cancelChangeTemplate": "已取消更换模板",
     "changePrimaryKey": "更换主键需先取消已有主键",
     "operationSuccess": "操作成功",
+    "operationError": "操作失败",
     "pleaseEnterString": "请至少输入{0}个字符",
     "emailIncorrect": "邮件地址格式不正确",
     "notFound": "页面不存在"

@@ -48,5 +48,4 @@ router.afterEach(to => {
   store.dispatch('app/setBreadcrumb', breadcrumb)
 })
 
-
 export default router

@@ -1,13 +1,11 @@
 import { store } from '@/store'
 import { UserModuleState } from '@/store/modules/user'
 import fetch from './fetch'
-import wrapService from '@/utlis/wrapService'
 
 export interface LoginArg { userName: string; password: string; loginType?: string; }
 
-export const LoginService = wrapService<LoginArg, UserModuleState>(async data => {
-
-  return fetch({
+export function LoginService (data: LoginArg) {
+  return fetch<UserModuleState>({
     method: 'post',
     url: 'login',
     data,
@@ -17,7 +15,7 @@ export const LoginService = wrapService<LoginArg, UserModuleState>(async data =>
     store.dispatch('user/saveUserInfo', res)
     return res
   })
-})
+}
 
 // function loginout (data) {
 //   return axios.post('logout', data)
@@ -30,5 +28,3 @@ export const LoginService = wrapService<LoginArg, UserModuleState>(async data =>
 //     isJSON: false
 //   })
 // }
-// export let LoginoutService = wrapService({ loginout })
-// export let GetValidateCodeService = wrapService({ getValidateCode })

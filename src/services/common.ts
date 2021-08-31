@@ -1,5 +1,5 @@
+import { AppSite } from '@/store/modules/app'
 import fetch from './fetch'
-import wrapService from '@/utlis/wrapService'
 
 export interface Menu {
   id: number
@@ -16,24 +16,24 @@ interface UserInfo {
   menus: Array<Menu>
 }
 
-export function getMenus (params) {
-  return fetch({
-    method: 'post',
-    url: 'loginResource',
-    params
-  }).then(data => {
-    return data
-  })
-}
+// export function getMenus (params) {
+//   return fetch({
+//     method: 'post',
+//     url: 'loginResource',
+//     params
+//   }).then(data => {
+//     return data
+//   })
+// }
 
-export const getUserInfoService = wrapService<undefined, UserInfo>(async () => {
-  return fetch({
+export function getUserInfoService () {
+  return fetch<UserInfo>({
     method: 'get',
     url: 'getUserInfo'
   }).then(data => {
-    return data
+    return data as UserInfo
   })
-})
+}
 
 // export function getMenusDetail (params) {
 //   return fetch({
@@ -52,10 +52,10 @@ export const getMenusDetailService = (params: any)=> {
 /**
  * 获取站点信息
  */
-export const getSiteInfo = wrapService(() => {
-  return fetch({
+export function getSiteInfo () {
+  return fetch<AppSite>({
     method: 'post',
     url: 'website/get',
     emptyToken: true
   })
-})
+}

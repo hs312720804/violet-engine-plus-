@@ -1,27 +1,34 @@
 import qs from 'qs'
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { store } from '@/store'
+import i18n from '@/i18n'
 // import NProgress from 'nprogress'
-import { ElLoading } from 'element-plus'
+import { ElLoading, ElNotification } from 'element-plus'
 // import 'nprogress/nprogress.css'
 
-interface Res { code: number | string; success: boolean; data: any; msg: string; }
+interface Res<T> { code: number | string; success: boolean; data: T; msg: string; }
 
 type IfetchArg = {
   isJSON?: boolean
   /** 是否清空token */
   emptyToken?: boolean
+  /** 操作成功时的信息，为空时不会显示任何弹窗提示 */
+  successMessage?: string
+  /** 操作失败时的信息，会覆盖接口返回的错误信息 */
+  errorMessage?: string
 } & AxiosRequestConfig
 
 let loadingInstance: import('element-plus/lib/el-loading/src/loading.type').ILoadingInstance | undefined
 
-export default function fetch ({
+export default function fetch<ResponseData> ({
   method = 'get',
   url,
   data = undefined,
   params = undefined,
   isJSON = true,
-  emptyToken = false
+  emptyToken = false,
+  successMessage = '',
+  errorMessage = ''
 }: IfetchArg) {
   // NProgress.start()
   // debugger
@@ -52,7 +59,7 @@ export default function fetch ({
     Authorization: token || ''
   }
   return axios(option)
-    .then(function ({ data }:AxiosResponse<Res>) {
+    .then(function ({ data }: AxiosResponse<Res<ResponseData>>) {
       // const data = xxx.data
       // NProgress.done()
       if (loadingInstance) {
@@ -73,6 +80,16 @@ export default function fetch ({
         }
       }
     })
+    .then(result => {
+      if (successMessage) {
+        ElNotification({
+          title: i18n.global.t('message.operationSuccess'), // '操作成功',
+          type: 'success',
+          message: successMessage
+        })
+      }
+      return result
+    })
     .catch(e => {
       // NProgress.done()
       if (loadingInstance) {
@@ -83,12 +100,11 @@ export default function fetch ({
         option.headers = {
           Authorization: ''
         }
-        // app.prototype.$logout().then(() => {
-        //   window.location.reload()
-        // })
-        throw e
-      } else {
-        throw e
       }
+      ElNotification({
+        title: '操作失败',
+        type: 'error',
+        message: errorMessage || e.message
+      })
     })
 }

@@ -1,5 +1,4 @@
 import fetch from './fetch'
-import wrapService from '@/utlis/wrapService'
 
 function removeEmptyChildren (menus:any) {
   menus.forEach(item => {
@@ -22,24 +21,6 @@ export function menuGetListService (params: undefined) {
     return data
   })
 }
-// export const menuGetListService = wrapService<undefined, any>(params => {
-//   return fetch({
-//     url: 'sys/menu/index',
-//     params
-//   }).then(data => {
-//     removeEmptyChildren(data)
-//     return data
-//   })
-// })
-
-// export const getUserInfoService = wrapService<undefined, UserInfo>(() => {
-//   return fetch({
-//     method: 'get',
-//     url: 'getUserInfo'
-//   }).then(data => {
-//     return data
-//   })
-// })
 
 
 export function menuUpsertService (data) {
