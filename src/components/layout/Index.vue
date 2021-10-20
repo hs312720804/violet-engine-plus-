@@ -113,40 +113,42 @@ export default defineComponent({
   },
   setup() {
     const store = useStore()
-    let isShowSetting = ref(false)
-    let uiSettingDefault = reactive<UISetting>({
-      layout: 'default',
-      basic: {
-        isShowTagNav: true, // 标签导航
-        topMenu: true //  头部菜单
-      }
-    })
-    let uiSetting = reactive({
-      layout: 'default',
-      basic: {
-        isShowTagNav: true, // 标签导航
-        topMenu: true //  头部菜单
-      }
-    })
-    let layoutMap = reactive<Array<AppUILayout>>(['default', 'tlr', 'tb'])
 
+    const uiSettingDefault = reactive<UISetting>({
+      layout: 'default',
+      basic: {
+        isShowTagNav: true, // 标签导航
+        topMenu: true //  头部菜单
+      }
+    })
+    let uiSetting = reactive<UISetting>({
+      layout: 'default',
+      basic: {
+        isShowTagNav: true, // 标签导航
+        topMenu: true //  头部菜单
+      }
+    })
+    function handleBackDefault() {
+      uiSetting = JSON.parse(JSON.stringify(uiSettingDefault))
+    }
+
+    const layoutMap = reactive<Array<AppUILayout>>(['default', 'tlr', 'tb'])
     const layout = store.state.app.site?.layout ?? 'default'
     layoutMap.indexOf(layout) > -1 ? uiSetting.layout = layout : uiSetting.layout = 'default'
 
+    let isShowSetting = ref(false)
     const setLayout = (msg: boolean) => {
       isShowSetting.value = msg
     }
-    const handleSelectLayout = (layout: string) => {
+
+    const handleSelectLayout = (layout: AppUILayout) => {
       uiSetting.layout = layout
       // $appState.$set('uiSetting', this.uiSetting)
     }
     const handleTagNav = () => {
       // $appState.$set('uiSetting', this.uiSetting)
     }
-    const handleBackDefault = () => {
-      uiSetting = JSON.parse(JSON.stringify(uiSettingDefault))
-      // $appState.$set('uiSetting', uiSettingDefault)
-    }
+
     return {
       isShowSetting,
       uiSetting,

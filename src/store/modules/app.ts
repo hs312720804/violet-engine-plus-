@@ -90,7 +90,6 @@ const app = {
     SET_BREADCRUMB (state: AppModuleState, userBreadcrumb: { loginName: string; breadcrumb: CBreadcrumbItems; }) {
 
       const { loginName, breadcrumb } = userBreadcrumb
-      console.log('SET_BREADCRUMB=======>', state.usersOptLog[loginName])
       if (loginName) {
         const usersOptLog = state.usersOptLog[loginName] || {}
         usersOptLog.breadcrumb = breadcrumb
@@ -100,7 +99,6 @@ const app = {
     SET_TAG_NAVS (state: AppModuleState, userTagNavs: { loginName: string; tagNavs: CTagNavInitTags; }) {
 
       const { loginName, tagNavs } = userTagNavs
-      console.log('SET_TAG_NAVS=======>', state.usersOptLog[loginName])
       if (loginName) {
         const usersOptLog = state.usersOptLog[loginName] || {}
         usersOptLog.tagNavs = tagNavs
