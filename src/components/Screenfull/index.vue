@@ -1,50 +1,37 @@
 <template>
-  <div class="c-fullscreen" @click="click">
+  <div class="c-fullscreen" @click="handleClick">
     <i :class="isFullscreen ? 'el-icon-cc-fullscreen-exit' : 'el-icon-full-screen'"></i>
   </div>
 </template>
 
-<script>
+<script lang="ts">
 
-import screenfull from 'screenfull'
+import { defineComponent,ref  } from 'vue'
+import  screenfull,{ Screenfull } from 'screenfull'
+import { ElMessage } from 'element-plus'
 
-export default {
+export default defineComponent({
   name: 'Screenfull',
-  data () {
-    return {
-      isFullscreen: false
+  setup(){
+    const isFullscreen = ref(false)
+    if (screenfull.isEnabled) {
+      screenfull.on('change',() =>{
+        const sf = screenfull as Screenfull
+        isFullscreen.value = sf.isFullscreen
+      })
     }
-  },
-  mounted () {
-    this.init()
-  },
-  methods: {
-    click () {
+    function  handleClick () {
       if (!screenfull.isEnabled) {
-        this.$message({
-          message: 'you browser can not work',
-          type: 'warning'
-        })
-        return false
+        return ElMessage.warning('you browser can not work')
       }
       screenfull.toggle()
-      screenfull.on('change', () => {
-        if (screenfull.isFullscreen) {
-          this.isFullscreen = true
-        } else {
-          this.isFullscreen = false
-        }
-      })
-    },
-    init () {
-      if (screenfull.enabled) {
-        screenfull.on('change', () => {
-          this.isFullscreen = screenfull.isFullscreen
-        })
-      }
+    }
+    return {
+      isFullscreen,
+      handleClick
     }
   }
-}
+})
 </script>
 
 <style lang="stylus" scoped>

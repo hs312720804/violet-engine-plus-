@@ -6,9 +6,11 @@
   "disable": "禁用",
   "sample": "示例",
   "accountInfo": "帐号信息",
+  "icp": "ICP备案证号：",
   "btn": {
     "login": "登录",
     "register": "注册",
+    "getVerifyCode": "获取验证码",
     "logout": "退出",
     "modifyPwd": "修改密码",
     "copyDraft": "复制为草稿",
@@ -103,6 +105,8 @@
   "xingming": "姓名",
   "phone": "电话",
   "loginName": "登录名",
+  "verifyCode": "验证码",
+  "mobilePhone": "手机号",
   "message": {
     "pageConfiguration": "请完善菜单页面配置",
     "noEmpty": "不能为空",

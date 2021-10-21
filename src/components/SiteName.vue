@@ -13,25 +13,30 @@
     </a>
   </div>
 </template>
-<script>
-import $constants from '@/utlis/consts'
-export default {
+<script lang="ts">
+import { defineComponent,computed  } from 'vue'
+import { useStore } from '@/store'
+import { AppLogo } from '@/store/getters'
+export default defineComponent({
   props: {
     name: {
       type: String,
-      default: '站点名称'
+      default: 'Site Name'
     },
     siteUrl: {
       type: String,
       default: '/'
     }
   },
-  computed: {
-    logo () {
-      return $constants.evil(this.$store.state.app.site.logo)
+  setup(){
+    const store = useStore()
+    const logo = computed<AppLogo>(()=> store.getters.appLog)
+
+    return {
+      logo
     }
   }
-}
+})
 </script>
 <style lang="stylus" scoped>
 .logo

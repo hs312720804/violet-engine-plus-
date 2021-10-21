@@ -15,44 +15,52 @@
   </div>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import { defineComponent, ref, PropType, watch } from 'vue'
+type EditCellValue = string | number | boolean | undefined
+export default defineComponent({
   name: 'CCellEdit',
   components: {},
-  props: ['initValue'],
-  data () {
-    return {
-      value: '',
-      readonly: true
+  props: {
+    initValue: {
+      type: String as PropType<EditCellValue>,
+      default: ''
     }
   },
-  computed: {},
-  watch: {
-    'initValue': 'handle'
-  },
-  created () {
-    this.value = this.initValue
-  },
-  methods: {
-    handle (val) {
-      this.value = val
-    },
-    handleInput (val) {
-      this.value = val
-      this.$emit('input', val)
-    },
-    handleEdit () {
-      this.readonly = false
-    },
-    handleBlur () {
-      this.readonly = true
-      this.$emit('blur', this.value)
-    },
-    handleFocus (e) {
-      e.target.select()
+  emits: ['input', 'blur'],
+  setup (props, { emit }) {
+    const value = ref<EditCellValue>('')
+    const readonly = ref(true)
+
+    watch(() => props.initValue, val => {
+      value.value = val
+    },{ immediate:true })
+
+    function handleInput (val: EditCellValue) {
+      value.value = val
+      emit('input', val)
+    }
+    function handleEdit () {
+      readonly.value = false
+    }
+    function handleBlur () {
+      readonly.value = true
+      emit('blur', value.value)
+    }
+    function handleFocus (e: FocusEvent) {
+      (e.target as HTMLInputElement).select()
+    }
+
+    return {
+      value,
+      readonly,
+      handleInput,
+      handleEdit,
+      handleBlur,
+      handleFocus
     }
   }
-}
+})
 </script>
 
 <style lang="stylus" scoped>

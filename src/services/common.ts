@@ -42,7 +42,7 @@ export function getUserInfoService () {
 //     params
 //   })
 // }
-export const getMenusDetailService = (params: any)=> {
+export const getMenusDetailService = (params: { id: string; }) => {
   return fetch({
     method: 'get',
     url: 'sys/menu/detail',

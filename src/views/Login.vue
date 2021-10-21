@@ -4,7 +4,7 @@
       <el-col class="login-form1">
         <div class="log_center">
           <div class="log_logo">
-            <img v-if="image" :src="image">
+            <img v-if="appLogo.login.image" :src="appLogo.login.image">
             <img v-else src="@/assets/images/logo.png">
             <span>{{ siteInfo?.siteName }}</span>
           </div>
@@ -38,7 +38,7 @@
               <el-form-item
                 prop="password"
                 :rules="[
-                  { required: true, message: '密码不能为空', trigger: 'change'}
+                  { required: true, message: $t('pleaseEnter',[$t('password')]), trigger: 'change'}
                 ]"
               >
                 <div class="formInput">
@@ -47,7 +47,7 @@
                     v-model="adminForm.password"
                     type="password"
                     auto-complete="off"
-                    placeholder="请输入密码"
+                    :placeholder="$t('pleaseEnter',[$t('password')])"
                   ></el-input>
                 </div>
               </el-form-item>
@@ -64,12 +64,12 @@
               <el-form-item
                 prop="phone"
                 :rules="[
-                  { required: true, message: '手机号不能为空', trigger: 'change'}
+                  { required: true, message: $t('pleaseEnter',[$t('mobilePhone')]), trigger: 'change'}
                 ]"
               >
                 <div class="formInput">
                   <span class="icon el-icon-mobile-phone"></span>
-                  <el-input v-model="employeeForm.phone" auto-complete="off" placeholder="请输入面试阶段使用的手机号"></el-input>
+                  <el-input v-model="employeeForm.phone" auto-complete="off" :placeholder="$t('pleaseEnter',[$t('mobilePhone')])"></el-input>
                 </div>
               </el-form-item>
               <el-form-item
@@ -77,15 +77,15 @@
               >
                 <div class="formInput">
                   <span class="icon el-icon-key"></span>
-                  <el-input v-model="employeeForm.verifyCode" auto-complete="off" placeholder="请输入验证码"></el-input>
+                  <el-input v-model="employeeForm.verifyCode" auto-complete="off" :placeholder="$t('pleaseEnter',[$t('verifyCode')])"></el-input>
                   <div class="verify-btn">
-                    <el-button @click="getVerifyCode">获取验证码</el-button>
+                    <el-button @click="getVerifyCode">{{ $t('btn.getVerifyCode') }}</el-button>
                   </div>
                 </div>
               </el-form-item>
               <el-form-item>
                 <div class="formSubmit">
-                  <el-button type="primary" @click="handleLogin">提交</el-button>
+                  <el-button type="primary" @click="handleLogin">{{ $t('btn.submit') }}</el-button>
                 </div>
               </el-form-item>
             </el-form>
@@ -94,7 +94,7 @@
       </el-col>
     </el-row>
     <div class="via">
-      Copyright ©{{ year }} {{ siteInfo?.copyright }} ·  <template v-if="siteInfo?.recordNum">ICP备案证号：<a href="https://beian.miit.gov.cn/" target="_blank">{{ siteInfo.recordNum }}</a></template>
+      Copyright ©{{ year }} {{ siteInfo?.copyright }} ·  <template v-if="siteInfo?.recordNum">{{ $t('icp') }}<a href="https://beian.miit.gov.cn/" target="_blank">{{ siteInfo.recordNum }}</a></template>
     </div>
   </div>
 </template>
@@ -102,9 +102,10 @@
 <script lang="ts">
 import { defineComponent, ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
+import { ElForm } from 'element-plus'
 import { useStore } from '@/store'
 
-import { ElForm } from 'element-plus'
+import { AppLogo } from '@/store/getters'
 import { LoginService, LoginArg } from '@/services/login'
 import { initUserData } from '@/auth'
 
@@ -113,6 +114,7 @@ export default defineComponent({
     const $router = useRouter()
     const $store = useStore()
     const siteInfo = $store.state.app.site
+    const appLogo: AppLogo = $store.getters.appLog
 
     const loginType = ref('admin')
     const adminForm = reactive<LoginArg>({
@@ -127,7 +129,6 @@ export default defineComponent({
     const employeeFormEl = ref<InstanceType<typeof ElForm>>()
 
     const formSchema = ref('')
-    const image = ref('')
     const year = ref(2021)
 
     const handleLogin = ()=>{
@@ -163,6 +164,7 @@ export default defineComponent({
 
     return {
       siteInfo,
+      appLogo,
       loginType,
       adminForm,
       employeeForm,
@@ -172,7 +174,6 @@ export default defineComponent({
       getVerifyCode,
       handleRegister,
       formSchema,
-      image,
       year
     }
 

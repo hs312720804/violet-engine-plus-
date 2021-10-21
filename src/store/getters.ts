@@ -1,5 +1,9 @@
 import { RootState } from './index'
 // import { UserOptLog } from './modules/app'
+
+interface AppLogoInfo { image: string; height: string; width: string; }
+export interface AppLogo { login: AppLogoInfo; top: AppLogoInfo; }
+
 export default {
   isLogin: (state: RootState) => state.user.id !== undefined,
   token: (state: RootState) => state.app.loginUserToken,
@@ -18,7 +22,8 @@ export default {
       tags = state.app.usersOptLog[loginName].tagNavs
     }
     return tags || []
-  }
+  },
+  appLog: (state: RootState) => JSON.parse(state.app.site.logo) as AppLogo
   // sidebar: (state: RootState) => state.app.sidebar,
   // language: (state: RootState) => state.app.language,
   // device: (state: RootState) => state.app.device,
