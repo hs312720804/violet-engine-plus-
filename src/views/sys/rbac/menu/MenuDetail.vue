@@ -278,10 +278,11 @@
             <div class="filed-row">
               <el-button @click="handleAddFiled">{{ $t('addField') }}</el-button>
             </div>
+            <!-- 1111 -->
+            <!-- v-dragging="{ list: fields, item: item, group: 'fieldsTab' }" -->
             <div
               v-for="(item, key) in fields"
               :key="key"
-              v-dragging="{ list: fields, item: item, group: 'fieldsTab' }"
               class="filed-row"
             >
               <el-row :gutter="10">
@@ -755,14 +756,15 @@ export default {
       extraArr.splice(key, 1)
     }
     // 字段Fields JSON的处理
-    let fields = reactive([])
+    let fields = ref([])
+
     function fieldsToArr () {
-      fields = reactive([]) // 复制时重新置空，再赋值
+      fields.value = [] // 复制时重新置空，再赋值
       if (menu.value.fields) {
-        fields = evil(menu.value.fields)
+        fields.value = evil(menu.value.fields)
       } else {
       // 初始化字段
-        fields = reactive([])
+        fields.value = []
         // {
         //   label: '',
         //   prop: '',
@@ -777,7 +779,7 @@ export default {
     fieldsToArr()
     // 添加字段
     function handleAddFiled () {
-      fields.push({
+      fields.value.push({
         label: '',
         primaryKey: 0,
         prop: '',
@@ -788,7 +790,7 @@ export default {
     }
     // 删除字段
     function handleReduceFiled (key) {
-      fields.splice(key, 1)
+      fields.value.splice(key, 1)
     }
 
     // Enum值编辑
@@ -821,7 +823,7 @@ export default {
       if (item.primaryKey === undefined) {
         ctx.root.$set(item, 'primaryKey', 0)
       }
-      hasPrimaryKey.value = fields.some(field => {
+      hasPrimaryKey.value = fields.value.some(field => {
         return field.primaryKey === 1
       })
       renderx.value = item
@@ -871,7 +873,7 @@ export default {
       data.extra = JSON.stringify(extraObj)
       // 字段保存
       // 删除切换类型后不是enum类型的值
-      const trimFields = fields.map(item => {
+      const trimFields = fields.value.map(item => {
         if (item.inputType !== 'enum') {
           if ('options' in item) {
             item.options = []
@@ -948,7 +950,7 @@ export default {
             break
           case 'iframe':
             apiArr = reactive([])
-            fields = reactive([])
+            fields.value = []
             extraArr = [{
               key: 'src',
               value: ''
@@ -956,7 +958,7 @@ export default {
             break
           default:
             apiArr = reactive([])
-            fields = reactive([])
+            fields.value = []
             extraArr = reactive([])
         }
       }
