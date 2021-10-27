@@ -19,9 +19,9 @@
     </template>
     <!-- <div  class="aaa"> -->
 
-    {{ isShowList }}
+    <!-- {{ isShowList }} -->
     <DetailPage
-      v-if="!isShowList"
+      v-else
       :id="state.id"
       style="color:red;"
       :item="state.item"
