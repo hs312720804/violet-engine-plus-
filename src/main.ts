@@ -10,6 +10,7 @@ import App from './App.vue'
 import { store, key } from '@/store'
 import router from '@/router/index'
 import i18n from '@/i18n'
+import installDirective from '@/directive'
 
 // import { use } from 'element-plus/lib/locale'
 // import './auth'
@@ -17,4 +18,5 @@ import i18n from '@/i18n'
 const app = createApp(App)
 
 installElementPlus(app)
+installDirective(app)
 app.use(store, key).use(router).use(adminToolkitPlus).use(i18n).mount('#app')
