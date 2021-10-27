@@ -1,10 +1,14 @@
 import fetch from './fetch'
-export function roleGetList (params) {
+export interface RBACRole {
+  id: number
+  name: string
+}
+export function roleGetList (params: CRBACApiParam) {
   return fetch({
     url: 'sys/role/index',
     params
   }).then(data => {
-    const { total, list: rows } = data.pageInfo
+    const { total, list: rows } = (data as CRBACApiResData<RBACRole>).pageInfo
     return {
       total,
       rows

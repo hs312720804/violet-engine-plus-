@@ -27,7 +27,7 @@ export default defineComponent({
       default: ''
     }
   },
-  emits: ['input', 'blur'],
+  emits: ['blur'],
   setup (props, { emit }) {
     const value = ref<EditCellValue>('')
     const readonly = ref(true)
@@ -38,7 +38,6 @@ export default defineComponent({
 
     function handleInput (val: EditCellValue) {
       value.value = val
-      emit('input', val)
     }
     function handleEdit () {
       readonly.value = false
