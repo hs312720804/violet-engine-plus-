@@ -35,20 +35,7 @@ export function getUserInfoService () {
   })
 }
 
-// export function getMenusDetail (params) {
-//   return fetch({
-//     method: 'get',
-//     url: 'sys/menu/detail',
-//     params
-//   })
-// }
-export const getMenusDetailService = (params: { id: string; }) => {
-  return fetch({
-    method: 'get',
-    url: 'sys/menu/detail',
-    params
-  })
-}
+
 /**
  * 获取站点信息
  */
@@ -57,5 +44,23 @@ export function getSiteInfo () {
     method: 'post',
     url: 'website/get',
     emptyToken: true
+  })
+}
+
+export interface websiteUpdateState {
+  copyright: ''
+  extra: ''
+  id: 0
+  introduction: ''
+  layout: ''
+  logo: ''
+  recordNum: ''
+  siteName: ''
+}
+export const websiteUpdateService = (data: websiteUpdateState) => {
+  return fetch({
+    method: 'post',
+    url: 'website/update',
+    data
   })
 }

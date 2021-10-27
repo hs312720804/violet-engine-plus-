@@ -11,12 +11,6 @@ function removeEmptyChildren (menus) {
     }
   })
 }
-/**
- *
- * @param {string} params 是否是 {@link departmentUpsert}
- * @returns
- *
- */
 export function departmentGetList (params) {
   return fetch({
     url: 'sys/department/index',

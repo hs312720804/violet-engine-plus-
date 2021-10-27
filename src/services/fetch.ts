@@ -6,6 +6,8 @@ import i18n from '@/i18n'
 import { ElLoading, ElNotification } from 'element-plus'
 // import 'nprogress/nprogress.css'
 
+import { getSign } from '@/utlis/sign'
+
 interface Res<T> { code: number | string; success: boolean; data: T; msg: string; }
 
 type IfetchArg = {
@@ -18,7 +20,7 @@ type IfetchArg = {
   errorMessage?: string
 } & AxiosRequestConfig
 
-let loadingInstance: import('element-plus/lib/el-loading/src/loading.type').ILoadingInstance | undefined
+let loadingInstance: import('element-plus/packages/components/loading/src/loading.type').ILoadingInstance | undefined
 
 export default function fetch<ResponseData> ({
   method = 'get',
@@ -35,6 +37,12 @@ export default function fetch<ResponseData> ({
   if (!loadingInstance) {
     // debugger
     loadingInstance = ElLoading.service({ target: document.querySelector('.el-main') as HTMLElement })
+  }
+  // 处理数据防篡改
+  if (data) {
+    data.sign = getSign(data)
+  } else if (params) {
+    params.sign = getSign(params)
   }
   const option: AxiosRequestConfig = {
     method,

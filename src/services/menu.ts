@@ -1,4 +1,30 @@
 import fetch from './fetch'
+/**
+ * {@linlk menuDeleteService}
+ */
+export interface menuDeleteArg {
+  /** sh */
+  id: string
+}
+export interface menuDeleteState {
+  /** sh */
+  data: string
+}
+
+// export function getMenusDetail (params) {
+//   return fetch({
+//     method: 'get',
+//     url: 'sys/menu/detail',
+//     params
+//   })
+// }
+export const getMenusDetailService = (params: { id: string; }) => {
+  return fetch({
+    method: 'get',
+    url: 'sys/menu/detail',
+    params
+  })
+}
 
 function removeEmptyChildren (menus:any) {
   menus.forEach(item => {
@@ -46,17 +72,7 @@ export function menuUpsertService (data) {
 //   })
 // }
 
-/**
- * {@linlk menuDeleteService}
- */
-export interface menuDeleteArg {
-  /** sh */
-  id: string
-}
-export interface menuDeleteState {
-  /** sh */
-  data: string
-}
+
 /**
  *
  * @param data
@@ -73,20 +89,3 @@ export const menuDeleteService = (data: menuDeleteArg)=> {
     }
   })
 }
-
-function xx (a:string|number,b:number){
-  return (a as number + b)
-}
-
-console.log(xx('11',2))
-export const isString = (arg: unknown): arg is string => typeof arg === 'string'
-
-function useIt(numOrStr: number | string) {
-  const aaa = isString(numOrStr)
-  console.log(aaa)
-
-  if (isString(numOrStr)) {
-    console.log(numOrStr.length)
-  }
-}
-useIt(33)
