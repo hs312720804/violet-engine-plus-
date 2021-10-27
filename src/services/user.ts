@@ -1,8 +1,13 @@
 import fetch from './fetch'
-export interface UserInfo {
+export interface RBACUserInfo {
   id: number
   status: 'ENABLE' | 'DISENABLE'
   departmentId: number
+  imageUrl?: string
+  name: string
+  loginName: string
+  phone: string
+  email: string
 }
 export interface RBACUser {
   id: number
@@ -22,6 +27,18 @@ export function userGetList (params: CRBACApiParam) {
     }
   })
 }
+
+export function userDetailService (params: { userId: number; }) {
+  return fetch<RBACUserInfo>({
+    method: 'get',
+    url: 'sys/user/detail',
+    isJSON: false,
+    params
+  }).then(data => {
+    return data as RBACUserInfo
+  })
+}
+
 
 export function userDelete (data) {
   return fetch({
@@ -62,7 +79,7 @@ export function userRoleAdd (res: RBACUserRoleParam, successMessage?: string) {
   })
 }
 
-export function userUpsert (data: UserInfo & { password?: string; }) {
+export function userUpsert (data: RBACUserInfo & { password?: string; }) {
   const url = data.id
     ? 'sys/user/update'
     : 'sys/user/add'

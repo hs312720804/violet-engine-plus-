@@ -1,7 +1,7 @@
 import { ActionContext } from 'vuex'
 import { RootState } from '@/store/index'
 export interface UserModuleState {
-  id?: string
+  id: number
   name?: string
   loginName?: string
   token?: string
@@ -21,7 +21,7 @@ const user = {
   },
 
   mutations: {
-    SET_ID: (state: UserModuleState, id: string) => {
+    SET_ID: (state: UserModuleState, id: number) => {
       state.id = id
     },
     SET_TOKEN: (state: UserModuleState, token: string) => {

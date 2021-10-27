@@ -21,6 +21,32 @@ declare module '@ccprivate/admin-toolkit-plus' {
   }
   export type CTagNavInitTags = Array<TagNav>
 
+  export type CForm = import('vue').DefineComponent<
+    {
+      readonly: { type: BooleanConstructor; default: false; }
+      initTags: { type: ArrayConstructor; default: () => []; }
+      titles: { type: ObjectConstructor; default: () => {}; }
+      theme: { type: StringConstructor; default: () => ''; }
+    },
+    {
+      // $refs: CTagNavInitTags
+    },
+    unknown,
+    {},
+    {},
+    import('vue').ComponentOptionsMixin,
+    import('vue').ComponentOptionsMixin,
+    'navigate'[],
+    'navigate',
+    import('vue').VNodeProps & import('vue').AllowedComponentProps & import('vue').ComponentCustomProps,
+    Readonly<{
+      readonly: boolean
+    }>,
+    {
+      readonly: boolean
+    }>
+
+
   export type CTagNav = import('vue').DefineComponent<
     {
       defaultPath: { type: StringConstructor; default: string; }

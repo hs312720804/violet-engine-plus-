@@ -22,7 +22,10 @@
       </div>
       <div class="account-car">
         <div class="account-car__title">帐号密码</div>
-        <el-form-item label="密码："><span style="padding-right:20px">******</span><el-button @click="handleChangePassword">修改密码</el-button></el-form-item>
+        <el-form-item label="密码：">
+          <span style="padding-right:20px">******</span>
+          <el-button @click="handleChangePassword">修改密码</el-button>
+        </el-form-item>
       </div>
     </el-form>
     <ChangePassword
@@ -34,44 +37,51 @@
   </div>
 </template>
 
-<script>
-import ChangePassword from '@/components/UserChangePassword'
-export default {
+<script lang="ts">
+import { defineComponent, ref, computed } from 'vue'
+import { useStore } from '@/store'
+import ChangePassword from '@/components/UserChangePassword.vue'
+import { RBACUserInfo, userDetailService } from '@/services/user'
+export default defineComponent({
   components: {
     ChangePassword
   },
-  data () {
-    return {
-      form: {
+  setup () {
+    const store = useStore()
+    const passwordVisible = ref(false)
+    const user = computed(() => store.state.user)
+    const form = ref<RBACUserInfo>({} as RBACUserInfo)
 
-      },
-      passwordVisible: false
+    fetchDate()
+
+    function handleChangePassword () {
+      passwordVisible.value = true
     }
-  },
-  computed: {
-    user () {
-      return this.$store.state.user
+    function dialogClose () {
+      passwordVisible.value = false
     }
-  },
-  created () {
-    this.fetchDate()
-    console.log(this.user)
-  },
-  methods: {
-    handleChangePassword () {
-      this.passwordVisible = true
-    },
-    dialogClose () {
-      this.passwordVisible = false
-    },
-    fetchDate () {
-      this.$service.userDetail({ userId: this.user.id }).then(data => {
-        this.form = data
+    function fetchDate () {
+      userDetailService({ userId: user.value.id }).then(data => {
+        form.value = data
         console.log(data)
       })
     }
+
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    function handleAvatarSuccess () { }
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    function beforeAvatarUpload () { }
+
+    return {
+      form,
+      passwordVisible,
+      handleChangePassword,
+      dialogClose,
+      handleAvatarSuccess,
+      beforeAvatarUpload
+    }
   }
-}
+})
 </script>
 
 <style lang="stylus" scoped>
@@ -83,7 +93,7 @@ export default {
   margin auto
   background #fff
   padding 20px 0 0
-  >>>.el-form-item
+  :deep(.el-form-item)
     margin-bottom 10px
     .avatar-uploader .el-upload
       border 1px dashed #d9d9d9
@@ -104,7 +114,7 @@ export default {
       width 110px
       height 110px
       display block
->>>.avatar-item .el-form-item__label
+:deep(.avatar-item) .el-form-item__label
   line-height 110px
 .account-car__title
   margin 0

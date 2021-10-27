@@ -6,10 +6,9 @@
     <el-button type="primary" size="normal" @click="$router.push({path: '/'})">{{ $t('btn.backHome') }}</el-button>
   </div>
 </template>
-<script>
-export default {
-
-}
+<script lang="ts">
+import { defineComponent } from 'vue'
+export default defineComponent({})
 </script>
 <style lang="stylus" scoped>
 .notfound

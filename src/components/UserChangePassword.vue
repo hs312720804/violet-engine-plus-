@@ -33,13 +33,13 @@ import { defineComponent, ref, reactive, PropType } from 'vue'
 import { ElForm, ElNotification } from 'element-plus'
 // import { FormRulesMap } from 'element-plus/packages/components/form/src/form.type'
 import { FormRulesMap } from 'element-plus/lib/el-form/src/form.type'
-import { UserInfo, userUpsert } from '@/services/user'
+import { RBACUserInfo, userUpsert } from '@/services/user'
 
 
 export default defineComponent({
   props: {
     row: {
-      type: Object as PropType<UserInfo>,
+      type: Object as PropType<RBACUserInfo>,
       default: () => {
         return {}
       }
