@@ -1,7 +1,7 @@
 import { store } from '@/store'
 import router from '@/router'
-import Wrapper from '@/components/Wrapper.vue'
-import Main from '@/components/layout/Index.vue'
+import Wrapper from '@/views/layout/Wrapper.vue'
+import Main from '@/views/layout/Index.vue'
 import routerComponents from '@/router/components'
 import NotFoundComponent from '@/views/NotFound.vue'
 
@@ -66,6 +66,15 @@ export async function initUserData () {
       //     icon: 'el-icon-odometer'
       //   }
       // })
+      children.unshift({
+        name: 'account',
+        path: 'account',
+        component: () => import('@/views/Account.vue'),
+        meta: {
+          title: '帐号信息',
+          hideInMenu: true
+        }
+      })
       const filterRoutes: Array<RouteRecordRaw> = [
         {
           path: '/',
