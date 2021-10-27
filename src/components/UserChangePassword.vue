@@ -31,7 +31,8 @@
 <script lang="ts">
 import { defineComponent, ref, reactive, PropType } from 'vue'
 import { ElForm, ElNotification } from 'element-plus'
-import { FormRulesMap } from 'element-plus/packages/components/form/src/form.type'
+// import { FormRulesMap } from 'element-plus/packages/components/form/src/form.type'
+import { FormRulesMap } from 'element-plus/lib/el-form/src/form.type'
 import { UserInfo, userUpsert } from '@/services/user'
 
 
