@@ -2,8 +2,8 @@
   <div class="notfound">
     <i></i>
     <span class="c404">404</span>
-    <!-- <span class="text">{{ $t('message.notFound') }}</span>
-    <el-button type="primary" size="normal" @click="$router.push({path: '/'})">{{ $t('btn.backHome') }}</el-button> -->
+    <span class="text">{{ $t('message.notFound') }}</span>
+    <el-button type="primary" size="normal" @click="$router.push({path: '/'})">{{ $t('btn.backHome') }}</el-button>
   </div>
 </template>
 <script>

@@ -1,24 +1,13 @@
-import Main from '@/components/layout/Index.vue'
 export default [
-  // {
-  //   path: '/',
-  //   name: 'Index',
-  //   component: () => import('@/views/Index.vue')
-  // },
   {
-    path: '/',
-    component: Main
-    // redirect: '/desktop.html',
-    // children
+    name: 'register',
+    path: '/register',
+    component: () => import('@/views/Register.vue'),
+    constantRoutes: true,
+    meta: {
+      title: '注册'
+    }
   },
-  // {
-  //   path: '/register',
-  //   name: 'register',
-  //   component: () => import('@/views/Register.vue'),
-  //   meta: {
-  //     title: '登录'
-  //   }
-  // },
   {
     path: '/login',
     name: 'login',
