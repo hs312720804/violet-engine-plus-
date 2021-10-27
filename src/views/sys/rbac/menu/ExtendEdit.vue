@@ -74,7 +74,7 @@
 </template>
 
 <script>
-import { renderMap } from '@/views/baseList/renderMethods'
+import { renderMap } from '@/views/template/baseList/renderMethods'
 export default {
   props: {
     row: {

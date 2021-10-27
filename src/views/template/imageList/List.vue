@@ -59,8 +59,8 @@
   </c-card>
 </template>
 <script>
-import BaseList from '@/views/baseList/BaseList'
-import Actions from '@/views/baseList/Actions.vue'
+import BaseList from '@/views/template/baseList/BaseList'
+import Actions from '@/views/template/baseList/Actions.vue'
 import listActions from './mixin/listActions'
 export default {
   extends: BaseList,

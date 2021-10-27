@@ -201,7 +201,7 @@ import $constants from '@/utlis/consts'
 import { getMenusDetailService } from '@/services/menu'
 import { defineComponent, ref, reactive } from 'vue'
 import { useStore } from '@/store'
-import { websiteUpdateService } from '@/services/user'
+import { websiteUpdateService } from '@/services/common'
 import { ElMessage } from 'element-plus'
 
 export default defineComponent({

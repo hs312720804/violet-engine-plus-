@@ -20,6 +20,7 @@
         </div>
         <template v-if="filterFields.length > 0">
           <c-list-filter
+            v-if="!filterExpand"
             ref="expandForm"
             :options="filterFields"
             :length="3"
@@ -27,7 +28,6 @@
             :is-expand="filterExpand"
             :button-text="buttonText"
             :hidden-expand-button="filterFields.length <= 3"
-            v-if="!filterExpand"
             @filter="handleSearch"
             @reset="handleResetSearch"
             @filter-expand="handlefilterExpand"
@@ -37,12 +37,12 @@
       </div>
       <div class="filter-expand">
         <c-list-filter
+          v-if="filterExpand"
           ref="expandForm"
           :options="filterFields"
           :form-data="filter"
           :is-expand="filterExpand"
           :button-text="buttonText"
-          v-if="filterExpand"
           @filter="handleSearch"
           @reset="handleResetSearch"
           @filter-expand="handlefilterExpand"
@@ -50,8 +50,8 @@
         </c-list-filter>
       </div>
       <c-table
-        :props="table.props"
         ref="table"
+        :props="table.props"
         :header="tableHeader"
         :data="table.data"
         :selected="table.selected"
@@ -64,17 +64,17 @@
   </c-card>
 </template>
 <script>
-import BaseList from '@/views/baseList/BaseList'
-import Actions from '@/views/baseList/Actions.vue'
+import BaseList from '@/views/template/baseList/BaseList'
+import Actions from '@/views/template/baseList/Actions.vue'
 import listActions from './mixin/listActions'
-import { renderMethods } from '@/views/baseList/renderMethods'
+import { renderMethods } from '@/views/template/baseList/renderMethods'
 import _ from 'lodash'
 export default {
-  extends: BaseList,
-  mixins: [listActions],
   components: {
     Actions
   },
+  extends: BaseList,
+  mixins: [listActions],
   data () {
     return {
       filterFields: [],
@@ -168,6 +168,9 @@ export default {
       return this.$constants.evil(this.menu.extra).selectionType
     }
   },
+  created () {
+    this.pageSetting(this.menu)
+  },
   methods: {
     ...renderMethods,
     actionOption (data) {
@@ -255,9 +258,6 @@ export default {
         this.getListData(this.api.list, { ...this.filter, ...params })
       }
     }
-  },
-  created () {
-    this.pageSetting(this.menu)
   }
 }
 </script>
