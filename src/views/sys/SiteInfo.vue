@@ -198,7 +198,7 @@
 
 <script>
 import $constants from '@/utlis/consts'
-import { getMenusDetailService } from '@/services/common'
+import { getMenusDetailService } from '@/services/menu'
 import { defineComponent, ref, reactive } from 'vue'
 import { useStore } from '@/store'
 import { websiteUpdateService } from '@/services/user'

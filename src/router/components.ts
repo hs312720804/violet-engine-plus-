@@ -25,7 +25,7 @@ const routerComponents: RouterComponents = {
   //   type: 'list'
   // },
   BaseList: {
-    template: () => import('@/views/baseList/Index.vue'),
+    template: () => import('@/views/template/baseList/Index.vue'),
     type: 'list'
   },
   // TabPage: {
