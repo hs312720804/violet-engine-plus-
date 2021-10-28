@@ -1,10 +1,28 @@
-import { ref, reactive } from 'vue'
+import { Ref, ref, reactive } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-export default function usePageControll ({ idField = 'id', listRef, deleteService }) {
-  console.log('listRef3==>')
-  console.log(JSON.parse(JSON.stringify(listRef)))
+type IdField = string | 'id'
+type IdFieldValue = string | number | undefined;
 
-  const state = reactive({
+type pageControllItem = { [key in IdField]: IdFieldValue }
+interface PageControllState {
+  id: IdFieldValue
+  item: pageControllItem | null | undefined
+  mode: RBACMode
+  isShowList: boolean
+  version: string | undefined
+}
+interface ListEl {
+  fetchData: () => void
+}
+interface PageControllParams<R, S> {
+  idField: IdField
+  listRef: Ref<R extends ListEl ? ListEl : never>
+  deleteService: S
+}
+export default function usePageControll<R, S> ({ idField = 'id', listRef, deleteService }: PageControllParams<R, S>) {
+
+
+  const state = reactive<PageControllState>({
     id: undefined,
     item: null,
     mode: 'read',
@@ -12,7 +30,7 @@ export default function usePageControll ({ idField = 'id', listRef, deleteServic
     version: undefined
   })
 
-  let isShowList = ref(true)
+  const isShowList = ref(true)
 
   function handleCreate () {
     state.id = undefined
@@ -22,7 +40,7 @@ export default function usePageControll ({ idField = 'id', listRef, deleteServic
     isShowList.value = false
   }
 
-  function handleEdit ({ item, selected = [] }) {
+  function handleEdit ({ item, selected = [] }: { item: pageControllItem; selected: Array<pageControllItem>; }) {
     item = item || selected[0]
     state.id = item[idField]
     state.item = item
@@ -31,7 +49,7 @@ export default function usePageControll ({ idField = 'id', listRef, deleteServic
     isShowList.value = false
   }
 
-  function handleRead ({ item, version }) {
+  function handleRead ({ item, version }: { item: pageControllItem; version: string; }) {
     state.id = item[idField]
     state.item = item
     state.mode = 'read'
@@ -44,7 +62,7 @@ export default function usePageControll ({ idField = 'id', listRef, deleteServic
     listRef.value.fetchData()
   }
 
-  function handleCopy ({ item }) {
+  function handleCopy ({ item }: { item: pageControllItem; }) {
     state.id = item[idField]
     state.item = item
     state.mode = 'copy'
@@ -52,7 +70,7 @@ export default function usePageControll ({ idField = 'id', listRef, deleteServic
     isShowList.value = false
   }
 
-  function handleDelete ({ item, selected }) {
+  function handleDelete ({ item, selected }: { item: pageControllItem; selected: Array<pageControllItem> | undefined; }) {
     selected = selected || [item]
     const id = selected.map(item => item[idField]).join(',')
     ElMessageBox.confirm('此操作将删除该数据, 是否继续?', '提示', {

@@ -91,7 +91,7 @@
 </template>
 
 <script>
-import ResrouceActions from '../../../../components/ResourceActions.vue'
+import ResrouceActions from '../../../modules/ResourceActions.vue'
 import { ref, computed } from 'vue'
 import { PageWrapper, PageContentWrapper, ContentLayout } from '../../../../utlis/deps'
 import consts from '../../../../utlis/consts'
@@ -160,7 +160,7 @@ export default {
 
     const allDepartments = ref([])
     function fetchAllDepartments () {
-      service.departmentGetList().then(result => {
+      service.departmentGetListService().then(result => {
         allDepartments.value = result
         if (!user.value.departmentId) {
           user.value.departmentId = result[0].id

@@ -15,19 +15,17 @@
   </div>
 </template>
 
-<script>
-// import { ref, onMounted, onBeforeUnmount, onActivated } from '@vue/composition-api'
-import { ref, onMounted, onBeforeUnmount, onActivated } from 'vue'
-export default {
-  setup (props, ctx) {
-    const heightRef = ref(undefined)
-    const $list = ref(null)
+<script lang="ts">
+import { defineComponent, ref, onMounted, onBeforeUnmount, onActivated, nextTick } from 'vue'
+export default defineComponent({
+  setup () {
+    const heightRef = ref<number | undefined>()
+    const $list = ref<HTMLElement | null>()
     const setHeight = () => {
-      // ctx.root.$nextTick(() => {
-      //   const el = $list.value
-      //   heightRef.value = el.clientHeight
-      // })
-      heightRef.value = 600
+      nextTick(() => {
+        const el = $list.value as HTMLElement
+        heightRef.value = el.clientHeight
+      })
     }
 
     onMounted(() => {
@@ -45,7 +43,7 @@ export default {
       $list: $list
     }
   }
-}
+})
 </script>
 
 <style lang="stylus" scoped>

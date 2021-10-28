@@ -1,10 +1,6 @@
 <template>
   <div class="page-code--child">
-    <c-card
-      :title="title"
-      class="c-normal"
-      @go-back="$emit('go-back')"
-    >
+    <c-card :title="title" class="c-normal" @go-back="$emit('go-back')">
       <template #actions></template>
       <c-form
         ref="form"
@@ -19,7 +15,7 @@
             :label="item.label"
           >
             {{ form[item.prop] }}
-          </el-form-item> -->
+          </el-form-item>-->
           <c-form-string
             v-if="item.inputType === 'string' || !item.inputType"
             :key="key"
@@ -29,8 +25,7 @@
             :rules="rules[item.prop]"
             :prop="item.prop"
             class="el-item-width"
-          >
-          </c-form-string>
+          ></c-form-string>
           <c-form-enum
             v-if="item.inputType === 'enum'"
             :key="key"
@@ -41,24 +36,11 @@
             :rules="rules.noEmpty"
             :options="item.options"
           ></c-form-enum>
-          <el-form-item
-            v-if="item.inputType === 'date'"
-            :label="item.label"
-          >
-            <el-date-picker
-              v-model="infoForm[item.prop]"
-              type="date"
-              placeholder="选择日期"
-            >
-            </el-date-picker>
+          <el-form-item v-if="item.inputType === 'date'" :label="item.label">
+            <el-date-picker v-model="infoForm[item.prop]" type="date" placeholder="选择日期"></el-date-picker>
           </el-form-item>
-          <el-form-item
-            v-if="item.inputType === 'layout'"
-            :label="item.label"
-          >
-            <div
-              :class="isReadonly ? 'c-layout c-layout-nopoint' : 'c-layout'"
-            >
+          <el-form-item v-if="item.inputType === 'layout'" :label="item.label">
+            <div :class="isReadonly ? 'c-layout c-layout-nopoint' : 'c-layout'">
               <el-radio-group
                 v-if="isReadonly"
                 v-model="infoForm.layout"
@@ -70,8 +52,7 @@
                     <p>
                       <span></span>
                       <b></b>
-                    </p>
-                    布局一(响应式)
+                    </p>布局一(响应式)
                   </span>
                 </div>
                 <div v-if="infoForm.layout === 'tlr'">
@@ -81,16 +62,14 @@
                       <b>
                         <small></small>
                       </b>
-                    </p>
-                    布局二
+                    </p>布局二
                   </span>
                 </div>
                 <div v-if="infoForm.layout === 'tb'">
                   <span class="c-layout-item tb">
                     <p>
                       <span></span>
-                    </p>
-                    布局三
+                    </p>布局三
                   </span>
                 </div>
               </el-radio-group>
@@ -100,8 +79,7 @@
                     <p>
                       <span></span>
                       <b></b>
-                    </p>
-                    布局一(响应式)
+                    </p>布局一(响应式)
                   </span>
                 </el-radio>
                 <el-radio label="tlr">
@@ -111,25 +89,20 @@
                       <b>
                         <small></small>
                       </b>
-                    </p>
-                    布局二
+                    </p>布局二
                   </span>
                 </el-radio>
                 <el-radio label="tb">
                   <span class="c-layout-item tb">
                     <p>
                       <span></span>
-                    </p>
-                    布局三
+                    </p>布局三
                   </span>
                 </el-radio>
               </el-radio-group>
             </div>
           </el-form-item>
-          <el-form-item
-            v-if="item.inputType === 'logoUpload'"
-            :label="item.label"
-          >
+          <el-form-item v-if="item.inputType === 'logoUpload'" :label="item.label">
             <div v-for="(obj, index) in infoForm.logo" :key="index" class="c-logo">
               <div class="c-site-logo">
                 <div v-if="obj.image" class="c-logo-img">
@@ -146,9 +119,7 @@
                   <el-button size="small" type="primary">{{ obj.image ? '更换' : '上传' }}</el-button>
                 </el-upload>
               </div>
-              <div
-                class="c-logo-attr"
-              >
+              <div class="c-logo-attr">
                 <div>
                   <template v-if="isReadonly">Key：{{ obj.key }}</template>
                   <el-input v-else v-model="obj.key" disabled>
@@ -175,7 +146,11 @@
                 </div>
               </div>
             </div>
-            <div style="color:#8e8f92; font-size:14px; font-style:italic">说明：Logo上传，在这里是演示作用，实际应用时根据需要完善或删除。</div>
+            <div
+              style="color:#8e8f92; font-size:14px; font-style:italic"
+            >
+              说明：Logo上传，在这里是演示作用，实际应用时根据需要完善或删除。
+            </div>
           </el-form-item>
         </div>
         <el-form-item v-if="!isReadonly">
@@ -184,12 +159,7 @@
         </el-form-item>
         <el-form-item v-else>
           <!-- v-permission="'normal:update'" -->
-          <el-button
-            type="primary"
-            @click="isReadonly = false"
-          >
-            修改
-          </el-button>
+          <el-button type="primary" @click="isReadonly = false">修改</el-button>
         </el-form-item>
       </c-form>
     </c-card>
@@ -207,7 +177,7 @@ import { ElMessage } from 'element-plus'
 export default defineComponent({
   props: ['menuId'],
   emits: ['go-back'],
-  setup(props, ctx) {
+  setup (props, ctx) {
 
     console.log('slots==>', ctx)
 

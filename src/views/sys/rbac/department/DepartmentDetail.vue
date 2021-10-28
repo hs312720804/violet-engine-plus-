@@ -2,12 +2,10 @@
   <PageWrapper>
     <PageContentWrapper>
       <ContentLayout :title="title" @go-back="handleGoBack">
-        <ResrouceActions
-          slot="resource-actions"
-          :actions="actions"
-          @do-action="handleDoAction"
-        >
-        </ResrouceActions>
+        <template #resource-actions>
+          <ResrouceActions :actions="actions" @do-action="handleDoAction"></ResrouceActions>
+        </template>
+
         <c-form
           ref="formRef"
           :model="department"
@@ -15,17 +13,16 @@
           label-width="80px"
         >
           <c-form-string
+            v-model="department.name"
             :label="$t('name')"
             prop="name"
-            v-model="department.name"
             :placeholder="$t('departmentName')"
-          >
-          </c-form-string>
+          ></c-form-string>
           <c-form-any prop="parentId" :label="$t('parentDepartment')">
-            <div slot="edit">
+            <template #edit>
               <el-cascader
-                style="width: 400px"
                 v-model="department.parentId"
+                style="width: 400px"
                 :options="allDepartments"
                 :props="{
                   checkStrictly: true,
@@ -33,55 +30,79 @@
                   value: 'id',
                   expandTrigger: 'hover'
                 }"
-              >
-              </el-cascader>
-            </div>
+              ></el-cascader>
+            </template>
           </c-form-any>
           <c-form-string
+            v-model="department.remark"
             :label="$t('remark')"
             prop="remark"
             type="textarea"
-            v-model="department.remark"
-          >
-          </c-form-string>
+          ></c-form-string>
         </c-form>
       </ContentLayout>
     </PageContentWrapper>
   </PageWrapper>
 </template>
 
-<script>
-import ResrouceActions from '../../../../components/ResourceActions'
-import { ref, computed } from '@vue/composition-api'
+<script lang="ts">
+import { defineComponent, ref, computed, PropType } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { ElForm, ElMessage } from 'element-plus'
+import { CForm } from '@ccprivate/admin-toolkit-plus'
+
+import ResrouceActions from '@/views/modules/ResourceActions.vue'
+
 import { PageWrapper, PageContentWrapper, ContentLayout } from '../../../../utlis/deps'
-import { Message } from 'element-ui'
-import consts from '../../../../utlis/consts'
+import { RBACDepartment, departmentGetListService, departmentUpsertService } from '@/services/department'
+import consts from '@/utlis/consts'
+
 const RESOURCE = 'department'
 const { CREATE, UPDATE } = consts.commonOperation
-export default {
+
+export default defineComponent({
   components: {
     PageWrapper,
     PageContentWrapper,
     ContentLayout,
     ResrouceActions
   },
-  props: ['initMode', 'id', 'item'],
+  // props: ['initMode', 'id', 'item'],
+  props: {
+    id: {
+      type: Number,
+      default: Infinity
+    },
+    initMode: {
+      type: String as PropType<RBACMode>,
+      default: ''
+    },
+    item: {
+      type: Object as PropType<RBACDepartment>,
+      default: () => {
+        return undefined
+      }
+    }
+  },
+  emits: ['upsert-end', 'go-back'],
   setup (props, ctx) {
-    const _$t = ctx.root.$t.bind(ctx.root)
-    const service = ctx.root.$service
+
+    const { t: _$t } = useI18n()
+
+
     const mode = ref(props.initMode)
     const title = computed(() => {
       return consts.modeText[mode.value] + _$t('department')
     })
 
-    const formRef = ref(null)
+    const formRef = ref<InstanceType<CForm>>()
     const originDep = JSON.parse(JSON.stringify(props.item))
     const department = ref(genDepartment(props.item))
-    function genDepartment (preset) {
+    function genDepartment (preset?: RBACDepartment) {
       return {
         name: '',
         remark: '',
-        parentId: '',
+        parentId: Infinity,
         ...preset
       }
     }
@@ -100,9 +121,9 @@ export default {
       ]
     })
 
-    const allDepartments = ref([])
+    const allDepartments = ref<Array<RBACDepartment>>([])
     function fetchAllDepartments () {
-      service.departmentGetList().then(result => {
+      departmentGetListService().then(result => {
         allDepartments.value = result
         if (!department.value.parentId) {
           department.value.parentId = result[0].id
@@ -132,21 +153,22 @@ export default {
         data.parentId = data.parentId.pop()
       }
       if (data.parentId === originDep.id) {
-        Message.error('自己不能作为自己的父级，请重新选择！')
+        ElMessage.error('自己不能作为自己的父级，请重新选择！')
         return
       }
-      service.departmentUpsert(data, _$t('message.saveSuccess'))
+      departmentUpsertService(data, _$t('message.saveSuccess'))
         .then(() => {
           ctx.emit('upsert-end')
         })
     }
-    function handleDoAction (action) {
+    function handleDoAction (action: string) {
       if (action === `${RESOURCE}:${UPDATE}` || action === `${RESOURCE}:${CREATE}`) {
-        formRef.value.$refs.form.validate((valid) => {
+
+        (formRef.value?.$refs.form as InstanceType<typeof ElForm>).validate(valid => {
           if (valid) {
             handleSave()
           } else {
-            Message.error(_$t('message.completeForm'))
+            ElMessage.error(_$t('message.completeForm'))
           }
         })
       }
@@ -165,9 +187,8 @@ export default {
       handleGoBack
     }
   }
-}
+})
 </script>
 
 <style>
-
 </style>

@@ -462,7 +462,7 @@
 </template>
 
 <script>
-import ResrouceActions from '../../../../components/ResourceActions.vue'
+import ResrouceActions from '../../../modules/ResourceActions.vue'
 import { PageWrapper, PageContentWrapper, ContentLayout } from '../../../../utlis/deps'
 import EnumEdit from './EnumEdit.vue'
 import DateEdit from './DateEdit.vue'
@@ -1001,13 +1001,14 @@ export default {
     }
     function handleDoAction (action) {
       if (action === `${RESOURCE}:${UPDATE}` || action === `${RESOURCE}:${CREATE}`) {
-        // this.formRef.$refs.form.validate(valid => {
-        //   if (valid) {
-        handleSave()
-        // } else {
-        //   ElMessage.error(_$t('message.completeRequireForm'))
-        // }
-        // })
+        formRef.value.$refs.form.validate(valid => {
+          console.log('validvalidvalidvalid',valid)
+          if (valid) {
+            handleSave()
+          } else {
+            ElMessage.error(_$t('message.completeRequireForm'))
+          }
+        })
       }
     }
     function handleGoBack () {

@@ -1,9 +1,7 @@
 <template>
   <div class="content-card">
     <div v-if="title !== undefined" class="content-card__header">
-      <slot name="title">
-        {{ title }}
-      </slot>
+      <slot name="title">{{ title }}</slot>
       <div class="actions">
         <slot name="actions">
           <el-button type="text" @click="$emit('go-back')">返回</el-button>
@@ -19,13 +17,19 @@
   </div>
 </template>
 
-<script>
-export default {
-  props: ['title'],
+<script lang="ts">
+import { defineComponent } from 'vue'
+export default defineComponent({
+  props: {
+    title: {
+      type: String,
+      default: ''
+    }
+  },
   emits: ['go-back']
   // setup (props, ctx) {
   // }
-}
+})
 </script>
 
 <style lang="stylus" scoped>
@@ -45,6 +49,6 @@ export default {
     .actions
         padding 0 20px
         float right
-.content-actions-wrapper >>> >*:first-child
+.content-actions-wrapper :deep(>*:first-child)
     margin-bottom 15px
 </style>

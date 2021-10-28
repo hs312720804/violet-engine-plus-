@@ -86,7 +86,7 @@ import { ref, watch, computed } from 'vue'
 import { useSelection, useFilter } from '../../use'
 import { Table, PageWrapper, PageContentWrapper, ListLayout } from '../../../../utlis/deps'
 import consts from '../../../../utlis/consts'
-import ResrouceActions from '../../../../components/ResourceActions.vue'
+import ResrouceActions from '../../../modules/ResourceActions.vue'
 import UserRoleSetter from '../../../../components/UserRoleSetter'
 const RESOURCE = 'user'
 const { CREATE, UPDATE, DELETE } = consts.commonOperation
@@ -105,7 +105,7 @@ export default {
     const idField = 'id'
     const departmentTree = ref([])
     const activeDepartmentId = ref(undefined)
-    service.departmentGetList().then(result => {
+    service.departmentGetListService().then(result => {
       departmentTree.value = result
     })
     function handleInputDepartmentId (item) {

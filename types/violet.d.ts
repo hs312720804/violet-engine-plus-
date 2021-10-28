@@ -4,6 +4,7 @@ type CActionTemplate = 'Edit'
 type CActionHandle = 'batchDelete'
 type CActionPermission = 'add'
 type CActionMode = 'add' | 'delete' | 'preview' | 'edit' | 'select'
+type RBACMode = 'read' | 'create' | 'edit' | 'copy' | 'list'
 
 type CButtonActionList =
   [CActionName, 'Page', CActionTemplate, CActionPermission, CActionMode] |
@@ -19,7 +20,7 @@ type CRBACButtonType = 'primary' | 'success' | 'warning' | 'danger' | 'info' | '
 interface CRBACButtonAction {
   label: string
   value: string
-  type: CRBACButtonType
+  type?: CRBACButtonType
 }
 
 interface CRBACApiParam {

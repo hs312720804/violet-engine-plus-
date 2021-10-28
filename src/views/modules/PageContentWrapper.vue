@@ -4,11 +4,9 @@
   </div>
 </template>
 
-<script>
-export default {
-  mounted () {
-  }
-}
+<script lang="ts">
+import { defineComponent } from 'vue'
+export default defineComponent({})
 </script>
 
 <style lang="stylus" scoped>

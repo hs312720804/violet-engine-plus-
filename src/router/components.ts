@@ -59,10 +59,10 @@ const routerComponents: RouterComponents = {
     type: 'custom'
   },
   // 部门管理
-  // DepartmentIndex: {
-  //   template: () => import('@/views/sys/rbac/department/DepartmentIndex.vue'),
-  //   type: 'custom'
-  // },
+  DepartmentIndex: {
+    template: () => import('@/views/sys/rbac/department/DepartmentIndex.vue'),
+    type: 'custom'
+  },
   // 站点信息
   SiteInfo: {
     template: () => import('@/views/sys/SiteInfo.vue'),

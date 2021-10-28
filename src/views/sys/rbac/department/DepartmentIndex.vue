@@ -24,19 +24,22 @@
   </TabPage>
 </template>
 
-<script>
-import { ref } from 'vue'
-import ListPage from './DepartmentList'
-import DetailPage from './DepartmentDetail'
+<script lang="ts">
+import { defineComponent, ref } from 'vue'
+import TabPage from '@/views/modules/TabPage.vue'
+import ListPage from './DepartmentList.vue'
+import DetailPage from './DepartmentDetail.vue'
+
 import usePageControll from '../../use/usePageControll'
-import { TabPage } from '../../../../utlis/deps'
-export default {
+import { departmentDeleteService } from '@/services/department'
+
+export default defineComponent({
   components: {
     TabPage,
     ListPage,
     DetailPage
   },
-  setup (props, ctx) {
+  setup () {
     const listRef = ref(null)
     const {
       state,
@@ -48,7 +51,7 @@ export default {
       handleRefreshList,
       handleGoBack,
       handleUpsertEnd
-    } = usePageControll({ idField: 'id', listRef, deleteService: ctx.root.$service.departmentDelete.bind(ctx.root) })
+    } = usePageControll({ idField: 'id', listRef, deleteService: departmentDeleteService })
     return {
       listRef,
       state,
@@ -62,9 +65,6 @@ export default {
       handleUpsertEnd
     }
   }
-}
+})
 </script>
-
-<style>
-
-</style>
+<style lang="stylus" scoped></style>

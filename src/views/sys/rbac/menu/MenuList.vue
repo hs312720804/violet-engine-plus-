@@ -81,7 +81,7 @@
 <script>
 import { ref } from 'vue'
 import { PageWrapper, PageContentWrapper, ListLayout } from '../../../../utlis/deps'
-import ResrouceActions from '../../../../components/ResourceActions.vue'
+import ResrouceActions from '../../../modules/ResourceActions.vue'
 import consts from '../../../../utlis/consts'
 const RESOURCE = 'menu'
 const { CREATE, UPDATE, DELETE } = consts.commonOperation

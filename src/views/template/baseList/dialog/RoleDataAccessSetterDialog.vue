@@ -5,7 +5,7 @@
       title="设置角色数据权限"
       :fullscreen="true"
       @close="handleCancel"
-      :visible.sync="showDialog"
+      v-model:visible="showDialog"
       width="50%"
     > -->
     <div class="role-access-setter">

@@ -2,7 +2,9 @@ const modeText = {
   read: '查看',
   edit: '编辑',
   create: '新建',
-  del: '删除'
+  del: '删除',
+  copy: '复制',
+  list: '列表'
 }
 
 const commonOperation = {
@@ -17,7 +19,10 @@ const commonOperationEvent = {
   add: 'create',
   update: 'edit',
   delete: 'delete',
-  read: 'read'
+  read: 'read',
+  select: 'select',
+  edit: 'edit',
+  preview: 'preview'
 }
 
 const abilityStatusText = {
