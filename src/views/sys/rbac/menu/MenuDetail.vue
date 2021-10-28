@@ -488,8 +488,8 @@ export default {
     ExtendEdit
   },
   props: ['initMode', 'id', 'item'],
-  emits: ['go-back'],
-  setup (props, ctx) {
+  emits: ['go-back', 'upsert-end'],
+  setup (props, { emit }) {
 
     const { t } = useI18n()
     const _$t = t
@@ -564,10 +564,10 @@ export default {
       ]
     })
 
-    let allMenus = reactive([])
+    let allMenus = ref([])
     function fetchAllMenus () {
       menuGetListService().then(result => {
-        allMenus = reactive(result)
+        allMenus.value = result
         if (!menu.value.parentId) {
           menu.value.parentId = result[0].id
         }
@@ -910,7 +910,7 @@ export default {
       }
       menuUpsertService(data, _$t('message.saveSuccess'))
         .then(() => {
-          ctx.emit('upsert-end')
+          emit('upsert-end')
         })
     }
 
@@ -1001,17 +1001,17 @@ export default {
     }
     function handleDoAction (action) {
       if (action === `${RESOURCE}:${UPDATE}` || action === `${RESOURCE}:${CREATE}`) {
-        formRef.value.$refs.form.validate(valid => {
-          if (valid) {
-            handleSave()
-          } else {
-            ElMessage.error(_$t('message.completeRequireForm'))
-          }
-        })
+        // this.formRef.$refs.form.validate(valid => {
+        //   if (valid) {
+        handleSave()
+        // } else {
+        //   ElMessage.error(_$t('message.completeRequireForm'))
+        // }
+        // })
       }
     }
     function handleGoBack () {
-      ctx.emit('go-back')
+      emit('go-back')
     }
 
     return {
@@ -1045,7 +1045,8 @@ export default {
       handleEditExtend,
       selectTemplate,
       copyToCreateMenu,
-      extendEdit
+      extendEdit,
+      handleSave
     }
   },
   data () {
@@ -1079,7 +1080,27 @@ export default {
     }
   },
   methods: {
+    // handleDoAction (action) {
+    //   debugger
+    //   if (action === `${RESOURCE}:${UPDATE}` || action === `${RESOURCE}:${CREATE}`) {
+    //     // this.formRef.$refs.form.validate(valid => {
+    //     //   if (valid) {
+    //     handleSave()
+    //     // } else {
+    //     //   ElMessage.error(_$t('message.completeRequireForm'))
+    //     // }
+    //     // })
 
+    //     // this.$refs['formRef'].$refs.form.validate(valid => {
+    //     //   if (valid) {
+    //     //     alert('submit!')
+    //     //   } else {
+    //     //     console.log('error submit!!')
+    //     //     return false
+    //     //   }
+    //     // })
+    //   }
+    // }
   }
 }
 </script>

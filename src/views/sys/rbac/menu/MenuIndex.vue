@@ -1,27 +1,24 @@
 <template>
   <TabPage>
-    <!-- {{ state.isShowList }}
-    {{ state.isShowList === true }}
-    {{ !(state.isShowList) === false }} -->
-
-    <template v-if="isShowList">
+    <!-- <template v-if="isShowList">
       <div class="aaa"></div>
-      <el-form></el-form>
-      <ListPage
-        ref="listRef"
-        @create="handleCreate"
-        @read="handleRead"
-        @edit="handleEdit"
-        @copy="handleCopy"
-        @delete="handleDelete"
-      >
-      </ListPage>
-    </template>
+      <el-form></el-form> -->
+    <ListPage
+      v-show="state.isShowList"
+      ref="listRef"
+      @create="handleCreate"
+      @read="handleRead"
+      @edit="handleEdit"
+      @copy="handleCopy"
+      @delete="handleDelete"
+    >
+    </ListPage>
+    <!-- </template> -->
     <!-- <div  class="aaa"> -->
 
     <!-- {{ isShowList }} -->
     <DetailPage
-      v-else
+      v-if="!state.isShowList"
       :id="state.id"
       style="color:red;"
       :item="state.item"
@@ -37,7 +34,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, onMounted } from 'vue'
+import { defineComponent, ref } from 'vue'
 import ListPage from './MenuList.vue'
 import DetailPage from './MenuDetail.vue'
 import usePageControll from '../../use/usePageControll'
@@ -51,8 +48,7 @@ export default defineComponent({
     DetailPage
   },
   setup (props, ctx) {
-    const listRef = ref()
-
+    const listRef = ref(null)
     const {
       isShowList,
       state,
