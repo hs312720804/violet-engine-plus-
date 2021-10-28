@@ -1,5 +1,5 @@
 <template>
-  <el-dialog v-model:visible="dialogRenderVisible" :title="$t('advancedSettings')">
+  <el-dialog v-model="dialogRenderVisible" :title="$t('advancedSettings')">
     <el-form :model="extendForm" label-width="80px">
       <el-form-item :label="$t('columnWidth')">
         <el-input v-model="extendForm.width" :placeholder="$t('placeholder.columnWidth')"></el-input>

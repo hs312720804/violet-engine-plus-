@@ -121,6 +121,7 @@
             >
               <c-form-enum
                 v-model="menu.status"
+                type="radio"
                 :label="$t('toEnable')"
                 :options="statusOptions"
               ></c-form-enum>
@@ -159,6 +160,7 @@
             >
               <c-form-enum
                 v-model="menu.template"
+                type="radio"
                 :label="$t('template')"
                 :options="templateOptions"
                 :placeholder="$t('placeholder.selectTemplate')"
@@ -236,7 +238,7 @@
                       <el-select v-model="api.method" placeholder="method">
                         <el-option label="post" value="post"></el-option>
                         <el-option label="get" value="get"></el-option>
-                        <el-button label="delete" value="delete"></el-button>
+                        <el-option label="delete" value="delete"></el-option>
                       </el-select>
                     </el-col>
                     <el-col :span="3">
@@ -467,8 +469,8 @@ import DateEdit from './DateEdit.vue'
 import ExtendEdit from './ExtendEdit.vue'
 import routerComponents from '@/router/components'
 
-import { ref, computed, reactive, onMounted } from 'vue'
-import { ElMessage } from 'element-plus'
+import { ref, computed, reactive } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import consts from '../../../../utlis/consts'
 
 import { useI18n } from 'vue-i18n'
@@ -486,8 +488,8 @@ export default {
     ExtendEdit
   },
   props: ['initMode', 'id', 'item'],
-  emits: ['go-back'],
-  setup (props, ctx) {
+  emits: ['go-back', 'upsert-end'],
+  setup (props, { emit }) {
 
     const { t } = useI18n()
     const _$t = t
@@ -562,10 +564,10 @@ export default {
       ]
     })
 
-    let allMenus = reactive([])
+    let allMenus = ref([])
     function fetchAllMenus () {
       menuGetListService().then(result => {
-        allMenus = reactive(result)
+        allMenus.value = result
         if (!menu.value.parentId) {
           menu.value.parentId = result[0].id
         }
@@ -658,9 +660,9 @@ export default {
         method: ''
       }
     ])
-    let apiArr = reactive([])
+    let apiArr = ref([])
     function apiToArr () {
-      apiArr = reactive([]) // 复制时重新置空，再赋值
+      apiArr.value = [] // 复制时重新置空，再赋值
       let api = ''
       if (menu.value.api) {
         api = evil(menu.value.api)
@@ -669,14 +671,14 @@ export default {
       }
       if (Object.keys(api).length > 0) {
         Object.keys(api).forEach(item => {
-          apiArr.push({
+          apiArr.value.push({
             key: item,
             url: api[item][0],
             method: api[item][1]
           })
         })
       } else {
-        apiArr = reactive([])
+        apiArr.value = []
       }
     }
     apiToArr()
@@ -688,14 +690,14 @@ export default {
       }
     }
     function genApi () {
-      apiArr.push({
+      apiArr.value.push({
         key: '',
         url: '',
         method: ''
       })
     }
     function handleDeleteApi (key) {
-      apiArr.splice(key, 1)
+      apiArr.value.splice(key, 1)
     }
     // extra处理
     // 初始化列表建议的增删查改extra，可根据项目实际进行改动
@@ -717,9 +719,9 @@ export default {
         value: ''
       }
     ])
-    let extraArr = reactive([])
+    let extraArr = ref([])
     function extraToArr () {
-      extraArr = reactive([]) // 复制时重新置空，再赋值
+      extraArr.value = [] // 复制时重新置空，再赋值
       let extra = ''
       if (menu.value.extra) {
         extra = evil(menu.value.extra)
@@ -728,7 +730,7 @@ export default {
       }
       if (Object.keys(extra).length > 0) {
         Object.keys(extra).forEach(item => {
-          extraArr.push({
+          extraArr.value.push({
             key: item,
             value: extra[item]
           })
@@ -747,13 +749,13 @@ export default {
       }
     }
     function genExtra () {
-      extraArr.push({
+      extraArr.value.push({
         key: '',
         value: ''
       })
     }
     function handleDeleteExtra (key) {
-      extraArr.splice(key, 1)
+      extraArr.value.splice(key, 1)
     }
     // 字段Fields JSON的处理
     let fields = ref([])
@@ -797,38 +799,49 @@ export default {
     const enumOptions = ref({})
     function handleEditOption (item) {
       if (item.options === undefined) {
-        ctx.root.$set(item, 'options', [])
+        // ctx.root.$set(item, 'options', [])
+        item.options = []
       }
       enumOptions.value = item
-      ctx.refs.enumEdit.dialogOptionVisible = true
+      // ctx.refs.enumEdit.dialogOptionVisible = true
+      const enumEdit = ref()
+      enumEdit.value.dialogOptionVisible = true
     }
 
     // Date格式化编辑
     const dateFormat = ref({})
     function handleEditDateFormat (item) {
       if (item.format === undefined) {
-        ctx.root.$set(item, 'format', '')
+        // ctx.root.$set(item, 'format', '')
+        item.format = ''
       }
       dateFormat.value = item
-      ctx.refs.dateEdit.dialogVisible = true
+      // ctx.refs.dateEdit.dialogVisible = true
+      const dateEdit = ref()
+      dateEdit.value.dialogVisible = true
     }
 
     // Render值编辑
     const renderx = ref({})
     const hasPrimaryKey = ref(false)
+    const extendEdit = ref()
+
     function handleEditExtend (item) {
       if (item.render === undefined) {
-        ctx.root.$set(item, 'render', '')
+        // ctx.root.$set(item, 'render', '')
+        item.render = ''
       }
       if (item.primaryKey === undefined) {
-        ctx.root.$set(item, 'primaryKey', 0)
+        // ctx.root.$set(item, 'primaryKey', 0)
+        item.primaryKey = 0
       }
       hasPrimaryKey.value = fields.value.some(field => {
         return field.primaryKey === 1
       })
       renderx.value = item
-      ctx.refs.extendEdit.dialogRenderVisible = true
+      extendEdit.value.dialogRenderVisible = true
     }
+
     function copyToCreateMenu (val) { // 复制已有的菜单
       const id = val[val.length - 1]
       let item = {}
@@ -856,7 +869,7 @@ export default {
       const data = JSON.parse(JSON.stringify(menu.value))
       // api转换成对象保存
       const apiObj = {}
-      apiArr.forEach(api => {
+      apiArr.value.forEach(api => {
         if (api.url) {
           apiObj[api.key] = [api.url, api.method]
         } else {
@@ -867,7 +880,7 @@ export default {
 
       // extra转换成对象保存
       const extraObj = {}
-      extraArr.forEach(extra => {
+      extraArr.value.forEach(extra => {
         extraObj[extra.key] = extra.value
       })
       data.extra = JSON.stringify(extraObj)
@@ -897,12 +910,13 @@ export default {
       }
       menuUpsertService(data, _$t('message.saveSuccess'))
         .then(() => {
-          ctx.emit('upsert-end')
+          emit('upsert-end')
         })
     }
 
     let previousTemplate = menu.value.template // 暂存切换前的模板
     let isNew = menu.value.id === undefined // 判断是否为新建，用于开关是否提醒
+
     function selectTemplate (val) {
       const oldType = menu.value.type
       const changeTemplateType = val ? routerComponents[val].type : val
@@ -911,20 +925,42 @@ export default {
         setTemplate()
       } else {
         if (changeTemplateType !== oldType) {
-          ctx.root.$confirm(_$t('message.lossDataSlert'), _$t('prompt'), {
-            confirmButtonText: _$t('btn.ok'),
-            cancelButtonText: _$t('btn.cancel'),
-            type: 'warning'
-          }).then(() => {
-            setTemplate()
-          }).catch(() => {
-            menu.value.type = oldType
-            menu.value.template = previousTemplate // 取消切换再把切换前的模板还回去
-            ctx.root.$message({
-              type: 'info',
-              message: _$t('message.cancelChangeTemplate')
+          // ctx.root.$confirm(_$t('message.lossDataSlert'), _$t('prompt'), {
+          //   confirmButtonText: _$t('btn.ok'),
+          //   cancelButtonText: _$t('btn.cancel'),
+          //   type: 'warning'
+          // }).then(() => {
+          //   setTemplate()
+          // }).catch(() => {
+          //   menu.value.type = oldType
+          //   menu.value.template = previousTemplate // 取消切换再把切换前的模板还回去
+          //   ctx.root.$message({
+          //     type: 'info',
+          //     message: _$t('message.cancelChangeTemplate')
+          //   })
+          // })
+          console.log('13214134===' )
+          ElMessageBox.confirm(
+            _$t('message.lossDataSlert'),
+            _$t('prompt'),
+            {
+              confirmButtonText: _$t('btn.ok'),
+              cancelButtonText: _$t('btn.cancel'),
+              type: 'warning'
+            }
+          )
+            .then(() => {
+              setTemplate()
             })
-          })
+            .catch(() => {
+              menu.value.type = oldType
+              menu.value.template = previousTemplate // 取消切换再把切换前的模板还回去
+
+              ElMessage({
+                type: 'info',
+                message: _$t('message.cancelChangeTemplate')
+              })
+            })
         }
       }
       function setTemplate () {
@@ -935,8 +971,8 @@ export default {
          */
         switch (menu.value.type) {
           case 'list':
-            apiArr = JSON.parse(JSON.stringify(initialApi.value))
-            extraArr = JSON.parse(JSON.stringify(initialExtra))
+            apiArr.value = JSON.parse(JSON.stringify(initialApi.value))
+            extraArr.value = JSON.parse(JSON.stringify(initialExtra))
             fields = [
               {
                 label: '',
@@ -949,33 +985,33 @@ export default {
             ]
             break
           case 'iframe':
-            apiArr = reactive([])
+            apiArr.value = []
             fields.value = []
-            extraArr = [{
+            extraArr.value = [{
               key: 'src',
               value: ''
             }]
             break
           default:
-            apiArr = reactive([])
+            apiArr.value = []
             fields.value = []
-            extraArr = reactive([])
+            extraArr.value = []
         }
       }
     }
     function handleDoAction (action) {
       if (action === `${RESOURCE}:${UPDATE}` || action === `${RESOURCE}:${CREATE}`) {
-        formRef.value.$refs.form.validate(valid => {
-          if (valid) {
-            handleSave()
-          } else {
-            ElMessage.error(_$t('message.completeRequireForm'))
-          }
-        })
+        // this.formRef.$refs.form.validate(valid => {
+        //   if (valid) {
+        handleSave()
+        // } else {
+        //   ElMessage.error(_$t('message.completeRequireForm'))
+        // }
+        // })
       }
     }
     function handleGoBack () {
-      ctx.emit('go-back')
+      emit('go-back')
     }
 
     return {
@@ -1008,7 +1044,9 @@ export default {
       hasPrimaryKey,
       handleEditExtend,
       selectTemplate,
-      copyToCreateMenu
+      copyToCreateMenu,
+      extendEdit,
+      handleSave
     }
   },
   data () {
@@ -1042,7 +1080,27 @@ export default {
     }
   },
   methods: {
+    // handleDoAction (action) {
+    //   debugger
+    //   if (action === `${RESOURCE}:${UPDATE}` || action === `${RESOURCE}:${CREATE}`) {
+    //     // this.formRef.$refs.form.validate(valid => {
+    //     //   if (valid) {
+    //     handleSave()
+    //     // } else {
+    //     //   ElMessage.error(_$t('message.completeRequireForm'))
+    //     // }
+    //     // })
 
+    //     // this.$refs['formRef'].$refs.form.validate(valid => {
+    //     //   if (valid) {
+    //     //     alert('submit!')
+    //     //   } else {
+    //     //     console.log('error submit!!')
+    //     //     return false
+    //     //   }
+    //     // })
+    //   }
+    // }
   }
 }
 </script>
