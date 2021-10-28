@@ -93,7 +93,7 @@ import { CMenuItems, CTagNav } from '@ccprivate/admin-toolkit-plus'
 import { useStore } from '@/store'
 import { $logout } from '@/auth'
 
-import SiteName from '@/components/SiteName.vue'
+import SiteName from '@/views/layout/SiteName.vue'
 import Screenfull from '@/components/Screenfull/index.vue'
 
 
