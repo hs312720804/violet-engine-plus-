@@ -1000,14 +1000,14 @@ export default {
     }
     function handleDoAction (action) {
       if (action === `${RESOURCE}:${UPDATE}` || action === `${RESOURCE}:${CREATE}`) {
-        formRef.value.$refs.form.validate(valid => {
-          console.log('validvalidvalidvalid',valid)
-          if (valid) {
-            handleSave()
-          } else {
-            ElMessage.error(_$t('message.completeRequireForm'))
-          }
-        })
+        // formRef.value.$refs.form.validate(valid => {
+        //   console.log('validvalidvalidvalid',valid)
+        //   if (valid) {
+        handleSave()
+        //   } else {
+        //     ElMessage.error(_$t('message.completeRequireForm'))
+        //   }
+        // })
       }
     }
     function handleGoBack () {
