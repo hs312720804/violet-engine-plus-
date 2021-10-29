@@ -66,10 +66,12 @@
         </el-input>
       </el-form-item>
     </el-form>
-    <div slot="footer" class="dialog-footer">
-      <el-button @click="dialogRenderVisible = false">{{ $t('btn.cancel') }}</el-button>
-      <el-button type="primary" @click="handleConfirm">{{ $t('btn.ok') }}</el-button>
-    </div>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="dialogRenderVisible = false">{{ $t('btn.cancel') }}</el-button>
+        <el-button type="primary" @click="handleConfirm">{{ $t('btn.ok') }}</el-button>
+      </div>
+    </template>
   </el-dialog>
 </template>
 
