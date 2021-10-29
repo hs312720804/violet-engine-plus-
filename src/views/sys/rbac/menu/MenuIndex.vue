@@ -38,7 +38,7 @@ import { defineComponent, ref } from 'vue'
 import ListPage from './MenuList.vue'
 import DetailPage from './MenuDetail.vue'
 import usePageControll from '../../use/usePageControll'
-import { TabPage } from '../../../../utlis/deps'
+import { TabPage } from '@/views/modules'
 import { menuDeleteService } from '@/services/menu'
 
 export default defineComponent({

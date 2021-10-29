@@ -3,11 +3,11 @@
     <PageContentWrapper class="menu-page">
       <ListLayout>
         <template #actions>
-          <ResrouceActions
+          <ResourceActions
             :actions="actions"
             @do-action="handleDoAction"
           >
-          </ResrouceActions>
+          </ResourceActions>
         </template>
 
         <template #list>
@@ -22,12 +22,12 @@
             <template #default="{ data }" class="tree-item">
               <span>{{ data.name }}</span>
               <el-row class="tree-item__info">
-                <ResrouceActions
+                <ResourceActions
                   button-type="text"
                   :actions="itemActions"
                   @do-action="handleDoAction($event, data)"
                 >
-                </ResrouceActions>
+                </ResourceActions>
               </el-row>
             </template>
           </el-tree>
@@ -39,8 +39,8 @@
 
 <script>
 import { ref } from 'vue'
-import { PageWrapper, PageContentWrapper, ListLayout } from '../../../../utlis/deps'
-import ResrouceActions from '../../../../components/ResourceActions.vue'
+import { PageWrapper, PageContentWrapper, ListLayout, ResourceActions } from '@/views/modules'
+
 import consts from '../../../../utlis/consts'
 const RESOURCE = 'menu'
 const { CREATE, UPDATE, DELETE } = consts.commonOperation
@@ -53,7 +53,7 @@ export default {
     ListLayout,
     PageWrapper,
     PageContentWrapper,
-    ResrouceActions
+    ResourceActions
   },
   setup (props, ctx) {
     // const _$t = ctx.root.$t.bind(ctx.root)

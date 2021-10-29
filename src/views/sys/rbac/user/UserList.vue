@@ -22,12 +22,12 @@
       </ListLayout>
       <ListLayout class="user-list">
         <div slot="filter" class="list-top">
-          <ResrouceActions
+          <ResourceActions
             slot="actions"
             :actions="actions"
             @do-action="handleDoAction"
           >
-          </ResrouceActions>
+          </ResourceActions>
           <el-form
             slot="filter"
             ref="elFilterForm"
@@ -84,9 +84,8 @@
 <script>
 import { ref, watch, computed } from 'vue'
 import { useSelection, useFilter } from '../../use'
-import { Table, PageWrapper, PageContentWrapper, ListLayout } from '../../../../utlis/deps'
+import { PageWrapper, PageContentWrapper, ListLayout, ResourceActions } from '@/views/modules'
 import consts from '../../../../utlis/consts'
-import ResrouceActions from '../../../modules/ResourceActions.vue'
 import UserRoleSetter from '../../../../components/UserRoleSetter'
 const RESOURCE = 'user'
 const { CREATE, UPDATE, DELETE } = consts.commonOperation
@@ -95,7 +94,7 @@ const commonOperationEvent = consts.commonOperationEvent
 export default {
   components: {
     ListLayout,
-    ResrouceActions,
+    ResourceActions,
     PageWrapper,
     PageContentWrapper
   },

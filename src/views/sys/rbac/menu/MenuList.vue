@@ -3,11 +3,11 @@
     <PageContentWrapper class="menu-page">
       <ListLayout>
         <template #actions>
-          <ResrouceActions
+          <ResourceActions
             :actions="actions"
             @do-action="handleDoAction"
           >
-          </ResrouceActions>
+          </ResourceActions>
         </template>
 
         <template #list>
@@ -63,12 +63,12 @@
               width="90px"
             >
               <template #default="{row}">
-                <ResrouceActions
+                <ResourceActions
                   button-type="text"
                   :actions="itemActions"
                   @do-action="handleDoAction($event, row)"
                 >
-                </ResrouceActions>
+                </ResourceActions>
               </template>
             </el-table-column>
           </el-table>
@@ -80,8 +80,8 @@
 
 <script>
 import { ref } from 'vue'
-import { PageWrapper, PageContentWrapper, ListLayout } from '../../../../utlis/deps'
-import ResrouceActions from '../../../modules/ResourceActions.vue'
+import { PageWrapper, PageContentWrapper, ListLayout, ResourceActions } from '@/views/modules'
+
 import consts from '../../../../utlis/consts'
 const RESOURCE = 'menu'
 const { CREATE, UPDATE, DELETE } = consts.commonOperation
@@ -94,7 +94,7 @@ export default {
     ListLayout,
     PageWrapper,
     PageContentWrapper,
-    ResrouceActions
+    ResourceActions // ResourceActions
   },
   emits:['edit'],
   setup (props, ctx) {

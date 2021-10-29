@@ -437,11 +437,11 @@
             </div>
           </el-form-item>
         </c-form>
-        <ResrouceActions
+        <ResourceActions
           :actions="actions"
           @do-action="handleDoAction"
         >
-        </ResrouceActions>
+        </ResourceActions>
       </ContentLayout>
     </PageContentWrapper>
     <EnumEdit
@@ -462,8 +462,7 @@
 </template>
 
 <script>
-import ResrouceActions from '../../../modules/ResourceActions.vue'
-import { PageWrapper, PageContentWrapper, ContentLayout } from '../../../../utlis/deps'
+import { PageWrapper, PageContentWrapper, ContentLayout, ResourceActions } from '@/views/modules'
 import EnumEdit from './EnumEdit.vue'
 import DateEdit from './DateEdit.vue'
 import ExtendEdit from './ExtendEdit.vue'
@@ -482,7 +481,7 @@ export default {
     PageWrapper,
     PageContentWrapper,
     ContentLayout,
-    ResrouceActions,
+    ResourceActions,
     EnumEdit,
     DateEdit,
     ExtendEdit

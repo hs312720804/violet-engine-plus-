@@ -26,7 +26,7 @@
 
 <script>
 import { ref } from 'vue'
-import { TabPage } from '../../../../utlis/deps'
+import { TabPage } from '@/views/modules'
 import ListPage from './UserList'
 import DetailPage from './UserDetail'
 import usePageControll from '../../use/usePageControll'

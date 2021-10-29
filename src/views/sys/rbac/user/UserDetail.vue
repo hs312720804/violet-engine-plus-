@@ -2,12 +2,12 @@
   <PageWrapper>
     <PageContentWrapper>
       <ContentLayout :title="title" @go-back="handleGoBack">
-        <ResrouceActions
+        <ResourceActions
           slot="resource-actions"
           :actions="actions"
           @do-action="handleDoAction"
         >
-        </ResrouceActions>
+        </ResourceActions>
         <c-form
           ref="formRef"
           :model="user"
@@ -91,9 +91,8 @@
 </template>
 
 <script>
-import ResrouceActions from '../../../modules/ResourceActions.vue'
 import { ref, computed } from 'vue'
-import { PageWrapper, PageContentWrapper, ContentLayout } from '../../../../utlis/deps'
+import { PageWrapper, PageContentWrapper, ContentLayout, ResourceActions } from '@/views/modules'
 import consts from '../../../../utlis/consts'
 import { ElMessage } from 'element-plus'
 const RESOURCE = 'user'
@@ -104,7 +103,7 @@ export default {
     PageWrapper,
     PageContentWrapper,
     ContentLayout,
-    ResrouceActions
+    ResourceActions
   },
   props: ['initMode', 'id', 'item'],
   setup (props, ctx) {
