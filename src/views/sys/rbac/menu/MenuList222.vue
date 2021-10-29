@@ -101,7 +101,6 @@ export default {
       }
     ]
     function handleDoAction (action, item) {
-      debugger
       const eventName = commonOperationEvent[action.split(':')[1]]
       ctx.emit(eventName, { item, selected: [item] })
     }

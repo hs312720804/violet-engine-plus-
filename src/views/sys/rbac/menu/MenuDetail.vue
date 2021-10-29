@@ -578,7 +578,7 @@ export default {
       if (value === '') {
         callback(new Error(_$t('message.menuAlias')))
       } else {
-        if (isHasSameValue(allMenus, rule.field, value)) {
+        if (isHasSameValue(allMenus.value, rule.field, value)) {
           callback(new Error(_$t('message.sameAlias')))
         } else {
           callback()
@@ -589,7 +589,7 @@ export default {
       if (value === '') {
         callback(new Error(_$t('pleaseEnter', [_$t('menuPath')])))
       } else {
-        if (isHasSameValue(allMenus, rule.field, value)) {
+        if (isHasSameValue(allMenus.value, rule.field, value)) {
           callback(new Error(_$t('message.samePath')))
         } else {
           callback()
@@ -1115,7 +1115,7 @@ export default {
   display flex
   span
     margin-right 10px
->>>.el-select
+:deep(.el-select)
   width 100%
 .c-title
   font-size 16px
@@ -1124,4 +1124,5 @@ export default {
   padding-left 10px
   margin-top 10px
   margin-bottom 20px
-</style>>
+
+</style>
