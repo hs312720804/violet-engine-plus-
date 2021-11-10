@@ -27,7 +27,7 @@ import { defineComponent, ref } from 'vue'
 import TabPage from '@/views/modules/TabPage.vue'
 import ListPage from './DepartmentList.vue'
 import DetailPage from './DepartmentDetail.vue'
-import usePageControll from '../../use/usePageControll'
+import usePageControll from '@/hooks/usePageControll'
 import { RBACDepartment, departmentDeleteService } from '@/services/department'
 
 // implements String

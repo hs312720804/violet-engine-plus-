@@ -29,7 +29,7 @@ import { ref } from 'vue'
 import { TabPage } from '@/views/modules'
 import ListPage from './UserList'
 import DetailPage from './UserDetail'
-import usePageControll from '../../use/usePageControll'
+import usePageControll from '@/hooks/usePageControll'
 export default {
   components: {
     TabPage,
