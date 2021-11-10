@@ -3,11 +3,11 @@
     <PageContentWrapper class="menu-page">
       <ListLayout>
         <template #actions>
-          <ResrouceActions
+          <ResourceActions
             class="actions"
             :actions="actions"
             @do-action="handleDoAction"
-          ></ResrouceActions>
+          ></ResourceActions>
         </template>
         <template #list>
           <el-table
@@ -22,11 +22,11 @@
             <el-table-column prop="remark" label="备注"></el-table-column>
             <el-table-column label="操作" width="90px">
               <template #default="{ row }">
-                <ResrouceActions
+                <ResourceActions
                   button-type="text"
                   :actions="itemActions"
                   @do-action="handleDoAction($event, row)"
-                ></ResrouceActions>
+                ></ResourceActions>
               </template>
             </el-table-column>
           </el-table>
@@ -40,8 +40,8 @@
 import { defineComponent, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-import { PageWrapper, PageContentWrapper, ListLayout } from '../../../../utlis/deps'
-import ResrouceActions from '../../../modules/ResourceActions.vue'
+import { PageWrapper, PageContentWrapper, ListLayout, ResourceActions } from '@/views/modules'
+
 import consts from '@/utlis/consts'
 const RESOURCE = 'department'
 // const { CREATE, UPDATE, DELETE } = consts.commonOperation
@@ -55,7 +55,7 @@ export default defineComponent({
     ListLayout,
     PageWrapper,
     PageContentWrapper,
-    ResrouceActions
+    ResourceActions
   },
   setup (props, { emit }) {
 
@@ -83,6 +83,7 @@ export default defineComponent({
     function handleDoAction (action:string, item?:RBACDepartment) {
       const eventKey = action.split(':')[1] as CActionMode
       const eventName = commonOperationEvent[eventKey]
+      console.log('eventName')
       emit(eventName, { item, selected: [item] })
     }
 

@@ -1,15 +1,14 @@
 <template>
   <TabPage>
     <ListPage
-      v-show="state.isShowList"
+      v-if="state.isShowList"
       ref="listRef"
       @create="handleCreate"
       @read="handleRead"
       @edit="handleEdit"
       @copy="handleCopy"
       @delete="handleDelete"
-    >
-    </ListPage>
+    ></ListPage>
     <DetailPage
       v-if="!state.isShowList"
       :id="state.id"
@@ -19,20 +18,19 @@
       @upsert-end="handleUpsertEnd"
       @refresh-list="handleRefreshList"
       @go-back="handleGoBack"
-    >
-    </DetailPage>
+    ></DetailPage>
   </TabPage>
 </template>
 
-<script lang="ts">
+<script lang="ts" >
 import { defineComponent, ref } from 'vue'
 import TabPage from '@/views/modules/TabPage.vue'
 import ListPage from './DepartmentList.vue'
 import DetailPage from './DepartmentDetail.vue'
-
 import usePageControll from '../../use/usePageControll'
-import { departmentDeleteService } from '@/services/department'
+import { RBACDepartment, departmentDeleteService } from '@/services/department'
 
+// implements String
 export default defineComponent({
   components: {
     TabPage,
@@ -40,7 +38,7 @@ export default defineComponent({
     DetailPage
   },
   setup () {
-    const listRef = ref(null)
+    const listRef = ref<InstanceType<typeof ListPage>>()
     const {
       state,
       handleCreate,
@@ -51,7 +49,7 @@ export default defineComponent({
       handleRefreshList,
       handleGoBack,
       handleUpsertEnd
-    } = usePageControll({ idField: 'id', listRef, deleteService: departmentDeleteService })
+    } = usePageControll<RBACDepartment>({ idField: 'id', listRef, deleteService: departmentDeleteService })
     return {
       listRef,
       state,

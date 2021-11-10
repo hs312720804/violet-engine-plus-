@@ -1,7 +1,7 @@
 import { isObject } from '@/utlis/type'
 const root = window
 interface debounceOptions {
-  maxWait: number
+  maxWait?: number
   trailing?: boolean
   leading?: boolean
 }
@@ -24,6 +24,8 @@ function debounce (this: any, func: debounceFunc, wait: number, options?: deboun
   if (options && isObject(options)) {
     leading = !!options.leading
     maxing = 'maxWait' in options
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore：已经对 maxWait 做了为空的判断
     maxWait = maxing ? Math.max(+options.maxWait || 0, wait) : maxWait
     trailing = 'trailing' in options ? !!options.trailing : trailing
   }

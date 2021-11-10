@@ -29,7 +29,7 @@ export function departmentGetListService () {
   })
 }
 
-export function departmentUpsertService (data, successMessage?: string) {
+export function departmentUpsertService (data: RBACDepartment, successMessage?: string) {
   const url = data.id ? 'sys/department/update' : 'sys/department/add'
   return fetch({
     method: 'post',
@@ -39,13 +39,14 @@ export function departmentUpsertService (data, successMessage?: string) {
     successMessage
   })
 }
-export function departmentDeleteService (data) {
-  return fetch({
+export function departmentDeleteService (data: { id: string; }, successMessage?: string) {
+  return fetch<number>({
     method: 'post',
     url: 'sys/department/delete',
     isJSON: false,
     data: {
       id: data.id
-    }
+    },
+    successMessage
   })
 }

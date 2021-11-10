@@ -20,7 +20,7 @@ type IfetchArg = {
   errorMessage?: string
 } & AxiosRequestConfig
 
-let loadingInstance: import('element-plus/packages/components/loading/src/loading.type').ILoadingInstance | undefined
+let loadingInstance: import('element-plus/lib/el-loading/src/loading.type').ILoadingInstance | undefined
 
 export default function fetch<ResponseData> ({
   method = 'get',

@@ -9,7 +9,7 @@ export default (app: App) => {
   app.directive('debounce', {
     mounted (el, binding) {
       const [fn, event = 'click', timer = 500] = binding.value
-      el.addEventListener(event, debounce(fn, timer))
+      el.addEventListener(event, debounce(fn, timer, { leading: true }))
     }
   })
 }

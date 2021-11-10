@@ -3,7 +3,7 @@
     <PageContentWrapper>
       <ContentLayout :title="title" @go-back="handleGoBack">
         <template #resource-actions>
-          <ResrouceActions :actions="actions" @do-action="handleDoAction"></ResrouceActions>
+          <ResourceActions :actions="actions" @do-action="handleDoAction"></ResourceActions>
         </template>
 
         <c-form
@@ -51,9 +51,7 @@ import { useI18n } from 'vue-i18n'
 import { ElForm, ElMessage } from 'element-plus'
 import { CForm } from '@ccprivate/admin-toolkit-plus'
 
-import ResrouceActions from '@/views/modules/ResourceActions.vue'
-
-import { PageWrapper, PageContentWrapper, ContentLayout } from '../../../../utlis/deps'
+import { PageWrapper, PageContentWrapper, ContentLayout, ResourceActions } from '@/views/modules'
 import { RBACDepartment, departmentGetListService, departmentUpsertService } from '@/services/department'
 import consts from '@/utlis/consts'
 
@@ -65,7 +63,7 @@ export default defineComponent({
     PageWrapper,
     PageContentWrapper,
     ContentLayout,
-    ResrouceActions
+    ResourceActions
   },
   // props: ['initMode', 'id', 'item'],
   props: {
@@ -80,7 +78,7 @@ export default defineComponent({
     item: {
       type: Object as PropType<RBACDepartment>,
       default: () => {
-        return undefined
+        return {}
       }
     }
   },

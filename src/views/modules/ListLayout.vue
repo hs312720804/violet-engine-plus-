@@ -6,7 +6,7 @@
     <div class="actions">
       <slot name="actions"></slot>
     </div>
-    <div ref="$list" class="list">
+    <div ref="listEl" class="list">
       <slot name="list" :height="height"></slot>
     </div>
     <div class="pagination">
@@ -20,10 +20,10 @@ import { defineComponent, ref, onMounted, onBeforeUnmount, onActivated, nextTick
 export default defineComponent({
   setup () {
     const heightRef = ref<number | undefined>()
-    const $list = ref<HTMLElement | null>()
+    const listEl = ref<HTMLElement | null>()
     const setHeight = () => {
       nextTick(() => {
-        const el = $list.value as HTMLElement
+        const el = listEl.value as HTMLElement
         heightRef.value = el.clientHeight
       })
     }
@@ -40,7 +40,7 @@ export default defineComponent({
     })
     return {
       height: heightRef,
-      $list: $list
+      listEl
     }
   }
 })
