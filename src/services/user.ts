@@ -79,7 +79,7 @@ export function userRoleAdd (res: RBACUserRoleParam, successMessage?: string) {
   })
 }
 
-export function userUpsert (data: RBACUserInfo & { password?: string; }) {
+export function userUpsert (data: Pick<RBACUserInfo, 'id' | 'status' | 'departmentId'> & { password: string; }) {
   const url = data.id
     ? 'sys/user/update'
     : 'sys/user/add'
