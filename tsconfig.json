@@ -9,7 +9,7 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "lib": ["esnext", "dom"],
-    // "isolatedModules": true,
+    "isolatedModules": true,
     "noErrorTruncation": true,
     "skipLibCheck": true,
     "allowJs": true,
@@ -34,7 +34,8 @@
     "src/**/*.ts",
     "src/**/*.d.ts",
     "src/**/*.tsx",
-    "src/**/*.vue"
+    "src/**/*.vue",
+    "node_modules/element-plus/**/*.type.ts"
   ],
   "exclude": [
     "node_modules",

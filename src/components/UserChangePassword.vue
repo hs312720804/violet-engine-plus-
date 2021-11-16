@@ -31,8 +31,6 @@
 <script lang="ts">
 import { defineComponent, ref, reactive, PropType } from 'vue'
 import { ElForm, ElNotification } from 'element-plus'
-// import { FormRulesMap } from 'element-plus/packages/components/form/src/form.type'
-import { FormRulesMap } from 'element-plus/lib/el-form/src/form.type'
 import { RBACUserInfo, userUpsert } from '@/services/user'
 
 
@@ -55,7 +53,7 @@ export default defineComponent({
     const dialogVisible = ref(props.visible)
     const ruleForm = reactive({ pass: '', checkPass: '' })
     const ruleFormEl = ref<InstanceType<typeof ElForm>>()
-    const rules: FormRulesMap = {
+    const rules: ELFormRulesMap = {
       pass: [
         {
           validator: (rule, value: string, callback) => {

@@ -28,14 +28,13 @@
 import { defineComponent, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElForm } from 'element-plus'
-import { FormRulesMap } from 'element-plus/lib/el-form/src/form.type'
 import CUtils from '@ccprivate/utils'
 import { CForm } from '@ccprivate/admin-toolkit-plus'
 export default defineComponent({
   setup () {
     const router = useRouter()
     const formEl = ref<InstanceType<CForm>>()
-    const rules: FormRulesMap = {
+    const rules: ELFormRulesMap = {
       loginName: [{ required: true, message: '不能为空', trigger: 'blur' }],
       name: [{ required: true, message: '不能为空', trigger: 'blur' }],
       password: [
