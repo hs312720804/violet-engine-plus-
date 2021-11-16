@@ -76,6 +76,13 @@ declare module '@ccprivate/admin-toolkit-plus' {
       initTags: CTagNavInitTags
     }>
 
+  export type CFormInputType = 'string' | 'enum'
+  export interface CFormEnumOption {
+    label: string
+    value: string | number
+    disabled: boolean
+  }
+
   declare const _default: Plugin
   export default _default
 }
