@@ -1,7 +1,7 @@
 import { RootState } from './index'
 // import { UserOptLog } from './modules/app'
 
-interface AppLogoInfo { image: string; height: string; width: string; }
+export interface AppLogoInfo { image: string; height: string; width: string; }
 export interface AppLogo { login: AppLogoInfo; top: AppLogoInfo; }
 
 export default {

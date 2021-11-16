@@ -1,7 +1,9 @@
 <template>
   <div class="page-code--child">
-    <c-card :title="title" class="c-normal" @go-back="$emit('go-back')">
-      <template #actions></template>
+    <c-card :title="title" class="c-normal">
+      <template #actions>
+        <span></span>
+      </template>
       <c-form
         ref="form"
         label-width="100px"
@@ -113,8 +115,8 @@
                   class="avatar-uploader"
                   action="https://jsonplaceholder.typicode.com/posts/"
                   :show-file-list="false"
-                  :on-success="handleAvatarSuccess"
                   :before-upload="beforeAvatarUpload"
+                  :on-success="(res, file)=>{handleAvatarSuccess(index, res, file)}"
                 >
                   <el-button size="small" type="primary">{{ obj.image ? '更换' : '上传' }}</el-button>
                 </el-upload>
@@ -166,25 +168,37 @@
   </div>
 </template>
 
-<script>
-import $constants from '@/utlis/consts'
-import { getMenusDetailService } from '@/services/menu'
-import { defineComponent, ref, reactive } from 'vue'
-import { useStore } from '@/store'
-import { websiteUpdateService } from '@/services/common'
+<script lang="ts">
+import { defineComponent, ref, reactive, computed } from 'vue'
 import { ElMessage } from 'element-plus'
+import $constants from '@/utlis/consts'
+import { useStore } from '@/store'
+import { AppSite,AppUILayout } from '@/store/modules/app'
+import { AppLogo, AppLogoInfo } from '@/store/getters'
+import { websiteUpdateService } from '@/services/common'
+import { CFormInputType, CFormEnumOption } from '@ccprivate/admin-toolkit-plus'
+type LogoKey = keyof AppLogo
+type LogoInfo = AppLogoInfo & { key: LogoKey; }
+type InfoForm = Omit<AppSite, 'logo'> & {
+  logo: Array<LogoInfo>
+}
+type FormField = {
+  label: string
+  prop: keyof InfoForm
+  inputType?: CFormInputType | 'logoUpload' | 'layout' | 'date'
+  options?: Array<CFormEnumOption>
+}
 
 export default defineComponent({
-  props: ['menuId'],
-  emits: ['go-back'],
-  setup (props, ctx) {
-
-    console.log('slots==>', ctx)
+  setup () {
 
     const $store = useStore()
+
+    const siteInfo = computed(() => $store.state.app.site)
+
     let isReadonly = ref(true)
     let title = ref('常规设置')
-    let fields = reactive(
+    let fields = reactive<Array<FormField>>(
       [
         {
           label: '站点名称',
@@ -195,16 +209,16 @@ export default defineComponent({
           prop: 'logo',
           inputType: 'logoUpload'
         },
-        {
-          label: 'Logo宽',
-          prop: 'logoWidth',
-          inputType: 'other'
-        },
-        {
-          label: 'Logo高',
-          prop: 'logoHeight',
-          inputType: 'other'
-        },
+        // {
+        //   label: 'Logo宽',
+        //   prop: 'logoWidth',
+        //   inputType: 'other'
+        // },
+        // {
+        //   label: 'Logo高',
+        //   prop: 'logoHeight',
+        //   inputType: 'other'
+        // },
         {
           label: '布局',
           prop: 'layout',
@@ -233,21 +247,18 @@ export default defineComponent({
         // }
       ]
     )
-    let infoForm = reactive({
-      layout: '',
-      siteName: ''
-    })
-    // const aaa = reactive({ a: 1 })
-    let rules = reactive({})
-    let menuDetail = reactive({})
+    const infoForm = reactive<InfoForm>({} as InfoForm)
+    const rules: ELFormRulesMap = {}
 
     const initData = () => {
-      console.log('...$store.state.app.site===>', $store.state.app.site)
 
-      infoForm = reactive({ ...infoForm, ...$store.state.app.site })
-      if (infoForm.logo) {
-        const logo = $constants.evil(infoForm.logo)
-        infoForm.logo = Object.keys(logo).map(key => {
+      // infoForm = reactive({ ...infoForm, ...siteInfo.value })
+      const data = Object.assign({}, infoForm, siteInfo.value)
+      let siteLogos: Array<LogoInfo> = []
+
+      if (data.logo) {
+        const logo: AppLogo = $constants.evil(data.logo)
+        siteLogos = (Object.keys(logo) as Array<LogoKey>).map(key => {
           return {
             key,
             image: logo[key].image,
@@ -256,7 +267,7 @@ export default defineComponent({
           }
         })
       } else {
-        infoForm.logo = [
+        siteLogos = [
           {
             key: 'login',
             image: '',
@@ -271,17 +282,19 @@ export default defineComponent({
           }
         ]
       }
+      Object.assign(infoForm, { ...data, logo: siteLogos })
     }
 
-    const handleLayoutSelect = val => {
+    const handleLayoutSelect = (val:AppUILayout) => {
+      console.log(val)
       // this.$store.dispatch('setLayout', val)
       // this.$set(this.$store.state.app, 'layout', val)
     }
-    const handleAvatarSuccess = (res, file) => {
-      infoForm['logo'] = URL.createObjectURL(file.raw)
+    const handleAvatarSuccess = (i:number, res:any, file:ElUploadFile) => {
+      infoForm.logo[i].image = URL.createObjectURL(file.raw)
     }
-
-    const beforeAvatarUpload = file => {
+    //
+    const beforeAvatarUpload = (file: ElFile) => {
       const isJPG = file.type === 'image/jpeg'
       const isLt2M = file.size / 1024 / 1024 < 2
 
@@ -294,11 +307,6 @@ export default defineComponent({
       return isJPG && isLt2M
     }
 
-    const fetchMenuData = () => {
-      getMenusDetailService({ id: props.menuId }).then(data => {
-        menuDetail = reactive(data)
-      })
-    }
 
     const handleCancleEdit = () => {
       isReadonly.value = true
@@ -306,20 +314,21 @@ export default defineComponent({
     }
 
     const saveForm = () => {
-      const saveDate = JSON.parse(JSON.stringify(infoForm))
+      const saveDate: InfoForm = JSON.parse(JSON.stringify(infoForm))
       delete saveDate.createdTime
       delete saveDate.updatedTime
-      let logoObj = {}
-      saveDate.logo.forEach(item => {
+      const logoObj = {} as AppLogo
+      (saveDate.logo).forEach(item => {
         logoObj[item.key] = {
           image: item.image,
           width: item.width,
           height: item.height
         }
       })
-      saveDate.logo = JSON.stringify(logoObj)
+      // saveDate.logo = JSON.stringify(logoObj)
+      const params = Object.assign({},saveDate,{ logo:JSON.stringify(logoObj) })
 
-      websiteUpdateService(saveDate).then(() => {
+      websiteUpdateService(params).then(() => {
         ElMessage.success('保存成功')
         setTimeout(() => {
           location.reload()
@@ -328,7 +337,6 @@ export default defineComponent({
     }
 
     initData()
-    fetchMenuData()
 
     return {
       isReadonly,
@@ -336,12 +344,9 @@ export default defineComponent({
       fields,
       infoForm,
       rules,
-      menuDetail,
-      initData,
       handleLayoutSelect,
       handleAvatarSuccess,
       beforeAvatarUpload,
-      fetchMenuData,
       handleCancleEdit,
       saveForm
     }

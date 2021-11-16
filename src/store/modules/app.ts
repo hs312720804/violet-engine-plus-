@@ -8,7 +8,7 @@ export type AppDeviceType = 'desktop' | 'miniScreen' | 'mobile'
 export type AppUILayout = 'default' | 'tlr' | 'tb'
 export interface AppMenu { isShow: boolean; isCollapse: boolean; }
 export interface AppSidebar { opened?: boolean; withoutAnimation: boolean; }
-export interface AppSite { copyright: string; layout: AppUILayout; recordNum: string; siteName: string; logo: string; }
+export interface AppSite { copyright: string; layout: AppUILayout; recordNum: string; siteName: string; logo: string; introduction: string; createdTime?: string; updatedTime?: string; }
 export interface AppAccess { [key: string]: boolean; }
 /**
  * 用户的操作信息: 面包屑, 打开的菜单

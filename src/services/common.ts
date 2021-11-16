@@ -47,17 +47,17 @@ export function getSiteInfo () {
   })
 }
 
-export interface websiteUpdateState {
-  copyright: ''
-  extra: ''
-  id: 0
-  introduction: ''
-  layout: ''
-  logo: ''
-  recordNum: ''
-  siteName: ''
-}
-export const websiteUpdateService = (data: websiteUpdateState) => {
+// export interface websiteUpdateState {
+//   copyright: ''
+//   extra: ''
+//   id: 0
+//   introduction: ''
+//   layout: ''
+//   logo: ''
+//   recordNum: ''
+//   siteName: ''
+// }
+export const websiteUpdateService = (data: AppSite) => {
   return fetch({
     method: 'post',
     url: 'website/update',
