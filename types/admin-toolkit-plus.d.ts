@@ -83,6 +83,15 @@ declare module '@ccprivate/admin-toolkit-plus' {
     disabled: boolean
   }
 
+  export type CTableHeder<T> = {
+    label: string
+    prop: keyof T
+  } | {
+    label: string
+    render: (renderRowData: import('element-plus/lib/el-table/src/table/defaults').RenderRowData<T>) => import('vue').VNode | string
+  }
+  export type CSelectionType = 'multiple' | 'single'
+
   declare const _default: Plugin
   export default _default
 }

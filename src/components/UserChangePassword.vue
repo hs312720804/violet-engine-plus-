@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-dialog
-      v-model:visible="dialogVisible"
+      v-model="dialogVisible"
       title="修改密码"
       width="450px"
       :before-close="handleCloseDialog"
@@ -49,7 +49,6 @@ export default defineComponent({
   },
   emits: ['close'],
   setup (props, { emit }) {
-
     const dialogVisible = ref(props.visible)
     const ruleForm = reactive({ pass: '', checkPass: '' })
     const ruleFormEl = ref<InstanceType<typeof ElForm>>()
@@ -136,6 +135,3 @@ export default defineComponent({
   }
 })
 </script>
-
-<style>
-</style>

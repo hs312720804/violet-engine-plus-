@@ -1,15 +1,17 @@
 import fetch from './fetch'
 export interface RBACUserInfo {
   id: number
-  status: 'ENABLE' | 'DISENABLE'
+  status: 'ENABLE' | 'DISABLE'
   departmentId: number
   imageUrl?: string
   name: string
   loginName: string
   phone: string
   email: string
+  registerType: string
+  remark: string
 }
-export interface RBACUser {
+export interface RBACUserRole {
   id: number
   roleIds: Array<number>
 }
@@ -20,7 +22,7 @@ export function userGetList (params: CRBACApiParam) {
     url: 'sys/user/index',
     params
   }).then(data => {
-    const { total, list: rows } = (data as CRBACApiResData<RBACUser>).pageInfo
+    const { total, list: rows } = (data as CRBACApiResData<RBACUserInfo>).pageInfo
     return {
       total,
       rows
@@ -40,14 +42,15 @@ export function userDetailService (params: { userId: number; }) {
 }
 
 
-export function userDelete (data) {
+export function userDelete (data: { id: string; }, successMessage?: string) {
   return fetch({
     method: 'post',
     url: 'sys/user/delete',
     isJSON: false,
     data: {
       userId: data.id
-    }
+    },
+    successMessage
   })
 }
 
@@ -73,20 +76,21 @@ export function userRoleAdd (res: RBACUserRoleParam, successMessage?: string) {
   return fetch({
     method: 'post',
     url: 'sys/user/update/userRole',
+    data,
     isJSON: false,
-    successMessage,
-    data
+    successMessage
   })
 }
 
-export function userUpsert (data: Pick<RBACUserInfo, 'id' | 'status' | 'departmentId'> & { password: string; }) {
+export function userUpsert (data: Pick<RBACUserInfo, 'id' | 'status' | 'departmentId'> & { password: string; }, successMessage?: string) {
   const url = data.id
     ? 'sys/user/update'
     : 'sys/user/add'
   return fetch({
     method: 'post',
-    isJSON: false,
     url,
-    data
+    data,
+    isJSON: false,
+    successMessage
   })
 }

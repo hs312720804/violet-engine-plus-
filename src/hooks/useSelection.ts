@@ -1,35 +1,41 @@
 // eslint-disable-next-line
-import { ref, reactive, watch } from 'vue'
+import { Ref, ref, watch } from 'vue'
+import { CSelectionType } from '@ccprivate/admin-toolkit-plus'
+type SelectedIndex = { [key: string]: boolean; }
+interface IdFieldFn<T> {
+  (item: T): string | number
+}
 
-export default function useSelection (options) {
+interface SelectionOptions<T> { idField: keyof T | IdFieldFn<T>; type: CSelectionType; data: Ref<Array<T>>; }
+export default function useSelection<T> (options: SelectionOptions<T>) {
   const { idField, type, data: tableData } = options
-  const selected = ref([])
-  const tableSelected = ref([])
+  const selected = ref<Array<T>>([]) as Ref<Array<T>>
+  const tableSelected = ref<Array<number>>([])
 
-  const getId = item => {
+  const getId = (item: T) => {
     return typeof idField === 'string'
       ? item[idField]
-      : idField(item)
+      : (idField as IdFieldFn<T>)(item)
   }
   const updateTableSelected = () => {
-    const newSelectedIndex = selected.value.reduce((result, item) => {
-      const id = getId(item)
+    const newSelectedIndex: SelectedIndex = selected.value.reduce((result: SelectedIndex, item) => {
+      const id = getId(item) as string
       result[id] = true
       return result
     }, {})
-    tableSelected.value = tableData.value.reduce((result, item, index) => {
-      const id = getId(item)
+    tableSelected.value = tableData.value.reduce((result: Array<number>, item, index) => {
+      const id = getId(item) as string
       if (newSelectedIndex[id]) {
         result.push(index)
       }
       return result
     }, [])
   }
-  const handleRowSelectionAdd = targetItem => {
+  const handleRowSelectionAdd = (targetItem: T) => {
     selected.value.push(targetItem)
     updateTableSelected()
   }
-  const handleRowSelectionRemove = targetItem => {
+  const handleRowSelectionRemove = (targetItem: T) => {
     const targetId = getId(targetItem)
     selected.value = selected.value.filter(item => {
       const id = getId(item)
@@ -37,11 +43,11 @@ export default function useSelection (options) {
     })
     updateTableSelected()
   }
-  const handleRowSelectionChange = (item, index) => {
+  const handleRowSelectionChange = (item: T, index: number) => {
     selected.value = [item]
     tableSelected.value = [index]
   }
-  const handleAllRowSelectionChange = value => {
+  const handleAllRowSelectionChange = (value: T) => {
     if (value) {
       tableData.value.forEach(handleRowSelectionAdd)
     } else {
