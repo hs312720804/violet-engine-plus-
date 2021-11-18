@@ -11,6 +11,7 @@
     "@ccprivate/utils": "^0.2.4",
     "axios": "^0.21.1",
     "element-plus": "^1.0.2-beta.71",
+    "file-saver": "^2.0.5",
     "js-md5": "^0.7.3",
     "nprogress": "^0.2.0",
     "qs": "^6.10.1",
@@ -18,6 +19,7 @@
     "secure-ls": "^1.2.6",
     "vue": "^3.1.1",
     "vue-i18n": "^9.1.6",
+    "vue-json-viewer": "^2.2.20",
     "vue-router": "^4.0.6",
     "vuex": "^4.0.1",
     "vuex-persistedstate": "^4.0.0"

@@ -97,7 +97,7 @@ export default {
     ResourceActions // ResourceActions
   },
   emits:['edit'],
-  setup (props, ctx) {
+  setup (props, { emit }) {
     // const _$t = ctx.root.$t.bind(ctx.root)
     // const service = ctx.root.$service
     const { t } = useI18n() // 获取 i18n 的 t
@@ -122,7 +122,7 @@ export default {
     ]
     function handleDoAction (action, item) {
       const eventName = commonOperationEvent[action.split(':')[1]]
-      ctx.emit(eventName, { item, selected: [item] })
+      emit(eventName, { item, selected: [item] })
     }
     function fetchData () {
       menuGetListService().then(result => {
