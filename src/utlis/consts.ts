@@ -15,14 +15,15 @@ const commonOperation = {
   LIST: 'select'
 }
 
-const commonOperationEvent = {
+const commonOperationEvent: { [k in CActionMode]: CActionModeEvent } = {
   add: 'create',
   update: 'edit',
   delete: 'delete',
   read: 'read',
   select: 'select',
   edit: 'edit',
-  preview: 'preview'
+  preview: 'preview',
+  copy: 'copy'
 }
 
 const abilityStatusText = {
