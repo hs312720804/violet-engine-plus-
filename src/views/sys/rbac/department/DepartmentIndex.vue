@@ -24,7 +24,7 @@
 
 <script lang="ts" >
 import { defineComponent, ref } from 'vue'
-import TabPage from '@/views/modules/TabPage.vue'
+import { TabPage } from '@/views/modules'
 import ListPage from './DepartmentList.vue'
 import DetailPage from './DepartmentDetail.vue'
 import usePageControll from '@/hooks/usePageControll'

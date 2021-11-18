@@ -1,13 +1,9 @@
-import { Ref, UnwrapRef, ref, reactive, defineComponent } from 'vue'
+import { Ref, ref, reactive, defineComponent } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import Fetch from '@/services/fetch'
-
-type IdField = 'id' | 'customId'  // 不同数据的主键
-type IdFieldValue = number | undefined;
-type pageControllItem = { [key in IdField]?: IdFieldValue }
-interface PageControllState<Data extends pageControllItem> {
-  id: IdFieldValue
-  item: Data | undefined
+interface PageControllState<Data> {
+  id?: Data[keyof Data]
+  item?: Data
   mode: RBACMode
   isShowList: boolean
   version: string | undefined
@@ -22,14 +18,12 @@ const listComponent = defineComponent({
   }
 })
 export type ListComponentType = InstanceType<typeof listComponent>
-interface PageControllParams {
-  idField: IdField
+interface PageControllParams<D> {
+  idField: keyof D
   listRef: Ref<ListComponentType | undefined>
   deleteService: (data: { id: string; }, successMessage: string) => ReturnType<typeof Fetch>
 }
-
-
-export default function usePageControll<Data extends pageControllItem> ({ idField = 'id', listRef, deleteService }: PageControllParams) {
+export default function usePageControll<Data extends { id?: number; }> ({ idField = 'id', listRef, deleteService }: PageControllParams<Data>) {
 
   const state = reactive<PageControllState<Data>>({
     id: undefined,
@@ -37,8 +31,7 @@ export default function usePageControll<Data extends pageControllItem> ({ idFiel
     mode: 'read',
     isShowList: true,
     version: undefined
-  })
-  console.log('state', state)
+  }) as PageControllState<Data>
 
   const isShowList = ref(true)
 
@@ -50,8 +43,7 @@ export default function usePageControll<Data extends pageControllItem> ({ idFiel
     isShowList.value = false
   }
 
-  function handleEdit ({ item, selected = [] }: { item: UnwrapRef<Data>; selected: Array<Data>; }) {
-    console.log('handleEdit', state.item, item)
+  function handleEdit ({ item, selected = [] }: { item: Data; selected: Array<Data>; }) {
     item = item || selected[0]
     state.id = item[idField]
     state.item = item
@@ -60,7 +52,7 @@ export default function usePageControll<Data extends pageControllItem> ({ idFiel
     isShowList.value = false
   }
 
-  function handleRead ({ item, version }: { item: UnwrapRef<Data>; version: string; }) {
+  function handleRead ({ item, version }: { item: Data; version: string; }) {
     state.id = item[idField]
     state.item = item
     state.mode = 'read'
@@ -73,7 +65,7 @@ export default function usePageControll<Data extends pageControllItem> ({ idFiel
     listRef?.value?.fetchData()
   }
 
-  function handleCopy ({ item }: { item: UnwrapRef<Data>; }) {
+  function handleCopy ({ item }: { item: Data; }) {
     state.id = item[idField]
     state.item = item
     state.mode = 'copy'

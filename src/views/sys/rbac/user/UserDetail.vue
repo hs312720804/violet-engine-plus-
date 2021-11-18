@@ -2,12 +2,9 @@
   <PageWrapper>
     <PageContentWrapper>
       <ContentLayout :title="title" @go-back="handleGoBack">
-        <ResourceActions
-          slot="resource-actions"
-          :actions="actions"
-          @do-action="handleDoAction"
-        >
-        </ResourceActions>
+        <template #resource-actions>
+          <ResourceActions :actions="actions" @do-action="handleDoAction"></ResourceActions>
+        </template>
         <c-form
           ref="formRef"
           :model="user"
@@ -19,40 +16,35 @@
             :label="$t('loginName')"
             prop="loginName"
             :readonly="!!user.id"
-            placeholder=""
-          >
-          </c-form-string>
+            placeholder
+          ></c-form-string>
           <c-form-string
             v-model="user.name"
             :label="$t('xingming')"
             prop="name"
-            placeholder=""
-          >
-          </c-form-string>
+            placeholder
+          ></c-form-string>
           <c-form-string
             v-model="user.email"
             :label="$t('email')"
             prop="email"
-            placeholder=""
-          >
-          </c-form-string>
+            placeholder
+          ></c-form-string>
           <c-form-string
             v-if="!user.id"
             v-model="user.password"
             :label="$t('password')"
             prop="password"
             :placeholder="$t('password')"
-          >
-          </c-form-string>
+          ></c-form-string>
           <c-form-string
             v-model="user.phone"
             :label="$t('phone')"
             prop="phone"
-            placeholder=""
-          >
-          </c-form-string>
+            placeholder
+          ></c-form-string>
           <c-form-any prop="departmentId" :label="$t('department')">
-            <div slot="edit">
+            <template #edit>
               <el-cascader
                 v-model="user.departmentId"
                 style="width: 400px"
@@ -63,9 +55,8 @@
                   value: 'id',
                   expandTrigger: 'hover'
                 }"
-              >
-              </el-cascader>
-            </div>
+              ></el-cascader>
+            </template>
           </c-form-any>
           <c-form-boolean
             v-model="user.status"
@@ -75,47 +66,68 @@
             false-val="DISABLE"
             :active-text="$t('enable')"
             :inactive-text="$t('disable')"
-          >
-          </c-form-boolean>
+          ></c-form-boolean>
           <c-form-string
             v-model="user.remark"
             :label="$t('remark')"
             prop="remark"
             type="textarea"
-          >
-          </c-form-string>
+          ></c-form-string>
         </c-form>
       </ContentLayout>
     </PageContentWrapper>
   </PageWrapper>
 </template>
 
-<script>
-import { ref, computed } from 'vue'
+<script lang="ts">
+import { defineComponent,PropType, ref, computed } from 'vue'
+import { ElForm, ElMessage } from 'element-plus'
+import { CForm } from '@ccprivate/admin-toolkit-plus'
+import { useI18n } from 'vue-i18n'
 import { PageWrapper, PageContentWrapper, ContentLayout, ResourceActions } from '@/views/modules'
-import consts from '../../../../utlis/consts'
-import { ElMessage } from 'element-plus'
+import { RBACDepartment, departmentGetListService } from '@/services/department'
+import { RBACUserInfo, userUpsert } from '@/services/user'
+import consts from '@/utlis/consts'
 const RESOURCE = 'user'
 const { CREATE, UPDATE } = consts.commonOperation
 
-export default {
+export default defineComponent({
   components: {
     PageWrapper,
     PageContentWrapper,
     ContentLayout,
     ResourceActions
   },
-  props: ['initMode', 'id', 'item'],
+  // props: ['initMode', 'id', 'item'],
+  props: {
+    id: {
+      type: Number,
+      default: Infinity
+    },
+    initMode: {
+      type: String as PropType<RBACMode>,
+      default: ''
+    },
+    item: {
+      type: Object as PropType<RBACUserInfo>,
+      default: () => {
+        return {}
+      }
+    }
+  },
+  emits: {
+    'upsert-end': () => true,
+    'go-back': () => true
+  },
   setup (props, ctx) {
-    const _$t = ctx.root.$t.bind(ctx.root)
-    const service = ctx.root.$service
+    const { t: _$t } = useI18n()
     const mode = ref(props.initMode)
     const title = computed(() => {
       return consts.modeText[mode.value] + _$t('user')
     })
-    const formRef = ref(null)
+    const formRef = ref<InstanceType<CForm>>()
     const user = ref(genUser(props.item))
-    function genUser (preset) {
+    function genUser (preset?:RBACUserInfo) {
       return {
         loginName: '',
         name: '',
@@ -157,9 +169,9 @@ export default {
       ]
     })
 
-    const allDepartments = ref([])
+    const allDepartments = ref<Array<RBACDepartment>>([])
     function fetchAllDepartments () {
-      service.departmentGetListService().then(result => {
+      departmentGetListService().then(result => {
         allDepartments.value = result
         if (!user.value.departmentId) {
           user.value.departmentId = result[0].id
@@ -184,9 +196,9 @@ export default {
         return [submit]
       }
     })
-    function handleDoAction (action) {
+    function handleDoAction (action:string) {
       if (action === `${RESOURCE}:${UPDATE}` || action === `${RESOURCE}:${CREATE}`) {
-        formRef.value.$refs.form.validate(valid => {
+        (formRef.value?.$refs.form as InstanceType<typeof ElForm>).validate(valid => {
           if (valid) {
             handleSave()
           } else {
@@ -204,7 +216,7 @@ export default {
       if (Array.isArray(data.departmentId)) {
         data.departmentId = data.departmentId.pop()
       }
-      service.userUpsert(data, _$t('message.saveSuccess'))
+      userUpsert(data, _$t('message.saveSuccess'))
         .then(() => {
           ctx.emit('upsert-end')
         })
@@ -225,9 +237,8 @@ export default {
       handleGoBack
     }
   }
-}
+})
 </script>
 
 <style>
-
 </style>

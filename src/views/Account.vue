@@ -118,7 +118,7 @@ export default defineComponent({
   line-height 110px
 .account-car__title
   margin 0
-  font-size 16pxs
+  font-size 16px
   border-bottom 1px solid #EBEEF5
   line-height 50px
   margin-bottom 10px

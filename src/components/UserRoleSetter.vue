@@ -15,7 +15,7 @@
 <script lang="ts">
 import { defineComponent, ref, PropType, watch } from 'vue'
 import { roleGetList, RBACRole } from '@/services/role'
-import { userRoleAdd, userRoleDel, RBACUser } from '@/services/user'
+import { userRoleAdd, userRoleDel, RBACUserRole } from '@/services/user'
 
 // interface IRoleData {
 //   key:string
@@ -28,7 +28,7 @@ export default defineComponent({
   },
   props: {
     row: {
-      type: Object as PropType<RBACUser>,
+      type: Object as PropType<RBACUserRole>,
       default: () => {
         return {}
       }

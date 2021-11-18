@@ -8,8 +8,7 @@
       @edit="handleEdit"
       @copy="handleCopy"
       @delete="handleDelete"
-    >
-    </ListPage>
+    ></ListPage>
     <DetailPage
       v-if="!state.isShowList"
       :id="state.id"
@@ -19,25 +18,30 @@
       @upsert-end="handleUpsertEnd"
       @refresh-list="handleRefreshList"
       @go-back="handleGoBack"
-    >
-    </DetailPage>
+    ></DetailPage>
   </TabPage>
 </template>
 
-<script>
-import { ref } from 'vue'
+<script lang="ts">
+import { defineComponent, ref } from 'vue'
 import { TabPage } from '@/views/modules'
-import ListPage from './UserList'
-import DetailPage from './UserDetail'
+import ListPage from './UserList.vue'
+import DetailPage from './UserDetail.vue'
 import usePageControll from '@/hooks/usePageControll'
-export default {
+import { RBACUserInfo, userDelete } from '@/services/user'
+
+export default defineComponent({
   components: {
     TabPage,
     ListPage,
     DetailPage
   },
-  setup (props, ctx) {
-    const listRef = ref(null)
+  setup () {
+    const listRef = ref<InstanceType<typeof ListPage>>()
+    // function del () {
+    //   console.log(data2)
+    //   return Promise.resolve(1)
+    // }
     const {
       state,
       handleCreate,
@@ -48,7 +52,7 @@ export default {
       handleRefreshList,
       handleGoBack,
       handleUpsertEnd
-    } = usePageControll({ idField: 'id', listRef, deleteService: ctx.root.$service.userDelete.bind(ctx.root) })
+    } = usePageControll<RBACUserInfo>({ idField: 'id', listRef, deleteService: userDelete })
     return {
       listRef,
       state,
@@ -62,9 +66,7 @@ export default {
       handleUpsertEnd
     }
   }
-}
+})
 </script>
 
-<style>
-
-</style>
+<style lang="stylus" scoped></style>
