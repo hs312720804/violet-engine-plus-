@@ -1,4 +1,4 @@
-import CellEdit from '@/components/CellEdit'
+import CellEdit from '@/components/CellEdit.vue'
 function handleOperation (arr) {
   // 不与权限关联时用例：["编辑:Page:Edit:edit","查看:Page:Edit:read","删除:Todo:rowDelete","自定义Page:Page:AA","DialogPage:Dialog:AAADialog"]
   // 与权限关联时用例：["编辑:Page:Edit:update:edit","查看:Page:Edit:detail:read","删除:Todo:rowDelete:delete","自定义Page:Page:AA","DialogPage:Dialog:AAADialog"]
@@ -58,7 +58,7 @@ function cellEdit (prop) {
           initValue: row[prop]
         },
         on: {
-          blur: (val) => {
+          blur: val => {
             let form = JSON.parse(JSON.stringify(row))
             form[prop] = val
             this.$service.fetch({
