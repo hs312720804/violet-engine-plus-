@@ -58,7 +58,7 @@ var mixin = {
         this.$emit('go-back')
       })
     },
-    rowDelete ({ data, params, isJSON = true }) {
+    tableDelete ({ data, params, isJSON = true }) {
       this.$confirm('确定要删除吗, 是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -89,6 +89,16 @@ var mixin = {
         })
       })
     },
+    // 删除行，需要保证详情、编辑、删除等使用的请求参数key一致
+    rowDelete (row) {
+      this.tableDelete(
+        {
+          params: {
+            [this.baseIndex.primaryKey]: row[this.baseIndex.primaryKey]
+          }
+        }
+      )
+    },
     // 删除角色
     roleDelete (row) {
       this.rowDelete(
@@ -105,6 +115,16 @@ var mixin = {
         {
           params: {
             userId: row[this.baseIndex.primaryKey]
+          }
+        }
+      )
+    },
+    // 删除枚举字典
+    enumDelete (row) {
+      this.rowDelete(
+        {
+          params: {
+            enumId: row[this.baseIndex.primaryKey]
           }
         }
       )

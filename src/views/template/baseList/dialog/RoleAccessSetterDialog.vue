@@ -2,9 +2,9 @@
   <div class="display-inline-block">
     <div class="role-access-setter">
       <div
+        class="resource-item"
         v-for="(item, index) in resources"
         :key="index"
-        class="resource-item"
       >
         <div class="resource-name">
           {{ item.name }}
@@ -12,16 +12,16 @@
         <div class="resource-operations">
           <el-checkbox
             v-for="(opItem, opIndex) in item.operations"
-            :key="opIndex"
             :value="accessIndexed[opItem.id]"
             @input="handleToggleAccessStatus(opItem, $event)"
+            :key="opIndex"
           >
             {{ opItem.name }}
           </el-checkbox>
         </div>
       </div>
     </div>
-    <div slot="footer" class="footer">
+    <div class="footer" slot="footer">
       <el-button type="primary" @click="handleSave">保存</el-button>
       <el-button @click="handleCancel">取消</el-button>
     </div>
@@ -30,10 +30,24 @@
 
 <script>
 import { ref, watch } from '@vue/composition-api'
-import { service } from '@/views/modules'
+import { service } from '@/utlis/deps'
 import consts from '@/utlis/consts'
 export default {
-  props: ['menu', 'row'],
+  // props: ['menu', 'row'],
+  props: {
+    menu: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    },
+    row: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    }
+  },
   setup (props, ctx) {
     const service = ctx.root.$service
     const api = consts.evil(props.menu.api)
@@ -80,12 +94,8 @@ export default {
     function handleToggleAccessStatus (item, val) {
       accessIndexed.value[item.id] = val
     }
-    // handleShowDialog()
-    watch(() => props.row, () => {
-      handleShowDialog()
-    })
+    handleShowDialog()
     return {
-      handleShowDialog,
       handleCancel,
       handleSave,
       resources,

@@ -1,72 +1,95 @@
 <template>
-  <c-card ref="contentCard" class="content">
-    <div v-show="showInfo">{{ $t('message.pageConfiguration') }}</div>
-    <c-content-wrapper
-      v-show="showList"
-      :filter="filter"
-      :pagination="pagination"
-      @filter-change="handleFilterChange"
-    >
-      <div class="list-option clearfix">
-        <div class="action-list">
-          <Actions
-            :selected="table.selected"
-            :actions="actions"
-            :rows="table.data"
-            :resource="resource"
-            @action="actionOption"
-            @todo="actionTodo"
-          ></Actions>
+  <div class="device">
+    <div class="department">
+      <div class="container">
+        <el-tree
+          slot="list"
+          class="tree-item-list"
+          :data="treeData"
+          :expand-on-click-node="false"
+          :props="{
+            label: 'name'
+          }"
+          :highlight-current="true"
+          @current-change="handleInputDepartmentId"
+          node-key="id"
+          default-expand-all
+        >
+        <!-- <div class="tree-item" slot-scope="{ node, data }">
+          <span class="tree-item__name">{{ data.name }}</span>
+        </div> -->
+        </el-tree>
+      </div>
+    </div>
+    <c-card ref="contentCard" class="content">
+      <div v-show="showInfo">{{ $t('message.pageConfiguration') }}</div>
+      <c-content-wrapper
+        v-show="showList"
+        :filter="filter"
+        :pagination="pagination"
+        @filter-change="handleFilterChange"
+      >
+        <div class="list-option clearfix">
+          <div class="action-list">
+            <Actions
+              :selected="table.selected"
+              :actions="actions"
+              :rows="table.data"
+              :resource="resource"
+              @action="actionOption"
+              @todo="actionTodo"
+            ></Actions>
+          </div>
+          <template v-if="filterFields.length > 0">
+            <c-list-filter
+              ref="expandForm"
+              :options="filterFields"
+              :length="3"
+              :form-data="filter"
+              :is-expand="filterExpand"
+              :button-text="buttonText"
+              :hidden-expand-button="filterFields.length <= 3"
+              v-if="!filterExpand"
+              @filter="handleSearch"
+              @reset="handleResetSearch"
+              @filter-expand="handlefilterExpand"
+            >
+            </c-list-filter>
+          </template>
         </div>
-        <template v-if="filterFields.length > 0">
+        <div class="filter-expand">
           <c-list-filter
             ref="expandForm"
             :options="filterFields"
-            :length="3"
             :form-data="filter"
             :is-expand="filterExpand"
             :button-text="buttonText"
-            :hidden-expand-button="filterFields.length <= 3"
-            v-if="!filterExpand"
+            v-if="filterExpand"
             @filter="handleSearch"
             @reset="handleResetSearch"
             @filter-expand="handlefilterExpand"
           >
           </c-list-filter>
-        </template>
-      </div>
-      <div class="filter-expand">
-        <c-list-filter
-          ref="expandForm"
-          :options="filterFields"
-          :form-data="filter"
-          :is-expand="filterExpand"
-          :button-text="buttonText"
-          v-if="filterExpand"
-          @filter="handleSearch"
-          @reset="handleResetSearch"
-          @filter-expand="handlefilterExpand"
-        >
-        </c-list-filter>
-      </div>
-      <c-table
-        :props="table.props"
-        ref="table"
-        :header="tableHeader"
-        :data="table.data"
-        :selected="table.selected"
-        :selection-type="selectionType"
-        @row-selection-add="handleRowSelectionAdd"
-        @row-selection-remove="handleRowSelectionRemove"
-        @all-row-selection-change="handleAllRowSelectionChange"
-      ></c-table>
-    </c-content-wrapper>
-  </c-card>
+        </div>
+        <c-table
+          :props="table.props"
+          ref="table"
+          :header="tableHeader"
+          :data="table.data"
+          :selected="table.selected"
+          :selection-type="selectionType"
+          @row-selection-add="handleRowSelectionAdd"
+          @row-selection-remove="handleRowSelectionRemove"
+          @all-row-selection-change="handleAllRowSelectionChange"
+        ></c-table>
+      </c-content-wrapper>
+    </c-card>
+  </div>
 </template>
 <script>
 import BaseList from '@/views/baseList/BaseList'
 import Actions from '@/views/baseList/Actions.vue'
-import listActions from './mixin/listActions'
+import listActions from '@/views/baseList/mixin/listActions'
 import { renderMethods } from '@/views/baseList/renderMethods'
 import _ from 'lodash'
 export default {
@@ -99,12 +122,31 @@ export default {
         selected: []
       },
       template: '',
-      actions: []
+      actions: [],
+      treeData: [],
+      activeDepartmentId: ''
     }
   },
-  computed: {},
+  computed: {
+  },
   methods: {
     ...renderMethods,
+    getDepartment () {
+      this.$service.fetch({
+        method: this.api.department[1],
+        url: this.api.department[0],
+        params: {
+          id: this.$store.state.user.departmentId
+        }
+      }).then((data) => {
+        this.treeData = data
+      })
+    },
+    handleInputDepartmentId (item) {
+      this.filter['organizationId'] = item.id
+      this.pagination.currentPage = 1
+      this.fetchData()
+    },
     actionOption (data) {
       this.$emit('action', data)
     },
@@ -166,18 +208,12 @@ export default {
           let listData = this.listDataMap ? _.get(data, this.listDataMap) : data // 获取映射数据
           if (listData.list.length < 1 && listData.total > 0) {
             _this.pagination.currentPage = _this.pagination.currentPage - 1
-            _this.fetchData()
+            _this.getListData()
           } else {
             // resolve(data.pageInfo)
             this.table.data = listData.list
             this.pagination.total = listData.total
           }
-        }).catch(e => {
-          this.$notify({
-            title: '获取数据失败',
-            type: 'error',
-            message: e.message
-          })
         })
       })
     },
@@ -193,10 +229,29 @@ export default {
   },
   created () {
     this.pageSetting(this.menu)
+    this.getDepartment()
   }
 }
 </script>
 <style lang="stylus" scoped>
+.device
+  background #fff
+  .department
+    width 280px
+    float left
+    box-sizing border-box
+    position relative
+    .container
+      background #fff
+      padding 14px
+  .content-card
+    margin-left 280px
+    border-left 1px solid #EBEEF5
+.device:after
+  content ''
+  height 0
+  clear both
+  display block
 >>>.content-list
   margin-top 0
   .el-pagination
@@ -231,6 +286,4 @@ th, td
     .el-button-group:not(:empty)
       margin-right 20px
       margin-bottom 14px
-  .filter-form
-    float left
 </style>

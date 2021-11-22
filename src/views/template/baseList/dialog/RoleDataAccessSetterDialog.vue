@@ -5,14 +5,14 @@
       title="设置角色数据权限"
       :fullscreen="true"
       @close="handleCancel"
-      v-model:visible="showDialog"
+      :visible.sync="showDialog"
       width="50%"
     > -->
     <div class="role-access-setter">
       <div
+        class="resource-item"
         v-for="(item, index) in resources"
         :key="index"
-        class="resource-item"
       >
         <div class="resource-name">
           {{ item.name }}
@@ -20,16 +20,16 @@
         <div class="resource-operations">
           <el-checkbox
             v-for="(opItem, opIndex) in item.operations"
-            :key="opIndex"
             :value="accessIndexed[opItem.id]"
             @input="handleToggleAccessStatus(opItem, $event)"
+            :key="opIndex"
           >
             {{ opItem.name }}
           </el-checkbox>
         </div>
       </div>
     </div>
-    <div slot="footer" class="footer">
+    <div class="footer" slot="footer">
       <el-button type="primary" @click="handleSave">保存</el-button>
       <el-button @click="handleCancel">取消</el-button>
     </div>

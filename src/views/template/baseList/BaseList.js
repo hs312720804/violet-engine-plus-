@@ -25,6 +25,9 @@ export default {
     primaryKey () {
       return this.baseIndex.primaryKey
     },
+    enums () {
+      return this.$store.state.app.enums
+    },
     tableHeader () {
       let header = JSON.parse(JSON.stringify(this.table.header))
       this.table.header.forEach((item, key) => {
@@ -38,11 +41,15 @@ export default {
         if (!('render' in item) || !item.render) {
           const renderMap = {
             enum: function (h, { row }) {
-              let options = {}
+              const rowEnum = _this.enums.find(ele => {
+                return ele.enumCode === item.options
+              })
+              const rowEnumArray = _this.$constants.evil(rowEnum.options)
+              let optionsRes = {}
               const tagType = ['', 'success', 'info', 'warning', 'danger', 'danger', 'warning', 'success', 'info']
               let type = ''
-              item.options.forEach((option, index) => {
-                options[option.value] = option.label
+              rowEnumArray.forEach((option, index) => {
+                optionsRes[option.value] = option.label
                 let optionsValue
                 if (typeof (row[item.prop]) === 'number') {
                   optionsValue = Number(option.value)
@@ -60,7 +67,7 @@ export default {
                     type: type
                   }
                 },
-                options[row[item.prop]]
+                optionsRes[row[item.prop]]
               )
             },
             image: function (h, { row }) {
@@ -111,12 +118,6 @@ export default {
     }
   },
   methods: {
-    selectChange () {
-      this.disabled = true
-      this.$nextTick(() => {
-        this.disabled = false
-      })
-    },
     setHeight () {
       const tableEl = this.$refs.table.$refs.table.$el
       const tableRect = tableEl.getBoundingClientRect()
@@ -213,16 +214,7 @@ export default {
       return filter
     }
   },
-  created () {
-    document.onkeypress = e => {
-      this.disabled = false
-      if (e.keyCode === 13) {
-        if (typeof (this.fetchData) !== 'undefined') {
-          this.fetchData()
-        }
-      }
-    }
-  },
+  created () {},
   beforeMount () {
     window.addEventListener('resize', this.setHeight)
   },

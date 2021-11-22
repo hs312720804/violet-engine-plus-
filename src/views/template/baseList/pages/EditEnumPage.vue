@@ -41,6 +41,33 @@
             >
             </el-date-picker>
           </el-form-item>
+          <el-form-item
+            label="枚举值"
+            v-if="item.prop === 'options'"
+          >
+            <el-row>
+              <el-col style="padding-bottom:10px">
+                <el-button @click="hancleAddOption">{{ $t('addValue') }}</el-button>
+              </el-col>
+            </el-row>
+            <div class="enum-value">
+              <el-row v-for="(option, index) in optionForm" :key="index" :gutter="14">
+                <el-col :span="11">
+                  <el-form-item label="label">
+                    <el-input v-model="option.label" autocomplete="off"></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="11">
+                  <el-form-item label="value">
+                    <el-input v-model="option.value" autocomplete="off"></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="2">
+                  <el-button type="text" icon="el-icon-delete" @click="handleDeleteOption(key)"></el-button>
+                </el-col>
+              </el-row>
+            </div>
+          </el-form-item>
         </div>
       </div>
       <el-form-item v-if="!isReadonly">
@@ -70,10 +97,20 @@ export default {
         noEmpty: [
           { required: true, message: this.$t('message.noEmpty'), trigger: ['blur', 'change'] }
         ]
-      }
+      },
+      optionForm: []
     }
   },
   methods: {
+    hancleAddOption () {
+      this.optionForm.push({
+        label: '',
+        value: ''
+      })
+    },
+    handleDeleteOption (key) {
+      this.optionForm.splice(key, 1)
+    },
     setItemRule (required) {
       const rule = required ? this.rules.noEmpty : []
       return rule
@@ -95,12 +132,15 @@ export default {
         params
       }).then(data => {
         this.form = data
+        // eslint-disable-next-line no-eval
+        this.optionForm = eval('(' + data.options + ')')
       })
     },
     saveForm () {
       this.$refs.form.$refs.form.validate(valid => {
         if (valid) {
           const form = JSON.parse(JSON.stringify(this.form))
+          form.options = JSON.stringify(this.optionForm)
           if (form.id) {
             this.$service.fetch({
               method: this.api.update[1],
@@ -141,3 +181,8 @@ export default {
   }
 }
 </script>
+<style lang="stylus" scoped>
+.enum-value
+  padding-top 15px
+  background #f2f2f2
+</style>
