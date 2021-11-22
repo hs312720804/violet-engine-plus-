@@ -33,7 +33,7 @@ export default {
     }
     function handleBack () {
     }
-    fetchRoles()
+
     function fetchRoles () {
       service.roleGetList({ pageNo: 1, pageSize: 10000 }).then(result => {
         roles.value = result.rows
@@ -48,8 +48,7 @@ export default {
       }
     }
     // watch(()user, fetchRoles, { lazy: true })
-    console.log(props.row)
-    watch(() => props.row, handleShowDialog)
+    handleShowDialog()
     return {
       inited,
       handleShowDialog,

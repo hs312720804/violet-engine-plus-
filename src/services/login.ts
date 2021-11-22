@@ -1,11 +1,10 @@
 import { store } from '@/store'
-import { UserModuleState } from '@/store/modules/user'
 import fetch from './fetch'
 
 export interface LoginArg { userName: string; password: string; loginType?: string; }
 
 export function LoginService (data: LoginArg) {
-  return fetch<UserModuleState>({
+  return fetch({
     method: 'post',
     url: 'login',
     data,

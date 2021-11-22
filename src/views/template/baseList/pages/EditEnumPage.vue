@@ -52,18 +52,24 @@
             </el-row>
             <div class="enum-value">
               <el-row v-for="(option, index) in optionForm" :key="index" :gutter="14">
-                <el-col :span="11">
-                  <el-form-item label="label">
+                <el-col :span="9">
+                  <el-form-item label="label" label-width="62px">
                     <el-input v-model="option.label" autocomplete="off"></el-input>
                   </el-form-item>
                 </el-col>
-                <el-col :span="11">
-                  <el-form-item label="value">
+                <el-col :span="9">
+                  <el-form-item label="value" label-width="62px">
                     <el-input v-model="option.value" autocomplete="off"></el-input>
                   </el-form-item>
                 </el-col>
-                <el-col :span="2">
-                  <el-button type="text" icon="el-icon-delete" @click="handleDeleteOption(key)"></el-button>
+                <el-col :span="3">
+                  <!-- http://gitlab.skysri.com/flower/violet-engine/issues/39 -->
+                  <el-form-item label="color" label-width="62px">
+                    <el-color-picker v-model="option.color" color-format="rgb"></el-color-picker>
+                  </el-form-item>
+                </el-col>
+                <el-col :span="3">
+                  <el-button type="text" icon="el-icon-delete" @click="handleDeleteOption(index)"></el-button>
                 </el-col>
               </el-row>
             </div>

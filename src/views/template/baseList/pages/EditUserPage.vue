@@ -1,9 +1,9 @@
 <template>
   <div>
     <c-form
+      ref="form"
       label-width="100px"
       :model="form"
-      ref="form"
       :rules="rules"
       :readonly="isReadonly"
     >
@@ -13,11 +13,11 @@
             <c-form-string
               v-if="item.inputType === 'string'"
               :key="key"
+              v-model="form[item.prop]"
               :label="item.label"
               :placeholder="$t('pleaseEnter', [item.label])"
               :rules="setItemRule(item)"
               :prop="item.prop"
-              v-model="form[item.prop]"
               class="el-item-width"
             ></c-form-string>
           </template>
@@ -25,26 +25,26 @@
             <c-form-string
               v-if="item.inputType === 'string'"
               :key="key"
+              v-model="form[item.prop]"
               :label="item.label"
               :placeholder="item.prop === 'password' ? '密码8-16位且不可输入汉字' : $t('pleaseEnter', [item.label])"
               :rules="setItemRule(item)"
               :prop="item.prop"
-              v-model="form[item.prop]"
               class="el-item-width"
             ></c-form-string>
           </template>
-          <el-form-item label="密码" v-if="form.id && item.prop === 'password' ">
+          <el-form-item v-if="form.id && item.prop === 'password' " label="密码">
             <el-button @click="handleChangePassword">修改密码</el-button>
           </el-form-item>
           <c-form-enum
             v-if="item.inputType === 'enum'"
-            :label="item.label"
             :key="key"
             v-model="form[item.prop]"
+            :label="item.label"
             type="radio"
             :prop="item.prop"
             :rules="setItemRule(item)"
-            :options="item.options"
+            :options="$store.getters.getEnumOptions(item.options)"
           ></c-form-enum>
           <el-form-item
             v-if="item.inputType === 'date'"
@@ -58,11 +58,11 @@
             >
             </el-date-picker>
           </el-form-item>
-          <c-form-any :prop="item.prop" :label="$t('department')" v-if="item.prop === 'departmentId'">
+          <c-form-any v-if="item.prop === 'departmentId'" :prop="item.prop" :label="$t('department')">
             <div slot="edit">
               <el-cascader
-                style="width: 400px"
                 v-model="form[item.prop]"
+                style="width: 400px"
                 :options="organizationOptions"
                 :props="{
                   checkStrictly: true,
@@ -82,10 +82,10 @@
       </el-form-item>
     </c-form>
     <ChangePassword
+      v-if="passwordVisible"
       :row="form"
       :visible="passwordVisible"
       @close="dialogClose"
-      v-if="passwordVisible"
     ></ChangePassword>
   </div>
 </template>
@@ -127,6 +127,11 @@ export default {
       }
     }
   },
+  created () {
+    this.mode === 'read' ? this.isReadonly = true : this.isReadonly = false
+    this.parseFormField(this.menu)
+    this.getDepartment()
+  },
   methods: {
     handleChangePassword () {
       this.passwordVisible = true
@@ -161,7 +166,7 @@ export default {
       }]
       if (item.prop in this.rules) {
         let itemRule = JSON.parse(JSON.stringify(noEmpty))
-        this.rules[item.prop].forEach((obj) => {
+        this.rules[item.prop].forEach(obj => {
           itemRule.push(obj)
         })
         return itemRule
@@ -182,7 +187,7 @@ export default {
       this.$service.fetch({
         method: this.api.department[1],
         url: this.api.department[0]
-      }).then((data) => {
+      }).then(data => {
         this.organizationOptions = data
       })
     },
@@ -232,11 +237,6 @@ export default {
         }
       })
     }
-  },
-  created () {
-    this.mode === 'read' ? this.isReadonly = true : this.isReadonly = false
-    this.parseFormField(this.menu)
-    this.getDepartment()
   }
 }
 </script>

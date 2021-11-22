@@ -116,7 +116,7 @@
                   action="https://jsonplaceholder.typicode.com/posts/"
                   :show-file-list="false"
                   :before-upload="beforeAvatarUpload"
-                  :on-success="(res, file)=>{handleAvatarSuccess(index, res, file)}"
+                  :on-success="(res, file) => { handleAvatarSuccess(index, res, file) }"
                 >
                   <el-button size="small" type="primary">{{ obj.image ? '更换' : '上传' }}</el-button>
                 </el-upload>
@@ -173,9 +173,8 @@ import { defineComponent, ref, reactive, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import $constants from '@/utlis/consts'
 import { useStore } from '@/store'
-import { AppSite,AppUILayout } from '@/store/modules/app'
 import { AppLogo, AppLogoInfo } from '@/store/getters'
-import { websiteUpdateService } from '@/services/common'
+import { AppSite, AppUILayout, websiteUpdateService } from '@/services/common'
 import { CFormInputType, CFormEnumOption } from '@ccprivate/admin-toolkit-plus'
 type LogoKey = keyof AppLogo
 type LogoInfo = AppLogoInfo & { key: LogoKey; }
@@ -285,12 +284,12 @@ export default defineComponent({
       Object.assign(infoForm, { ...data, logo: siteLogos })
     }
 
-    const handleLayoutSelect = (val:AppUILayout) => {
+    const handleLayoutSelect = (val: AppUILayout) => {
       console.log(val)
       // this.$store.dispatch('setLayout', val)
       // this.$set(this.$store.state.app, 'layout', val)
     }
-    const handleAvatarSuccess = (i:number, res:any, file:ElUploadFile) => {
+    const handleAvatarSuccess = (i: number, res: any, file: ElUploadFile) => {
       infoForm.logo[i].image = URL.createObjectURL(file.raw)
     }
     //
@@ -326,7 +325,7 @@ export default defineComponent({
         }
       })
       // saveDate.logo = JSON.stringify(logoObj)
-      const params = Object.assign({},saveDate,{ logo:JSON.stringify(logoObj) })
+      const params = Object.assign({}, saveDate, { logo: JSON.stringify(logoObj) })
 
       websiteUpdateService(params).then(() => {
         ElMessage.success('保存成功')

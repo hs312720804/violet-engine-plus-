@@ -1,8 +1,11 @@
 import { RootState } from './index'
+import Consts from '@/utlis/consts'
+import { EnumOptions } from '@/services/enum'
 // import { UserOptLog } from './modules/app'
 
 export interface AppLogoInfo { image: string; height: string; width: string; }
 export interface AppLogo { login: AppLogoInfo; top: AppLogoInfo; }
+
 
 export default {
   isLogin: (state: RootState) => state.user.id !== undefined,
@@ -23,7 +26,11 @@ export default {
     }
     return tags || []
   },
-  appLog: (state: RootState) => JSON.parse(state.app.site.logo) as AppLogo
+  appLog: (state: RootState) => JSON.parse(state.app.site.logo) as AppLogo,
+  getEnumOptions: (state: RootState) => (code: string) => {
+    const rowEnum = state.app.enums.find(ele => ele.enumCode === code)
+    return rowEnum ? Consts.evil<EnumOptions>(rowEnum.options) : undefined
+  }
   // sidebar: (state: RootState) => state.app.sidebar,
   // language: (state: RootState) => state.app.language,
   // device: (state: RootState) => state.app.device,

@@ -2,14 +2,14 @@
 import { ActionContext } from 'vuex'
 import { CBreadcrumbItems, CTagNavInitTags } from '@ccprivate/admin-toolkit-plus'
 import { RootState } from '@/store/index'
-import { getSiteInfo } from '@/services/common'
+import { AppSite, getSiteInfo } from '@/services/common'
+import { AppEnum, enumList } from '@/services/enum'
 
 export type AppDeviceType = 'desktop' | 'miniScreen' | 'mobile'
-export type AppUILayout = 'default' | 'tlr' | 'tb'
 export interface AppMenu { isShow: boolean; isCollapse: boolean; }
 export interface AppSidebar { opened?: boolean; withoutAnimation: boolean; }
-export interface AppSite { copyright: string; layout: AppUILayout; recordNum: string; siteName: string; logo: string; introduction: string; createdTime?: string; updatedTime?: string; }
 export interface AppAccess { [key: string]: boolean; }
+
 /**
  * 用户的操作信息: 面包屑, 打开的菜单
  */
@@ -27,6 +27,7 @@ export interface AppModuleState {
   site: AppSite
   usersOptLog: AppUsersOptLog
   loginUserToken?: string
+  enums: Array<AppEnum>
 }
 
 type AppActionContext = ActionContext<AppModuleState, RootState>
@@ -46,7 +47,8 @@ const app = {
     site: undefined,
     access: {},
     usersOptLog: {},
-    loginUserToken: undefined
+    loginUserToken: undefined,
+    enums: []
   },
   mutations: {
     TOGGLE_MENU: (state: AppModuleState) => {
@@ -104,6 +106,9 @@ const app = {
         usersOptLog.tagNavs = tagNavs
         state.usersOptLog[loginName] = usersOptLog
       }
+    },
+    SET_ENUM: (state: AppModuleState, enums: Array<AppEnum> = []) => {
+      state.enums = enums
     }
   },
   actions: {
@@ -139,6 +144,11 @@ const app = {
     setTagNavs: ({ commit, rootState }: AppActionContext, tagNavs: CTagNavInitTags) => {
       const user = rootState.user
       commit('SET_TAG_NAVS', { loginName: user.loginName, tagNavs })
+    },
+    setEnums ({ commit }: AppActionContext) {
+      enumList({ pageNo: 1, pageSize: 999 }).then(res => {
+        commit('SET_ENUM', res.list)
+      })
     }
   }
 }

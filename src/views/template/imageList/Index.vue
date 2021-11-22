@@ -15,7 +15,6 @@
       :menu-id="menuId"
       :menu="menuDetail"
       :template="template"
-      :content-props="contentProps"
       :title="title"
       :option-type="optionType"
       :selected="selected"
@@ -67,41 +66,15 @@ export default defineComponent({
       default:undefined
     }
   },
-  data () {
-    return {
-      isShowList: true,
-      id: undefined,
-      mode: 'create',
-      template: '',
-      title: '',
-      menuDetail: '',
-      dialogVisible: false,
-      optionType: '',
-      selected: []
-    }
-  },
-  computed: {
-    resourceInfo () {
-      return {
-      }
-    },
-    contentProps () {
-      return {
-      }
-    },
-    listProps () {
-      return {
-      }
-    }
-  },
-  created () {
-    this.fetchMenuData(this.menuId)
+  setup(props){
+
+    fetchMenuData(props.menuId)
+
     this.$bus.$on('go-back', () => {
       this.isShowList = true
     })
-  },
-  methods: {
-    disposalField (fields, useType) {
+
+    function disposalField (fields, useType) {
       return fields.filter(item => {
         if ('use' in item && item.use.length > 0) {
           const bool = item.use.some(num => {
@@ -114,18 +87,18 @@ export default defineComponent({
           return item
         }
       })
-    },
-    fetchMenuData (id) {
-      this.$service.getMenusDetail({ id }).then(data => {
+    }
+    function fetchMenuData (id) {
+      this.$service.getMenusDetailService({ id }).then(data => {
         this.menuDetail = data
       })
-    },
-    handleUpsertEnd () {
+    }
+    function handleUpsertEnd () {
       this.isShowList = true
       this.mode = 'list'
       this.$refs.list.fetchData()
-    },
-    handleOption (data) {
+    }
+    function handleOption (data) {
       this.template = data.option[2]
       this.title = data.option[0]
       this.mode = data.option[4]
@@ -139,8 +112,8 @@ export default defineComponent({
       if (data.option[1] === 'Dialog') {
         this.dialogVisible = true
       }
-    },
-    handleAction (data) {
+    }
+    function handleAction (data) {
       this.template = data.option[2]
       this.title = data.option[0]
       this.mode = data.option[3]
@@ -157,12 +130,23 @@ export default defineComponent({
       if (data.option[1] === 'Dialog') {
         this.dialogVisible = true
       }
-    },
-    goBack () {
+    }
+    function goBack () {
       this.isShowList = true
       this.mode = 'list'
       this.optionType = ''
       this.id = undefined
+    }
+    return {
+      isShowList: true,
+      id: undefined,
+      mode: 'create',
+      template: '',
+      title: '',
+      menuDetail: '',
+      dialogVisible: false,
+      optionType: '',
+      selected: []
     }
   }
 })

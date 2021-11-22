@@ -1,28 +1,41 @@
+import MenuDetail from '@/views/sys/rbac/menu/MenuDetail.vue'
 import fetch from './fetch'
-/**
- * {@linlk menuDeleteService}
- */
-export interface menuDeleteArg {
-  /** sh */
-  id: string
-}
-export interface menuDeleteState {
-  /** sh */
-  data: string
+
+export interface MenuExtra {
+  actions: string // Array<CButtonAction>
+  listDataMap: string
+  resource: string
 }
 
-// export function getMenusDetail (params) {
-//   return fetch({
-//     method: 'get',
-//     url: 'sys/menu/detail',
-//     params
-//   })
-// }
-export const getMenusDetailService = (params: { id: string; }) => {
-  return fetch({
+export interface MenuFields {
+  inputType: 'operate' | ''
+  label: string
+  options: string
+  prop: string
+  queryExclude: boolean
+  render: string
+  use: Array<number>
+  width: string
+  primaryKey: 1 | 0
+}
+export interface MenuDetail {
+  /**
+   * JSON.stringify(MenuExtra)
+   */
+  extra: string
+  /**
+   * JSON.stringify(MenuFields<T>)
+   */
+  fields: string
+}
+
+export const getMenusDetailService = (params: { id: string | number; }) => {
+  return fetch<MenuDetail>({
     method: 'get',
     url: 'sys/menu/detail',
     params
+  }).then(res => {
+    return res as MenuDetail
   })
 }
 
@@ -76,10 +89,8 @@ export function menuUpsertService (data) {
 /**
  *
  * @param data
- * @returns { Promise<menuDeleteState>}
- * {@link xx}
  */
-export const menuDeleteService = (data: menuDeleteArg)=> {
+export const menuDeleteService = (data: { id: string; }) => {
   return fetch({
     method: 'post',
     url: 'sys/menu/delete',

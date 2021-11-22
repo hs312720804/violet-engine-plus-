@@ -103,6 +103,7 @@ export default {
   },
   methods: {
     handleClick (tab, event) {
+      this.$router.push({ query: { tab: this.activeName } })
       this.$nextTick(() => {
         this.menuChildren.forEach((item, index) => {
           if (item.alias === this.activeName && item.template === 'BaseList') { // 判断是BaseList时才会进行高度的设置
@@ -121,7 +122,11 @@ export default {
         })
         this.primaryKey = primaryField.length > 0 ? primaryField[0].prop : 'id'
         if (this.menuChildren.length > 0) {
-          this.activeName = this.menuChildren[0].alias
+          if (this.$route.query.tab) {
+            this.activeName = this.$route.query.tab
+          } else {
+            this.activeName = this.menuChildren[0].alias
+          }
         }
         this.pageSetting(this.menuDetail)
       })

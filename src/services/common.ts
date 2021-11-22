@@ -1,5 +1,7 @@
-import { AppSite } from '@/store/modules/app'
 import fetch from './fetch'
+
+export type AppUILayout = 'default' | 'tlr' | 'tb'
+export interface AppSite { copyright: string; layout: AppUILayout; recordNum: string; siteName: string; logo: string; introduction: string; createdTime?: string; updatedTime?: string; }
 
 export interface Menu {
   id: number
@@ -47,16 +49,6 @@ export function getSiteInfo () {
   })
 }
 
-// export interface websiteUpdateState {
-//   copyright: ''
-//   extra: ''
-//   id: 0
-//   introduction: ''
-//   layout: ''
-//   logo: ''
-//   recordNum: ''
-//   siteName: ''
-// }
 export const websiteUpdateService = (data: AppSite) => {
   return fetch({
     method: 'post',

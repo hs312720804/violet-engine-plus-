@@ -101,7 +101,7 @@ var mixin = {
     },
     // 删除角色
     roleDelete (row) {
-      this.rowDelete(
+      this.tableDelete(
         {
           params: {
             roleId: row[this.baseIndex.primaryKey]
@@ -111,7 +111,7 @@ var mixin = {
     },
     // 删除用户
     userDelete (row) {
-      this.rowDelete(
+      this.tableDelete(
         {
           params: {
             userId: row[this.baseIndex.primaryKey]
@@ -121,7 +121,7 @@ var mixin = {
     },
     // 删除枚举字典
     enumDelete (row) {
-      this.rowDelete(
+      this.tableDelete(
         {
           params: {
             enumId: row[this.baseIndex.primaryKey]

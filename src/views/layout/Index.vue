@@ -83,7 +83,7 @@
 <script lang="ts">
 import { defineComponent, ref, reactive } from 'vue'
 import { useStore } from '@/store'
-import { AppUILayout } from '@/store/modules/app'
+import { AppUILayout } from '@/services/common'
 
 import MainLR from './MainLR.vue'
 import MainTLR from './MainTLR.vue'

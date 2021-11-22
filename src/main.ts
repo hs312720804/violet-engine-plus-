@@ -4,6 +4,7 @@ import adminToolkitPlus from '@ccprivate/admin-toolkit-plus'
 import '../node_modules/@ccprivate/admin-toolkit-plus/dist/style.css'
 import '@/assets/icon/iconfont.css'
 import '@/assets/global.styl'
+import '@/assets/animation/transition.css'
 
 
 import App from './App.vue'

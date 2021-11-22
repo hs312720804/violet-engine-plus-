@@ -29,7 +29,7 @@
       @close="hiddenDialog"
     >
       <component
-        v-if="id"
+        v-if="dialogVisible"
         :is="`${template}Dialog`"
         :mode="mode"
         :id="id"

@@ -44,10 +44,14 @@ export default {
               const rowEnum = _this.enums.find(ele => {
                 return ele.enumCode === item.options
               })
+              if (!rowEnum) {
+                return row[item.prop]
+              }
               const rowEnumArray = _this.$constants.evil(rowEnum.options)
               let optionsRes = {}
-              const tagType = ['', 'success', 'info', 'warning', 'danger', 'danger', 'warning', 'success', 'info']
-              let type = ''
+              const defaultColor = ['#409eff', '#67c23a', '#909399', '#f56c6c', '#e6a23c'] // 默认5种颜色
+              let color = ''
+              let borderColor = ''
               rowEnumArray.forEach((option, index) => {
                 optionsRes[option.value] = option.label
                 let optionsValue
@@ -57,14 +61,23 @@ export default {
                   optionsValue = option.value
                 }
                 if (row[item.prop] === optionsValue) {
-                  type = tagType[index]
+                  color = option['color'] || defaultColor[index]
+                  if (option['color']) {
+                    const oc = option['color']
+                    const rgb = oc.substr(0, oc.length - 1)
+                    borderColor = rgb + ', .35)'
+                  }
                 }
               })
               return h(
                 'el-tag',
                 {
                   attrs: {
-                    type: type
+                    effect: 'plain'
+                  },
+                  style: {
+                    border: '1px solid ' + (borderColor || color || '#909399'), // 设有设置颜色用默认颜色，默认颜色用完用灰色
+                    color: color || '#909399'
                   }
                 },
                 optionsRes[row[item.prop]]

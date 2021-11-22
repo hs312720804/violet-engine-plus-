@@ -55,7 +55,7 @@
         :header="tableHeader"
         :data="table.data"
         :selected="table.selected"
-        :selection-type="selectionType"
+        :selection-type="selectionType ? selectionType : 'none'"
         @row-selection-add="handleRowSelectionAdd"
         @row-selection-remove="handleRowSelectionRemove"
         @all-row-selection-change="handleAllRowSelectionChange"
