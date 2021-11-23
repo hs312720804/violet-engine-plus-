@@ -8,8 +8,8 @@ export interface RBACUserInfo {
   loginName: string
   phone: string
   email: string
-  registerType: string
-  remark: string
+  registerType?: string
+  remark?: string
 }
 export interface RBACUserRole {
   id: number
@@ -89,6 +89,16 @@ export function userUpsert (data: Pick<RBACUserInfo, 'id' | 'status' | 'departme
   return fetch({
     method: 'post',
     url,
+    data,
+    isJSON: false,
+    successMessage
+  })
+}
+
+export function userUpdateService (data: RBACUserInfo, successMessage?: string) {
+  return fetch({
+    method: 'post',
+    url: 'sys/user/update',
     data,
     isJSON: false,
     successMessage
