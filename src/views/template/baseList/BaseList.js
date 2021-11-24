@@ -25,6 +25,9 @@ export default {
     primaryKey () {
       return this.baseIndex.primaryKey
     },
+    enums () {
+      return this.$store.state.app.enums
+    },
     tableHeader () {
       let header = JSON.parse(JSON.stringify(this.table.header))
       this.table.header.forEach((item, key) => {
@@ -38,11 +41,19 @@ export default {
         if (!('render' in item) || !item.render) {
           const renderMap = {
             enum: function (h, { row }) {
-              let options = {}
-              const tagType = ['', 'success', 'info', 'warning', 'danger', 'danger', 'warning', 'success', 'info']
-              let type = ''
-              item.options.forEach((option, index) => {
-                options[option.value] = option.label
+              const rowEnum = _this.enums.find(ele => {
+                return ele.enumCode === item.options
+              })
+              if (!rowEnum) {
+                return row[item.prop]
+              }
+              const rowEnumArray = _this.$constants.evil(rowEnum.options)
+              let optionsRes = {}
+              const defaultColor = ['#409eff', '#67c23a', '#909399', '#f56c6c', '#e6a23c'] // 默认5种颜色
+              let color = ''
+              let borderColor = ''
+              rowEnumArray.forEach((option, index) => {
+                optionsRes[option.value] = option.label
                 let optionsValue
                 if (typeof (row[item.prop]) === 'number') {
                   optionsValue = Number(option.value)
@@ -50,17 +61,26 @@ export default {
                   optionsValue = option.value
                 }
                 if (row[item.prop] === optionsValue) {
-                  type = tagType[index]
+                  color = option['color'] || defaultColor[index]
+                  if (option['color']) {
+                    const oc = option['color']
+                    const rgb = oc.substr(0, oc.length - 1)
+                    borderColor = rgb + ', .35)'
+                  }
                 }
               })
               return h(
                 'el-tag',
                 {
                   attrs: {
-                    type: type
+                    effect: 'plain'
+                  },
+                  style: {
+                    border: '1px solid ' + (borderColor || color || '#909399'), // 设有设置颜色用默认颜色，默认颜色用完用灰色
+                    color: color || '#909399'
                   }
                 },
-                options[row[item.prop]]
+                optionsRes[row[item.prop]]
               )
             },
             image: function (h, { row }) {
@@ -111,12 +131,6 @@ export default {
     }
   },
   methods: {
-    selectChange () {
-      this.disabled = true
-      this.$nextTick(() => {
-        this.disabled = false
-      })
-    },
     setHeight () {
       const tableEl = this.$refs.table.$refs.table.$el
       const tableRect = tableEl.getBoundingClientRect()
@@ -213,16 +227,7 @@ export default {
       return filter
     }
   },
-  created () {
-    document.onkeypress = e => {
-      this.disabled = false
-      if (e.keyCode === 13) {
-        if (typeof (this.fetchData) !== 'undefined') {
-          this.fetchData()
-        }
-      }
-    }
-  },
+  created () {},
   beforeMount () {
     window.addEventListener('resize', this.setHeight)
   },

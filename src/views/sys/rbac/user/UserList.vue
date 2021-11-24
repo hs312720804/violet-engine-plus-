@@ -98,6 +98,7 @@ const RESOURCE = 'user'
 const { CREATE, UPDATE, DELETE } = consts.commonOperation
 const commonOperationEvent = consts.commonOperationEvent
 
+
 export default defineComponent({
   components: {
     ListLayout,
@@ -105,6 +106,7 @@ export default defineComponent({
     PageWrapper,
     PageContentWrapper
   },
+  emits: Object.keys(commonOperationEvent).map(k=> commonOperationEvent[k as keyof typeof commonOperationEvent]),
   setup (props, { emit }) {
 
     const { t: _$t } = useI18n()

@@ -48,8 +48,7 @@ export default {
       }
     }
     // watch(()user, fetchRoles, { lazy: true })
-    console.log(props.row)
-    watch(() => props.row, handleShowDialog)
+    handleShowDialog()
     return {
       inited,
       handleShowDialog,

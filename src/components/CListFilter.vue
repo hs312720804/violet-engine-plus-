@@ -16,7 +16,7 @@
             v-model="filterForm[item.prop]"
             :label="showLabel ? item.label : ''"
             :prop="item.prop"
-            :options="item.options"
+            :options="getEnumOptions(item.options)"
             :placeholder="item.label"
             clearable
           ></c-form-enum>
@@ -102,6 +102,7 @@ interface CListFilterButton {
   'packUp': '收起'
 }
 import { defineComponent, PropType, ref, reactive, computed } from 'vue'
+import { useStore } from '@/store'
 export default defineComponent({
   components: {
   },
@@ -144,6 +145,8 @@ export default defineComponent({
   },
   emits: ['filter', 'filter-expand', 'reset'],
   setup (props, { emit }) {
+    const store = useStore()
+    const getEnumOptions = computed(()=>store.getters.getEnumOptions)
     const expand = ref(props.isExpand)
     const genButtonText = computed<CListFilterButton>(() => {
       return {
@@ -178,7 +181,8 @@ export default defineComponent({
       filterForm,
       handleFilter,
       handleFilterReset,
-      handleFilterExpand
+      handleFilterExpand,
+      getEnumOptions
     }
   }
 })

@@ -27,7 +27,7 @@
             type="radio"
             :prop="item.prop"
             :rules="setItemRule(item.required)"
-            :options="item.options"
+            :options="$store.getters.getEnumOptions(item.options)"
           ></c-form-enum>
           <el-form-item
             v-if="item.inputType === 'date'"
@@ -45,7 +45,7 @@
       </div>
       <el-form-item v-if="!isReadonly">
         <el-button type="success" @click="$emit('go-back')">{{ $t('btn.cancel') }}</el-button>
-        <el-button type="primary" @click="saveForm()">{{ $t('btn.save') }}</el-button>
+        <el-button v-debounce="[saveForm, 'click', 500]" type="primary">{{ $t('btn.save') }}</el-button>
       </el-form-item>
     </c-form>
   </div>

@@ -2,11 +2,11 @@
   <div>
     <div>
       <el-checkbox
-        v-for="item in row.operations"
-        :key="item.id"
         class="access-item"
+        v-for="item in row.operations"
         :value="item.status === 'ENABLE'"
         @input="handleToggleOperationStatus(item)"
+        :key="item.id"
       >
         {{ item.name }}
       </el-checkbox>
@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { ref } from '@vue/composition-api'
 import consts from '@/utlis/consts'
 export default {
   props: {

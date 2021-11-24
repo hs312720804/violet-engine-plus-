@@ -1,32 +1,46 @@
+import MenuDetail from '@/views/sys/rbac/menu/MenuDetail.vue'
 import fetch from './fetch'
-/**
- * {@linlk menuDeleteService}
- */
-export interface menuDeleteArg {
-  /** sh */
-  id: string
-}
-export interface menuDeleteState {
-  /** sh */
-  data: string
+
+export interface MenuExtra {
+  actions: string // Array<CButtonAction>
+  listDataMap: string
+  resource: string
 }
 
-// export function getMenusDetail (params) {
-//   return fetch({
-//     method: 'get',
-//     url: 'sys/menu/detail',
-//     params
-//   })
-// }
-export const getMenusDetailService = (params: { id: string; }) => {
-  return fetch({
+export interface MenuFields {
+  inputType: 'operate' | '' // 字段类型，当 render 存在时，忽略该字段
+  label: string
+  options: string // 枚举code，会根据该code从store中的 getEnumOptions 获取对应的code选项
+  prop: string
+  queryExclude: boolean // 是否从筛选组件 CListFilter 中排除
+  render: string  // 该字段在表格（c-table）中自定义渲染函数
+  use: Array<number>  // 该字段在列表表格（1）、列表筛选（2）、编辑页（3）中显示，eg: [1,3]，表示只在列表表格和编辑页中显示，不在列表筛选中显示
+  width: string // 字段在表格中的宽度 eg: '100px'
+  primaryKey: 1 | 0 // 是否主键; 1:是,0:否
+}
+export interface MenuDetail {
+  /**
+   * JSON.stringify(MenuExtra[])
+   */
+  extra: string
+  /**
+   * JSON.stringify(MenuFields[])
+   */
+  fields: string
+  children: MenuDetail[] | null
+}
+
+export const getMenusDetailService = (params: { id: string | number; }) => {
+  return fetch<MenuDetail>({
     method: 'get',
     url: 'sys/menu/detail',
     params
+  }).then(res => {
+    return res as MenuDetail
   })
 }
 
-function removeEmptyChildren (menus:any) {
+function removeEmptyChildren (menus: Array<MenuDetail>) {
   menus.forEach(item => {
     if (item.children) {
       if (item.children.length === 0) {
@@ -39,11 +53,11 @@ function removeEmptyChildren (menus:any) {
 }
 
 export function menuGetListService (params: undefined) {
-  return fetch({
+  return fetch<Array<MenuDetail>>({
     url: 'sys/menu/index',
     params
   }).then(data => {
-    removeEmptyChildren(data)
+    removeEmptyChildren(data as Array<MenuDetail>)
     return data
   })
 }
@@ -76,10 +90,8 @@ export function menuUpsertService (data) {
 /**
  *
  * @param data
- * @returns { Promise<menuDeleteState>}
- * {@link xx}
  */
-export const menuDeleteService = (data: menuDeleteArg)=> {
+export const menuDeleteService = (data: { id: string; }) => {
   return fetch({
     method: 'post',
     url: 'sys/menu/delete',

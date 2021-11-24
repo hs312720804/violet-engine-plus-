@@ -45,8 +45,11 @@ function stringHidden (argment) {
     )
   }
 }
+/**
+ * 单元格编辑
+ * @param {prop} prop
+ */
 function cellEdit (prop) {
-  // debugger
   return (h, { row }) => {
     return h(
       CellEdit,
@@ -79,9 +82,9 @@ const renderMethods = {
   stringHidden,
   cellEdit
 }
-// 方法名:说明
+// 方法名:说明，如果用数组，索引0为下拉表单显示的名称，索引1为提示。
 const renderMap = {
-  handleOperation: '普通列表操作',
+  handleOperation: ['普通列表操作', '参数说明：字符数组，元素格式"名称:操作类型[Page|Dialog|Todo]:文件名(末尾去掉Page|Dialog):权限:[mode]"，如["编辑:Page:Edit:update:edit","删除:Todo:roleDelete:delete",....]'],
   stringHidden: '字符串隐藏',
   cellEdit: '单元格编辑'
 }

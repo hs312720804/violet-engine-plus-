@@ -5,7 +5,7 @@
       title="设置角色数据权限"
       :fullscreen="true"
       @close="handleCancel"
-      v-model:visible="showDialog"
+      :visible.sync="showDialog"
       width="50%"
     > -->
     <div class="role-access-setter">
@@ -78,7 +78,7 @@ export default {
     function handleToggleAccessStatus (item, val) {
       accessIndexed.value[item.id] = val
     }
-    watch(() => props.row, handleShowDialog)
+    handleShowDialog()
     return {
       handleShowDialog,
       handleCancel,

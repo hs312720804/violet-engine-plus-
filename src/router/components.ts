@@ -16,34 +16,34 @@ interface RouterComponents {
  * 自定义可使用custom或者为空
  */
 const routerComponents: RouterComponents = {
-  // ConferenceManagement: {
-  //   template: () => import('@/views/single/ConferenceManagement.vue'),
-  //   type: 'single'
-  // },
-  // TreeSideList: {
-  //   template: () => import('@/views/treeSideList/Index.vue'),
-  //   type: 'list'
-  // },
+  ConferenceManagement: {
+    template: () => import('@/views/template/single/ConferenceManagement.vue'),
+    type: 'single'
+  },
+  TreeSideList: {
+    template: () => import('@/views/template/treeSideList/Index.vue'),
+    type: 'list'
+  },
   BaseList: {
     template: () => import('@/views/template/baseList/Index.vue'),
     type: 'list'
   },
-  // TabPage: {
-  //   template: () => import('@/views/tabPage/Index.vue'),
-  //   type: 'tab'
-  // },
-  // ImageList: {
-  //   template: () => import('@/components/imageList/Index.vue'),
-  //   type: 'list'
-  // },
-  // CardList: {
-  //   template: () => import('@/views/cardList/Index.vue'),
-  //   type: 'list'
-  // },
-  // ExternalIframe: {
-  //   template: () => import('@/views/externalIframe/Index.vue'),
-  //   type: 'iframe'
-  // },
+  TabPage: {
+    template: () => import('@/views/template/tabPage/Index.vue'),
+    type: 'tab'
+  },
+  ImageList: {
+    template: () => import('@/views/template/imageList/Index.vue'),
+    type: 'list'
+  },
+  CardList: {
+    template: () => import('@/views/template/cardList/Index.vue'),
+    type: 'list'
+  },
+  ExternalIframe: {
+    template: () => import('@/views/template/externalIframe/Index.vue'),
+    type: 'iframe'
+  },
   Dashboard: {
     template: () => import('@/views/Dashboard.vue'),
     type: 'custom'
@@ -66,6 +66,11 @@ const routerComponents: RouterComponents = {
   // 站点信息
   SiteInfo: {
     template: () => import('@/views/sys/SiteInfo.vue'),
+    type: 'custom'
+  },
+  // 转场动画
+  TransitionAnimation: {
+    template: () => import('@/views/example/animation/Transition.vue'),
     type: 'custom'
   }
 }

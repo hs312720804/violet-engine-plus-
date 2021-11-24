@@ -1,20 +1,20 @@
 <template>
   <div class="display-inline-block">
     <el-tree
-      ref="treeRef"
       class="menu-item-list"
       :data="menuTree"
+      ref="treeRef"
       show-checkbox
       node-key="id"
       :check-strictly="true"
       :default-checked-keys="roleMenuIds"
       default-expand-all
     >
-      <div slot-scope="{ node, data }" class="menu-item">
+      <div class="menu-item" slot-scope="{ node, data }">
         <span>{{ data.name }}</span>
       </div>
     </el-tree>
-    <div slot="footer" class="footer">
+    <div class="footer" slot="footer">
       <el-button type="primary" @click="handleSave">保存</el-button>
       <el-button @click="handleCancel">取 消</el-button>
     </div>
@@ -32,9 +32,6 @@ export default {
   },
   watch: {
     'row': 'handleShowDialog'
-  },
-  created () {
-    this.handleShowDialog()
   },
   methods: {
     handleShowDialog () {
@@ -70,6 +67,9 @@ export default {
     handleCancel () {
       this.$emit('set-cancel')
     }
+  },
+  created () {
+    this.handleShowDialog()
   }
 }
 </script>

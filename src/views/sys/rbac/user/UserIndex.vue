@@ -52,7 +52,8 @@ export default defineComponent({
       handleRefreshList,
       handleGoBack,
       handleUpsertEnd
-    } = usePageControll<RBACUserInfo>({ idField: 'id', listRef, deleteService: userDelete })
+    } = usePageControll<RBACUserInfo>({ listRef, deleteService: userDelete })
+
     return {
       listRef,
       state,

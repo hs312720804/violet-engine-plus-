@@ -4,6 +4,7 @@ import Wrapper from '@/views/layout/Wrapper.vue'
 import Main from '@/views/layout/Index.vue'
 import routerComponents from '@/router/components'
 import NotFoundComponent from '@/views/NotFound.vue'
+import NotTemplateComponent from '@/views/NotTemplate.vue'
 
 import { getUserInfoService } from '@/services/common'
 import { AppAccess } from '@/store/modules/app'
@@ -31,6 +32,11 @@ export async function initUserData () {
       if (menu.length === 0) {
         throw new Error('not login')
       }
+      function getTemplateComponent (template: string) { // 增加菜单模板组件未提交时,会出现找不到模板的情况
+        return routerComponents[template]
+          ? routerComponents[template].template
+          : NotTemplateComponent
+      }
       const children: Array<RouteRecordRaw> = (function getRouter (menu) {
         return menu.map(element => {
           const route: RouteRecordRaw = {
@@ -41,7 +47,7 @@ export async function initUserData () {
               'children' in element && element.children.length > 0 && element.type !== 'tab'
                 ? Wrapper
                 : element.template
-                  ? (routerComponents[element.template] || {}).template : element.name === '菜单管理'
+                  ? getTemplateComponent(element.template) : element.name === '菜单管理'
                     ? routerComponents.MenuIndex.template : routerComponents.BaseList.template,
             props: {
               menuId: element.id

@@ -3,7 +3,8 @@ type CActionName = string
 type CActionTemplate = 'Edit'
 type CActionHandle = 'batchDelete'
 type CActionPermission = 'add'
-type CActionMode = 'add' | 'delete' | 'preview' | 'edit' | 'select'
+type CActionMode = 'add' | 'update' | 'delete' | 'read' | 'select' | 'edit' | 'preview' | 'copy'
+type CActionModeEvent = 'create' | 'edit' | 'delete' | 'read' | 'select' | 'edit' | 'preview' | 'copy'
 type RBACMode = 'read' | 'create' | 'edit' | 'copy' | 'list'
 
 type CButtonActionList =

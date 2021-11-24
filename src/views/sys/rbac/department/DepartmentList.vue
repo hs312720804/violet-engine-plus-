@@ -57,6 +57,7 @@ export default defineComponent({
     PageContentWrapper,
     ResourceActions
   },
+  emits: Object.keys(commonOperationEvent).map(k=> commonOperationEvent[k as keyof typeof commonOperationEvent]),
   setup (props, { emit }) {
 
     const { t: $t } = useI18n()

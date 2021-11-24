@@ -11,6 +11,13 @@
           <el-option :label="$t('rightAlign')" value="right"></el-option>
         </el-select>
       </el-form-item>
+      <el-form-item :label="$t('fixed')">
+        <el-select v-model="extendForm.fixed" :placeholder="$t('pleaseSelect',[$t('fixed')])" clearable>
+          <el-option :label="$t('fixedLeft')" value="left"></el-option>
+          <el-option :label="$t('fixedRight')" value="right"></el-option>
+        </el-select>
+      </el-form-item>
+
       <el-form-item :label="$t('setPrimaryKey')">
         <el-switch
           v-model="extendForm.primaryKey"
@@ -157,7 +164,7 @@ export default {
       } else {
         this.row.render = ''
       }
-      const attribute = ['width', 'sortable', 'primaryKey', 'required', 'align']
+      const attribute = ['width', 'sortable', 'primaryKey', 'required', 'align', 'fixed']
       attribute.forEach(item => {
         if (this.extendForm[item]) {
           this.row[item] = this.extendForm[item]
