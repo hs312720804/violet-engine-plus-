@@ -786,6 +786,8 @@ export default {
 
     // Enum值编辑
     const enumOptions = ref({})
+    const enumEdit = ref()
+
     function handleEditOption (item) {
       if (item.options === undefined) {
         // ctx.root.$set(item, 'options', [])
@@ -793,7 +795,6 @@ export default {
       }
       enumOptions.value = item
       // ctx.refs.enumEdit.dialogOptionVisible = true
-      const enumEdit = ref()
       enumEdit.value.dialogOptionVisible = true
     }
 

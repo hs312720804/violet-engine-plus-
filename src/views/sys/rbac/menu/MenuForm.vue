@@ -734,6 +734,7 @@ export default {
     }
     // Enum值编辑
     const enumOptions = ref({})
+    const enumEdit = ref()
     function handleEditOption (item) {
       if (item.options === undefined) {
         // ctx.root.$set(item, 'options', [])
@@ -742,13 +743,13 @@ export default {
       enumOptions.value = item
       // ctx.refs.enumEdit.dialogOptionVisible = true
       // ctx.refs.enumEdit.fetchEnumList()
-
-      const enumEdit = ref()
       enumEdit.value.dialogOptionVisible = true
       enumEdit.value.fetchEnumList()
     }
     // Date格式化编辑
     const dateFormat = ref({})
+    const dateEdit = ref()
+
     function handleEditDateFormat (item) {
       if (item.format === undefined) {
         // ctx.root.$set(item, 'format', '')
@@ -756,7 +757,6 @@ export default {
       }
       dateFormat.value = item
       // ctx.refs.dateEdit.dialogVisible = true
-      const dateEdit = ref()
       dateEdit.value.dialogVisible = true
     }
     return {
@@ -780,7 +780,10 @@ export default {
       enumOptions,
       handleEditOption,
       dateFormat,
-      handleEditDateFormat
+      handleEditDateFormat,
+      dateEdit,
+      enumEdit,
+      extendEdit
     }
   },
   data () {

@@ -1,3 +1,4 @@
+import fetch from './fetch'
 /**
  * 删除枚举字典
  *
@@ -22,7 +23,7 @@ export function enumDelete (data) {
  * @returns
  */
 export function enumUpdate (data) {
-  return this.fetch({
+  return fetch({
     method: 'post',
     url: 'sys/enum/update',
     isJSON: true,
@@ -36,8 +37,17 @@ export function enumUpdate (data) {
  * @param {*} params
  * @returns
  */
-export function enumList (params) {
-  return this.fetch({
+// export function enumList (params) {
+//   return this.fetch({
+//     method: 'get',
+//     url: 'sys/enum/index',
+//     isJSON: true,
+//     params
+//   })
+// }
+
+export function enumListService (params: undefined) {
+  return fetch({
     method: 'get',
     url: 'sys/enum/index',
     isJSON: true,
