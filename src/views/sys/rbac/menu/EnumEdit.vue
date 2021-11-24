@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { enumListService } from '@/services/enum'
+import { enumList } from '@/services/enum'
 export default {
   props: {
     field: {
@@ -52,7 +52,7 @@ export default {
       this.selectEnum = val.options ? val.options : ''
     },
     fetchEnumList () {
-      enumListService(
+      enumList(
         {
           pageNo: 1,
           pageSize: 999

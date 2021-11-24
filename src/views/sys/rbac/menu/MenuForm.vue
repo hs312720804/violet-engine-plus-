@@ -208,7 +208,7 @@
                   <el-select v-model="api.method" placeholder="method">
                     <el-option label="post" value="post"></el-option>
                     <el-option label="get" value="get"></el-option>
-                    <el-button label="delete" value="delete"></el-button>
+                    <el-option label="delete" value="delete"></el-option>
                   </el-select>
                 </el-col>
                 <el-col :span="3">
@@ -430,7 +430,7 @@ import EnumEdit from './EnumEdit.vue'
 import DateEdit from './DateEdit.vue'
 import routerComponents from '@/router/components'
 
-import { ElMessageBox } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
 import { menuGetListService } from '@/services/menu'
 const initialApi = [
@@ -598,7 +598,7 @@ export default {
     let isNew = menu.value.id === undefined // 判断是否为新建，用于开关是否提醒
     function selectTemplate (val) {
       const oldType = menu.value.type
-      const changeTemplateType = val ? routerComponents[val].type : val
+      const changeTemplateType = val && typeof(val) === 'string' ? routerComponents[val].type : val
       if (isNew) {
         isNew = false // 新建菜单切换了一次后再切换就要提醒了。
         setTemplate()
