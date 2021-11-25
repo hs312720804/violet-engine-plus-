@@ -82,7 +82,7 @@ export default defineComponent({
     ]
 
     function handleDoAction (action:string, item?:RBACDepartment) {
-      const eventKey = action.split(':')[1] as CActionMode
+      const eventKey = action.split(':')[1] as RBACActionMode
       const eventName = commonOperationEvent[eventKey]
       console.log('eventName')
       emit(eventName, { item, selected: [item] })

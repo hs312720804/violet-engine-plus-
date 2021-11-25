@@ -1,13 +1,19 @@
-const modeText = {
+const modeText: { [k in RBACActionMode]: string } = {
   read: '查看',
   edit: '编辑',
   create: '新建',
   del: '删除',
   copy: '复制',
-  list: '列表'
+  // list: '列表'
+  // ---------------
+  add: '增加',
+  update: '更新',
+  delete: '删除',
+  select: '选择',
+  preview: '预览'
 }
 
-const commonOperation = {
+const commonOperation: { [k: string]: RBACActionMode; } = {
   CREATE: 'add',
   UPDATE: 'update',
   DELETE: 'delete',
@@ -15,9 +21,11 @@ const commonOperation = {
   LIST: 'select'
 }
 
-const commonOperationEvent: { [k in CActionMode]: CActionModeEvent } = {
+const commonOperationEvent: { [k in RBACActionMode]: RBACActionModeEvent } = {
   add: 'create',
+  create: 'create',
   update: 'edit',
+  del: 'delete',
   delete: 'delete',
   read: 'read',
   select: 'select',
@@ -31,22 +39,5 @@ const abilityStatusText = {
   DISABLE: '禁用'
 }
 
-function evil<T> (fn: string): T {
-  const Fn = Function // 一个变量指向Function，防止有些前端编译工具报错
-  return new Fn('return ' + fn)()
-}
-function disposalField (fields, useType) {
-  return fields.filter(item => {
-    if ('use' in item && item.use.length > 0) {
-      const bool = item.use.some(num => {
-        return num === useType
-      })
-      if (bool) {
-        return item
-      }
-    } else {
-      return item
-    }
-  })
-}
-export default { evil, modeText, commonOperation, commonOperationEvent, abilityStatusText, disposalField }
+
+export default { modeText, commonOperation, commonOperationEvent, abilityStatusText }

@@ -8,7 +8,7 @@ type IdKeyType<D, KV> = keyof DataLimit<D, KV>
 interface PageControllState<Data, KV, K> {
   id?: K extends IdKeyType<Data, KV> ? KV : never
   item?: Data
-  mode: RBACMode
+  mode: RBACActionMode
   isShowList: boolean
   version: string | undefined
 }

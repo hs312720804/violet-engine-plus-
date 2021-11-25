@@ -89,7 +89,6 @@ export function menuUpsertService (data) {
 
 /**
  *
- * @param data
  */
 export const menuDeleteService = (data: { id: string; }) => {
   return fetch({

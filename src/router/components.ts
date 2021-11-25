@@ -32,10 +32,6 @@ const routerComponents: RouterComponents = {
     template: () => import('@/views/template/tabPage/Index.vue'),
     type: 'tab'
   },
-  ImageList: {
-    template: () => import('@/views/template/imageList/Index.vue'),
-    type: 'list'
-  },
   CardList: {
     template: () => import('@/views/template/cardList/Index.vue'),
     type: 'list'

@@ -226,7 +226,7 @@ export default defineComponent({
       }
     ]
     function handleDoAction (action: string, item: RBACUserInfo) {
-      const eventKey = action.split(':')[1] as CActionMode
+      const eventKey = action.split(':')[1] as RBACActionMode
       const eventName = commonOperationEvent[eventKey]
       emit(eventName, { item, selected: selected.value })
     }

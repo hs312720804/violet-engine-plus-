@@ -1,5 +1,5 @@
 import { RootState } from './index'
-import Consts from '@/utlis/consts'
+import { evil } from '@/utlis/common'
 import { EnumOptions } from '@/services/enum'
 // import { UserOptLog } from './modules/app'
 
@@ -29,7 +29,7 @@ export default {
   appLog: (state: RootState) => JSON.parse(state.app.site.logo) as AppLogo,
   getEnumOptions: (state: RootState) => (code: string) => {
     const rowEnum = state.app.enums.find(ele => ele.enumCode === code)
-    return rowEnum ? Consts.evil<EnumOptions>(rowEnum.options) : undefined
+    return rowEnum ? evil<EnumOptions>(rowEnum.options) : undefined
   }
   // sidebar: (state: RootState) => state.app.sidebar,
   // language: (state: RootState) => state.app.language,

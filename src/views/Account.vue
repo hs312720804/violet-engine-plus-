@@ -58,10 +58,11 @@
 import { defineComponent, ref, computed } from 'vue'
 import { ElNotification,ElMessage,ElForm } from 'element-plus'
 import { CForm } from '@ccprivate/admin-toolkit-plus'
-import CUtils from '@ccprivate/utils'
+import { CUtils } from '@/utlis/common'
 import { useStore } from '@/store'
 import ChangePassword from '@/components/UserChangePassword.vue'
 import { RBACUserInfo, userDetailService, userUpdateService } from '@/services/user'
+
 export default defineComponent({
   components: {
     ChangePassword
