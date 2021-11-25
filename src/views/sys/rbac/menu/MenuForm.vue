@@ -406,6 +406,7 @@
         </div>
       </el-form-item>
     </c-form>
+    {{ enumOptions }}
     <ExtendEdit
       ref="extendEdit"
       :row="renderx"
@@ -494,6 +495,8 @@ export default {
     }
   },
   setup (props, ctx) {
+    console.log('ctx=========', ctx)
+
     // const _$t = ctx.root.$t.bind(ctx.root)
     const { t } = useI18n()
     const _$t = t
@@ -743,8 +746,8 @@ export default {
       enumOptions.value = item
       // ctx.refs.enumEdit.dialogOptionVisible = true
       // ctx.refs.enumEdit.fetchEnumList()
-      enumEdit.value.dialogOptionVisible = true
       enumEdit.value.fetchEnumList()
+      enumEdit.value.dialogOptionVisible = true
     }
     // Date格式化编辑
     const dateFormat = ref({})

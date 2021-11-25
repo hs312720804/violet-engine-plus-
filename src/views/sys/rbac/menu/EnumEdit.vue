@@ -1,5 +1,5 @@
 <template>
-  <el-dialog v-if="dialogOptionVisible" v-model:visible="dialogOptionVisible" :title="$t('enumSet')">
+  <el-dialog v-model="dialogOptionVisible" :title="$t('enumSet')">
     <div class="enum-select">
       <div class="select">
         <el-select v-model="selectEnum" placeholder="请选择">
@@ -16,10 +16,12 @@
         <el-button @click="handleAddEnum">新建</el-button>
       </div>
     </div>
-    <div slot="footer" class="dialog-footer">
-      <el-button @click="dialogOptionVisible = false">{{ $t('btn.cancel') }}</el-button>
-      <el-button type="primary" @click="handleConfirm">{{ $t('btn.ok') }}</el-button>
-    </div>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="dialogOptionVisible = false">{{ $t('btn.cancel') }}</el-button>
+        <el-button type="primary" @click="handleConfirm">{{ $t('btn.ok') }}</el-button>
+      </div>
+    </template>
   </el-dialog>
 </template>
 
@@ -45,6 +47,7 @@ export default {
     'field': 'initOptions'
   },
   created () {
+    debugger
     this.selectEnum = this.field.options
   },
   methods: {

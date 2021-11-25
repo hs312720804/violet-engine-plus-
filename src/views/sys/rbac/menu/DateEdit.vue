@@ -1,5 +1,5 @@
 <template>
-  <el-dialog v-model:visible="dialogVisible" title="日期/时间格式">
+  <el-dialog v-model="dialogVisible" title="日期/时间格式">
     <el-form>
       <el-form-item label="格式：" :label-width="formLabelWidth">
         <el-input v-model="dateFormat" autocomplete="off"></el-input>
