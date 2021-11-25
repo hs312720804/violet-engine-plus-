@@ -1,12 +1,11 @@
 # Note
 
 1. [element-plus 的 el-dropdown 无法显示](https://github.com/element-plus/element-plus/issues/2179)
-
-> 解决方法：同时将 vue3 和 element-plus 升级到最新版本([组件库admin-toolkit-plus引用的element-plus也要升级到最新版本，并对c-menu进行改造](https://github.com/element-plus/element-plus/pull/3037));[element-plus@1.1.0-beta.1 Breaking changes](https://github.com/element-plus/element-plus/discussions/3020)
-
+    解决方法：同时将 vue3 和 element-plus 升级到最新版本([组件库admin-toolkit-plus引用的element-plus也要升级到最新版本，并对c-menu进行改造](https://github.com/element-plus/element-plus/pull/3037));[element-plus@1.1.0-beta.1 Breaking changes](https://github.com/element-plus/element-plus/discussions/3020)
 1. element-plus 的 form 自定义校验validator类型有误
-
-解决方法：将 element-plus 升级到 1.1.0-beta.17 以上 [https://github.com/element-plus/element-plus/blob/dev/CHANGELOG.en-US.md#110-beta17]
+    解决方法：将 element-plus 升级到 1.1.0-beta.17 以上 [https://github.com/element-plus/element-plus/blob/dev/CHANGELOG.en-US.md#110-beta17]
+1. element-plus 的 form 由 table 布局改为 flex布局，但由于 admin-toolkit-plus 中的 element-plus 版本与当前项目版本不兼容，导致布局错位
+    解决方法：升级 admin-toolkit-plus 中的 element-plus 版本
 
 # Vue 3 + Typescript + Vite
 
