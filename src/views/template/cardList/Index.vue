@@ -1,11 +1,11 @@
 <script>
-import BaseList from '@/views/baseList/Index.vue'
+import BaseList from '@/views/template/baseList/Index.vue'
 import ResourceList from './List'
 export default {
-  extends: BaseList,
   components: {
     ResourceList
-  }
+  },
+  extends: BaseList
 }
 </script>
 

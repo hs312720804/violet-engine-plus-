@@ -55,14 +55,14 @@
         <MenuForm v-if="!isJsonView" ref="formRef" :value="menu"></MenuForm>
         <!--预览JSON-->
         <div v-else style="margin-bottom:20px">
-          <JsonViewer
+          <json-viewer
             :value="jsonData"
             :expand-depth="5"
             :copyable="false"
             expanded
             boxed
             sort
-          ></JsonViewer>
+          ></json-viewer>
         </div>
         <ResourceActions
           v-if="!isJsonView"
@@ -79,8 +79,7 @@
 import FileSaver from 'file-saver'
 import { PageWrapper, PageContentWrapper, ContentLayout, ResourceActions } from '@/views/modules'
 import MenuForm from './MenuForm.vue'
-import JsonViewer from 'vue-json-viewer'
-import { ref, computed, reactive } from 'vue'
+import { ref, computed, reactive, toRefs } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import consts from '../../../../utlis/consts'
 const RESOURCE = 'menu'
@@ -96,8 +95,7 @@ export default {
     PageContentWrapper,
     ContentLayout,
     ResourceActions,
-    MenuForm,
-    JsonViewer
+    MenuForm
   },
   props: {
     initMode: {
@@ -346,8 +344,6 @@ export default {
     }
     // 导出JSON
     function exportJSON () {
-      debugger
-
       const now = cUtils.format.formatDate(new Date(), 'yyyyMMdd-hhmmss')
       const data = editJsonFormat()
       const blob = new Blob([JSON.stringify(data)], { type: '' })
