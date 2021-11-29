@@ -1,15 +1,17 @@
 type CActionName = string
-// type ActionType = 'Page' | 'Todo'
-type CActionTemplate = 'Edit'
+type CActionTemplateType = 'Page' | 'Dialog' | ''
+type CActionHandleType = 'Todo'
+type CActionType = CActionTemplateType | CActionHandleType
+type CActionTemplate = 'Edit' | ''
+type CActionTemplateTrueName = `${CActionTemplate}${CActionTemplateType}`
 type CActionHandle = 'batchDelete'
 type CActionPermission = 'add'
-type CActionMode = 'add' | 'update' | 'delete' | 'read' | 'select' | 'edit' | 'preview' | 'copy'
-type CActionModeEvent = 'create' | 'edit' | 'delete' | 'read' | 'select' | 'edit' | 'preview' | 'copy'
-type RBACMode = 'read' | 'create' | 'edit' | 'copy' | 'list'
+type CActionMode = 'read' | 'create' | 'edit' | 'copy' | 'list'
 
+// ["新建","Page","Edit","add","edit"]
 type CButtonActionList =
-  [CActionName, 'Page', CActionTemplate, CActionPermission, CActionMode] |
-  [CActionName, 'Todo', CActionHandle, CActionPermission, CActionMode]
+  [CActionName, CActionTemplateType, CActionTemplate, CActionPermission, CActionMode] |
+  [CActionName, CActionHandleType, CActionHandle, CActionPermission, CActionMode]
 
 // ["新建:Page:Edit:add:edit","删除:Todo:batchDelete:delete","刷新:Todo:handleRefresh:select"]
 type CButtonAction =
@@ -17,6 +19,9 @@ type CButtonAction =
   `${CButtonActionList[0]}:${CButtonActionList[1]}:${CButtonActionList[2]}:${CButtonActionList[3]}` |
   `${CButtonActionList[0]}:${CButtonActionList[1]}:${CButtonActionList[2]}:${CButtonActionList[3]}:${CButtonActionList[4]}`
 
+
+type RBACActionMode = 'add' | 'update' | 'delete' | 'del' | 'read' | 'select' | 'edit' | 'preview' | 'copy' | 'create'
+type RBACActionModeEvent = 'create' | 'edit' | 'delete' | 'read' | 'select' | 'edit' | 'preview' | 'copy'
 type CRBACButtonType = 'primary' | 'success' | 'warning' | 'danger' | 'info' | 'text' | 'default'
 interface CRBACButtonAction {
   label: string

@@ -28,7 +28,7 @@
 import { defineComponent, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElForm } from 'element-plus'
-import CUtils from '@ccprivate/utils'
+import { CUtils } from '@/utlis/common'
 import { CForm } from '@ccprivate/admin-toolkit-plus'
 export default defineComponent({
   setup () {

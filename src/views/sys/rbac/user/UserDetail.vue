@@ -105,7 +105,7 @@ export default defineComponent({
       default: Infinity
     },
     initMode: {
-      type: String as PropType<RBACMode>,
+      type: String as PropType<RBACActionMode>,
       default: ''
     },
     item: {
