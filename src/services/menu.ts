@@ -1,4 +1,4 @@
-import MenuDetail from '@/views/sys/rbac/menu/MenuDetail.vue'
+// import MenuDetail from '@/views/sys/rbac/menu/MenuDetail.vue'
 import fetch from './fetch'
 
 export interface MenuExtra {
