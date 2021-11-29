@@ -48,7 +48,7 @@
 import { defineComponent, ref, provide } from 'vue'
 import ResourceContent from './Page.vue'
 import ResourceList from './List.vue'
-import DialogPage from './dialog/index.js'
+import DialogPage from './dialog/Index'
 import { evil as functionEvil } from '@/utlis/common'
 import { MenuDetail,MenuFields, getMenusDetailService } from '@/services/menu'
 

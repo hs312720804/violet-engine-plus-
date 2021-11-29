@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { ref, watch } from '@vue/composition-api'
+import { ref, watch } from 'vue'
 // import { service } from '../utlis/deps'
 export default {
   components: {

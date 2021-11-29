@@ -9,18 +9,18 @@
         :left-data="roleUser"
         :right-data="allUser"
       >
-        <div class="role-user-actions" slot="left-footer" slot-scope="{currentChecked}">
+        <div slot="left-footer" slot-scope="{currentChecked}" class="role-user-actions">
           <el-button type="primary" :disabled="currentChecked.length === 0" @click="handleRemoveRoleUser(currentChecked)">移除</el-button>
         </div>
         <div slot="right-head">
           <el-input
+            v-model="searchKey"
             class="search-input"
             clearable
-            v-model="searchKey"
             placeholder="输入关键字搜索"
           ></el-input>
         </div>
-        <div class="role-user-actions" slot="right-footer" slot-scope="{currentChecked}">
+        <div slot="right-footer" slot-scope="{currentChecked}" class="role-user-actions">
           <el-button type="primary" :disabled="currentChecked.length === 0" @click="handleAddRoleUser(currentChecked)">设置为角色用户</el-button>
         </div>
       </Transfer>
@@ -29,8 +29,8 @@
 </template>
 
 <script>
-import { ref, computed, watch } from '@vue/composition-api'
-import Transfer from '@/components/Transfer'
+import { ref, computed, watch } from 'vue'
+import Transfer from '@/components/Transfer/Index.vue'
 export default {
   components: {
     Transfer

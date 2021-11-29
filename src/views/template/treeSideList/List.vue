@@ -11,9 +11,9 @@
             label: 'name'
           }"
           :highlight-current="true"
-          @current-change="handleInputDepartmentId"
           node-key="id"
           default-expand-all
+          @current-change="handleInputDepartmentId"
         >
         <!-- <div class="tree-item" slot-scope="{ node, data }">
           <span class="tree-item__name">{{ data.name }}</span>
@@ -42,6 +42,7 @@
           </div>
           <template v-if="filterFields.length > 0">
             <c-list-filter
+              v-if="!filterExpand"
               ref="expandForm"
               :options="filterFields"
               :length="3"
@@ -49,7 +50,6 @@
               :is-expand="filterExpand"
               :button-text="buttonText"
               :hidden-expand-button="filterFields.length <= 3"
-              v-if="!filterExpand"
               @filter="handleSearch"
               @reset="handleResetSearch"
               @filter-expand="handlefilterExpand"
@@ -59,12 +59,12 @@
         </div>
         <div class="filter-expand">
           <c-list-filter
+            v-if="filterExpand"
             ref="expandForm"
             :options="filterFields"
             :form-data="filter"
             :is-expand="filterExpand"
             :button-text="buttonText"
-            v-if="filterExpand"
             @filter="handleSearch"
             @reset="handleResetSearch"
             @filter-expand="handlefilterExpand"
@@ -72,8 +72,8 @@
           </c-list-filter>
         </div>
         <c-table
-          :props="table.props"
           ref="table"
+          :props="table.props"
           :header="tableHeader"
           :data="table.data"
           :selected="table.selected"
@@ -87,17 +87,17 @@
   </div>
 </template>
 <script>
-import BaseList from '@/views/baseList/BaseList'
-import Actions from '@/views/baseList/Actions.vue'
-import listActions from '@/views/baseList/mixin/listActions'
-import { renderMethods } from '@/views/baseList/renderMethods'
+// import BaseList from '@/views/baseList/BaseList'
+// import Actions from '@/views/baseList/Actions.vue'
+// import listActions from '@/views/baseList/mixin/listActions'
+// import { renderMethods } from '@/views/baseList/renderMethods'
 import _ from 'lodash'
 export default {
-  extends: BaseList,
-  mixins: [listActions],
   components: {
     Actions
   },
+  extends: BaseList,
+  mixins: [listActions],
   data () {
     return {
       filterFields: [],
@@ -129,6 +129,10 @@ export default {
   },
   computed: {
   },
+  created () {
+    this.pageSetting(this.menu)
+    this.getDepartment()
+  },
   methods: {
     ...renderMethods,
     getDepartment () {
@@ -138,7 +142,7 @@ export default {
         params: {
           id: this.$store.state.user.departmentId
         }
-      }).then((data) => {
+      }).then(data => {
         this.treeData = data
       })
     },
@@ -226,10 +230,6 @@ export default {
         this.getListData(this.api.list, { ...this.filter, ...params })
       }
     }
-  },
-  created () {
-    this.pageSetting(this.menu)
-    this.getDepartment()
   }
 }
 </script>

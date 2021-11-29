@@ -90,7 +90,7 @@
   </div>
 </template>
 <script>
-import ChangePassword from '@/components/UserChangePassword'
+import ChangePassword from '@/components/UserChangePassword.vue'
 export default {
   components: {
     ChangePassword
