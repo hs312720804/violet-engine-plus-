@@ -1,49 +1,83 @@
 <template>
   <div>
     <c-card
-      :title="title"
-      @go-back="$emit('go-back')"
       v-if="!showIcon"
+      :title="title"
       class="add-page"
+      @go-back="$emit('go-back')"
     >
       <component
         :is="pageName"
-        :mode="mode"
         :id="id"
+        :mode="mode"
         :menu-id="menuId"
         :menu="menu"
         @upsert-end="$emit('upsert-end')"
         @go-back="$emit('go-back')"
-      >
-      </component>
+      ></component>
     </c-card>
   </div>
 </template>
-<script>
-import Temp from './pages/index.js'
-export default {
+<script lang="ts">
+import { defineComponent, PropType, ref, computed } from 'vue'
+import Temp from './pages/index'
+import { MenuDetail } from '@/services/menu'
+
+export default defineComponent({
   components: {
     ...Temp
   },
-  data () {
+  // props: ['id', 'menuId', 'menu', 'mode', 'template', 'title', 'optionType'],
+  props: {
+    id: {
+      type: [Number, String],
+      default: undefined
+    },
+    menuId: {
+      type: Number,
+      required: true
+    },
+    menu: {
+      type: Object as PropType<MenuDetail>,
+      default: () => undefined
+    },
+    mode: {
+      type: String as PropType<CActionMode>,
+      default: ''
+    },
+    title: {
+      type: String as PropType<CActionName>,
+      default: ''
+    },
+    // 模板路径
+    template: {
+      type: String as PropType<CActionTemplate>,
+      default: ''
+    },
+    // 模板类型，弹窗Or详情
+    optionType: {
+      type: String as PropType<CActionTemplateType>,
+      default: ''
+    }
+  },
+  emits: {
+    'go-back': () => true,
+    'upsert-end': () => true
+  },
+  setup (props) {
+    const showIcon = ref(false)
+    const pageName = computed<CActionTemplateTrueName>(() => `${props.template}${props.optionType}`)
     return {
-      showIcon: false
+      showIcon,
+      pageName
     }
-  },
-  props: ['id', 'menuId', 'menu', 'mode', 'template', 'title', 'optionType', 'selected'],
-  computed: {
-    pageName () {
-      return this.template + this.optionType
-    }
-  },
-  created () {
   }
-}
+})
 </script>
 <style lang="stylus" scoped>
 .show-one-line
   display flex
-  >>> button
+  :deep(button)
     height 32px
     margin-left 10px
 .el-dialog--height

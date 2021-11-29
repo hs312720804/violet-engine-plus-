@@ -11,7 +11,7 @@ const modeText: { [k in RBACActionMode]: string } = {
   delete: '删除',
   select: '选择',
   preview: '预览'
-}
+} as const
 
 const commonOperation: { [k: string]: RBACActionMode; } = {
   CREATE: 'add',
@@ -19,7 +19,7 @@ const commonOperation: { [k: string]: RBACActionMode; } = {
   DELETE: 'delete',
   READ: 'read',
   LIST: 'select'
-}
+} as const
 
 const commonOperationEvent: { [k in RBACActionMode]: RBACActionModeEvent } = {
   add: 'create',
@@ -32,12 +32,17 @@ const commonOperationEvent: { [k in RBACActionMode]: RBACActionModeEvent } = {
   edit: 'edit',
   preview: 'preview',
   copy: 'copy'
-}
+} as const
 
 const abilityStatusText = {
   ENABLE: '可用',
   DISABLE: '禁用'
-}
+} as const
 
+const FieldUse = {
+  list: 1,
+  filter: 2,
+  page: 3
+} as const
 
-export default { modeText, commonOperation, commonOperationEvent, abilityStatusText }
+export default { modeText, commonOperation, commonOperationEvent, abilityStatusText, FieldUse }

@@ -1,17 +1,26 @@
-type CActionName = string
+type CActionName = string // 按钮名称
 type CActionTemplateType = 'Page' | 'Dialog' | ''
 type CActionHandleType = 'Todo'
-type CActionType = CActionTemplateType | CActionHandleType
+type CActionType = CActionTemplateType | CActionHandleType  // 按钮类型
 type CActionTemplate = 'Edit' | ''
 type CActionTemplateTrueName = `${CActionTemplate}${CActionTemplateType}`
-type CActionHandle = 'batchDelete'
+type CToDoActionWithRow = 'rowDelete' | 'roleDelete' | 'userDelete' | 'enumDelete'
+type CToDoActionNotRow = 'batchDelete' | 'batchDeleteUser' | 'handleRefresh'
+type CToDoAction = CToDoActionWithRow | CToDoActionNotRow
 type CActionPermission = 'add'
 type CActionMode = 'read' | 'create' | 'edit' | 'copy' | 'list'
+
+type CToDoActionHandles<T> = {
+  [k in CToDoActionWithRow]: (row: T) => void
+} & { [k in CToDoActionNotRow]: () => void }
+interface COptionActions<T> {
+  ({ row, option }: { row?: T; option: CButtonActionList; }): void
+}
 
 // ["新建","Page","Edit","add","edit"]
 type CButtonActionList =
   [CActionName, CActionTemplateType, CActionTemplate, CActionPermission, CActionMode] |
-  [CActionName, CActionHandleType, CActionHandle, CActionPermission, CActionMode]
+  [CActionName, CActionHandleType, CToDoAction, CActionPermission, CActionMode]
 
 // ["新建:Page:Edit:add:edit","删除:Todo:batchDelete:delete","刷新:Todo:handleRefresh:select"]
 type CButtonAction =

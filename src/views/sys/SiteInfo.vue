@@ -171,7 +171,7 @@
 <script lang="ts">
 import { defineComponent, ref, reactive, computed } from 'vue'
 import { ElMessage } from 'element-plus'
-import $constants from '@/utlis/consts'
+import {  evil as functionEvil } from '@/utlis/common'
 import { useStore } from '@/store'
 import { AppLogo, AppLogoInfo } from '@/store/getters'
 import { AppSite, AppUILayout, websiteUpdateService } from '@/services/common'
@@ -256,7 +256,7 @@ export default defineComponent({
       let siteLogos: Array<LogoInfo> = []
 
       if (data.logo) {
-        const logo: AppLogo = $constants.evil(data.logo)
+        const logo = functionEvil<AppLogo>(data.logo)
         siteLogos = (Object.keys(logo) as Array<LogoKey>).map(key => {
           return {
             key,

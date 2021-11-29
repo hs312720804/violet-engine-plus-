@@ -83,13 +83,52 @@ declare module '@ccprivate/admin-toolkit-plus' {
     disabled: boolean
   }
 
+  export interface CTableRender<T extends { [k: string]: any; }> {
+    (renderRowData: import('element-plus/lib/el-table/src/table/defaults').RenderRowData<T>): import('vue').VNode | import('vue').VNode[] | string
+  }
   export type CTableHeder<T> = {
     label: string
     prop: keyof T
   } | {
     label: string
-    render: (renderRowData: import('element-plus/lib/el-table/src/table/defaults').RenderRowData<T>) => import('vue').VNode | string
+    render: CTableRender<T>
   }
+  export type CTable<T> = import('vue').DefineComponent<
+    {
+      props: { type: ObjectConstructor; default: () => {}; }
+      data: { type: ArrayConstructor; default: () => []; }
+      header: { type: ObjectConstructor; default: () => {}; }
+      selectionType: { type: StringConstructor; default: () => ''; }
+      selected: { type: ArrayConstructor; default: () => []; }
+      selectOnRowClick: { type: BooleanConstructor; default: () => false; }
+      fixSelection: { type: BooleanConstructor; default: () => true; }
+      rowIndexDisableSelection: { type: ArrayConstructor; default: () => []; }
+      useContextMenu: { type: BooleanConstructor; default: () => false; }
+    },
+    {
+      hiddenColumns: Array<number>
+      toggleColumn: (index: number) => void
+      handleSortChange: () => void
+      handleRowClick: (row: T) => void
+      createEmitter: (eventName: string) => void
+      $refs: { table: any; }
+    },
+    unknown,
+    {},
+    {},
+    import('vue').ComponentOptionsMixin,
+    import('vue').ComponentOptionsMixin,
+    'navigate'[],
+    'navigate',
+    import('vue').VNodeProps & import('vue').AllowedComponentProps & import('vue').ComponentCustomProps,
+    Readonly<{
+      readonly: boolean
+    }>,
+    {
+      readonly: boolean
+    }>
+
+
   export type CSelectionType = 'multiple' | 'single'
 
   declare const _default: Plugin

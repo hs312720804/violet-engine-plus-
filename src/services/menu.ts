@@ -1,26 +1,38 @@
+
+import { CTableRender, CSelectionType } from '@ccprivate/admin-toolkit-plus'
 import MenuDetail from '@/views/sys/rbac/menu/MenuDetail.vue'
 import fetch from './fetch'
 
+export type MenuApi = {
+  [key in 'add' | 'delete' | 'detail' | 'list' | 'update']: [string, 'post' | 'get']
+}
 export interface MenuExtra {
-  actions: string // Array<CButtonAction>
+  actions?: string // Array<CButtonAction>
   listDataMap: string
   resource: string
+  selectionType: CSelectionType | 'none'
 }
-
-export interface MenuFields {
-  inputType: 'operate' | '' // 字段类型，当 render 存在时，忽略该字段
+export type MenuFieldUse = 1 | 2 | 3
+export type MenuFieldType = 'enum' | 'image' | 'date' | 'number'
+export interface MenuFields<T> {
+  inputType: MenuFieldType // 字段类型，当 render 存在时，忽略该字段
+  format?: string // 当 inputType 为 date 时该字段才存在，用于格式化时间
   label: string
   options: string // 枚举code，会根据该code从store中的 getEnumOptions 获取对应的code选项
-  prop: string
+  prop: string // keyof T
   queryExclude: boolean // 是否从筛选组件 CListFilter 中排除
-  render: string  // 该字段在表格（c-table）中自定义渲染函数
-  use: Array<number>  // 该字段在列表表格（1）、列表筛选（2）、编辑页（3）中显示，eg: [1,3]，表示只在列表表格和编辑页中显示，不在列表筛选中显示
+  render: string | CTableRender<T>  // 该字段在表格（c-table）中自定义渲染函数
+  use: Array<MenuFieldUse> // 该字段在列表表格（1）、列表筛选（2）、编辑页（3）中显示，eg: [1,3]，表示只在列表表格和编辑页中显示，不在列表筛选中显示
   width: string // 字段在表格中的宽度 eg: '100px'
   primaryKey: 1 | 0 // 是否主键; 1:是,0:否
 }
 export interface MenuDetail {
   /**
-   * JSON.stringify(MenuExtra[])
+   * JSON.stringify(MenuApi[])
+   */
+  api: string
+  /**
+   * JSON.stringify(MenuExtra)
    */
   extra: string
   /**

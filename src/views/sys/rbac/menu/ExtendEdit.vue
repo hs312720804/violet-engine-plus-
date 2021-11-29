@@ -83,7 +83,7 @@
 </template>
 
 <script>
-import { renderMap } from '@/views/template/baseList/renderMethods'
+import { renderMap } from '@/hooks/baseList/useTableColumn'
 export default {
   props: {
     row: {

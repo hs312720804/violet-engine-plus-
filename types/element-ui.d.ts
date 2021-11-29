@@ -4,3 +4,4 @@ type ELLoadingInstance = import('element-plus/lib/el-loading/src/loading.type').
 type ElFile = import('element-plus/lib/el-upload/src/upload.type').ElFile
 type ElUploadFile = import('element-plus/lib/el-upload/src/upload.type').UploadFile
 type ELFormRulesMap = import('element-plus/lib/el-form/src/form.type').FormRulesMap
+type ELTableProps<T> = import('element-plus/lib/el-table/src/table/defaults').TableProps<T>

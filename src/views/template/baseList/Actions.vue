@@ -1,5 +1,6 @@
-<script>
-export default {
+<script lang="ts">
+import { defineComponent,h, PropType } from 'vue'
+export default defineComponent({
   name: 'ListActions',
   props: {
     resource: {
@@ -7,33 +8,20 @@ export default {
       default: ''
     },
     actions: {
-      type: Array,
+      type: Array as PropType<CButtonAction[]>,
       default: () => {
         return []
       }
     }
   },
-  data () {
-    return {}
+  emits:{
+    todo: (option:CButtonActionList) => true,
+    action:({ option }:{option:CButtonActionList;})=> true
   },
-  computed: {
-    selectedRow () {
-      return this.rows.filter((item, index) => {
-        const b = this.selected.some((select, key) => {
-          return select === index
-        })
-        if (b) {
-          return item
-        }
-      })
-    }
-  },
-  methods: {},
-  render (createElement) {
+  render () {
     // let arr = ["新建:Page:Edit:add:edit","删除:Todo:batchDelete:delete","刷新:Todo:handleRefresh:select"]
-    const h = createElement
     const buttons = this.actions.map((item, index) => {
-      let option = item.split(':')
+      let option = item.split(':') as CButtonActionList
       // if (this.access.indexOf(option[3]) > -1) {
       return h(
         'el-button',
@@ -62,5 +50,5 @@ export default {
     })
     return h('el-button-group', {}, buttons)
   }
-}
+})
 </script>

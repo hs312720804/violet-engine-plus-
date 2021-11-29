@@ -1,204 +1,204 @@
 <template>
   <div class="page-code--child">
     <ResourceList
-      ref="list"
-      :style="{'visibility': isShowList ? 'visible' : 'hidden'}"
-      :menu="menuDetail"
       v-if="menuDetail"
-      @option="handleOption"
-      @action="handleAction"
+      ref="listEL"
+      :style="{ 'visibility': isShowList ? 'visible' : 'hidden' }"
+      :menu="menuDetail"
+      @action="handleOption"
     ></ResourceList>
     <ResourceContent
       v-if="!isShowList || optionType === 'Confirm'"
-      :mode="mode"
       :id="id"
+      :mode="mode"
       :menu-id="menuId"
       :menu="menuDetail"
       :template="template"
-      :content-props="contentProps"
       :title="title"
       :option-type="optionType"
-      :selected="selected"
       @upsert-end="handleUpsertEnd"
       @go-back="goBack"
     ></ResourceContent>
     <el-dialog
+      v-model:visible="dialogVisible"
       :title="title"
-      :visible.sync="dialogVisible"
       width="50%"
       @close="hiddenDialog"
     >
       <component
-        v-if="dialogVisible"
         :is="`${template}Dialog`"
-        :mode="mode"
+        v-if="dialogVisible"
         :id="id"
+        :mode="mode"
         :row="row"
         :menu-id="menuId"
         :menu="menuDetail"
         @set-change="handleDialogChange"
         @set-end="hiddenDialog('ok')"
         @set-cancel="hiddenDialog"
-      >
-      </component>
+      ></component>
       <!-- <span slot="footer" class="dialog-footer">
         <el-button @click="dialogVisible = false">{{ $t('btn.cancel') }}</el-button>
         <el-button type="primary" @click="dialogVisible = false">{{ $t('btn.ok') }}</el-button>
-      </span> -->
+      </span>-->
     </el-dialog>
   </div>
 </template>
-<script>
-import ResourceContent from './Page'
-import ResourceList from './List'
+<script lang="ts">
+import { defineComponent, ref, provide } from 'vue'
+import ResourceContent from './Page.vue'
+import ResourceList from './List.vue'
 import DialogPage from './dialog/index.js'
-export default {
-  provide () {
-    return {
-      baseIndex: this
-    }
-  },
+import { evil as functionEvil } from '@/utlis/common'
+import { MenuDetail,MenuFields, getMenusDetailService } from '@/services/menu'
+
+import { BaseListRow, baseIndexKey } from '@/hooks/baseList/usePageDataInit'
+
+
+export default defineComponent({
   components: {
     ResourceList,
     ResourceContent,
     ...DialogPage
   },
+  // provide () {
+  //   return {
+  //     baseIndex: this
+  //   }
+  // },
   props: {
     menuId: {
-      type: Number
+      type: Number,
+      required: true
     },
     type: {
       type: String,
       default: ''
     }
   },
-  data () {
-    return {
-      isShowList: true,
-      id: undefined,
-      mode: 'create',
-      template: '',
-      title: '',
-      row: '',
-      menuDetail: '',
-      dialogVisible: false,
-      optionType: '',
-      selected: [],
-      primaryKey: '', // 主键
-      dialogChang: false // 弹窗数据改动后是否有保存，如果已保存设置为true, 关闭弹窗后重新加载页面。
-    }
-  },
-  computed: {
-    resourceInfo () {
-      return {
-      }
-    },
-    contentProps () {
-      return {
-      }
-    },
-    listProps () {
-      return {
-      }
-    }
-  },
-  methods: {
-    disposalField (fields, useType) {
-      return fields.filter((item) => {
-        if ('use' in item && item.use.length > 0) {
-          const bool = item.use.some((num) => {
-            return num === useType
-          })
-          if (bool) {
-            return item
-          }
-        } else {
-          return item
-        }
-      })
-    },
-    fetchMenuData (id) {
-      this.$service.getMenusDetail({ id }).then((data) => {
-        this.menuDetail = data
-        const fields = this.$constants.evil(this.menuDetail.fields)
-        const primaryField = fields.filter((field) => {
+  setup (props) {
+
+    const menuDetail = ref<MenuDetail>()
+    const primaryKey = ref('')
+    const optionType = ref<CActionTemplateType>() // 模板类型，弹窗Or详情
+    const template = ref<CActionTemplate>('') // 模板路径
+    const title = ref<CActionName>('')
+    const mode = ref<CActionMode>('create')
+    const row = ref<BaseListRow>()
+    // const selected = ref<Array<BaseListRow>>([])
+    const id = ref()
+    const isShowList = ref(true)
+    const dialogVisible = ref(false)
+    const dialogChang = ref(false) // 弹窗数据改动后是否有保存，如果已保存设置为true, 关闭弹窗后重新加载页面。
+    const listEL = ref<typeof ResourceList>()
+    function fetchMenuData (id:number) {
+      getMenusDetailService({ id }).then(data => {
+        menuDetail.value = data
+        const fields = functionEvil<Array<MenuFields<BaseListRow>>>(menuDetail.value.fields)
+        const primaryField = fields.filter(field => {
           return 'primaryKey' in field && field.primaryKey === 1
         })
-        this.primaryKey = primaryField.length > 0 ? primaryField[0].prop : 'id'
+        primaryKey.value = primaryField.length > 0 ? (primaryField[0].prop as string) : 'id'
       })
-    },
-    handleUpsertEnd () {
-      this.isShowList = true
-      this.mode = 'list'
-      this.$refs.list.fetchData()
-    },
-    handleOption (data) {
-      this.template = data.option[2]
-      this.title = data.option[0]
-      this.mode = data.option[4]
-      if ('row' in data) {
-        this.row = data.row
-        this.id = data.row[this.primaryKey]
-      }
-      this.optionType = data.option[1]
-      if (data.option[1] === 'Page') {
-        this.isShowList = false
-      }
-      if (data.option[1] === 'Dialog') {
-        this.dialogVisible = true
-      }
-    },
-    handleAction (data) {
-      this.template = data.option[2]
-      this.title = data.option[0]
-      this.mode = data.option[3]
-      if ('row' in data) {
-        this.id = data.row[this.primaryKey]
-      }
-      if ('selected' in data) {
-        this.selected = data.selected
-      }
-      this.optionType = data.option[1]
-      if (data.option[1] === 'Page') {
-        this.isShowList = false
-      }
-      if (data.option[1] === 'Dialog') {
-        this.dialogVisible = true
-      }
-    },
-    goBack () {
-      this.isShowList = true
-      this.mode = 'list'
-      this.optionType = ''
-      this.id = undefined
-    },
-    hiddenDialog (val) {
-      this.mode = 'list'
-      this.optionType = ''
-      this.id = undefined
-      this.dialogVisible = false
-      if (val === 'ok' || this.dialogChang) {
-        this.$refs.list.fetchData()
-      }
-      if (this.dialogChang) {
-        this.dialogChang = false
-      }
-    },
-    handleDialogChange (msg) {
-      this.dialogChang = msg
     }
-  },
-  created () {
-    this.fetchMenuData(this.menuId)
-    this.$bus.$on('go-back', () => {
-      this.isShowList = true
+    function handleUpsertEnd () {
+      isShowList.value = true
+      mode.value = 'list'
+      listEL.value?.fetchData()
+    }
+    const handleOption: COptionActions<BaseListRow> =  function  (data) {
+      template.value = data.option[2] as CActionTemplate
+      title.value = data.option[0]
+      mode.value = data.option[4]
+      if (data.row) {
+        row.value = data.row
+        id.value = data.row[primaryKey.value]
+      }
+      // if (data.selected) {
+      //   selected.value = data.selected
+      // }
+      optionType.value = data.option[1] as CActionTemplateType
+      if (data.option[1] === 'Page') {
+        isShowList.value = false
+      }
+      if (data.option[1] === 'Dialog') {
+        dialogVisible.value = true
+      }
+    }
+    // function handleAction (data) {
+    //   this.template = data.option[2]
+    //   this.title = data.option[0]
+    //   this.mode = data.option[3]
+    //   if ('row' in data) {
+    //     this.id = data.row[this.primaryKey]
+    //   }
+    //   if ('selected' in data) {
+    //     this.selected = data.selected
+    //   }
+    //   this.optionType = data.option[1]
+    //   if (data.option[1] === 'Page') {
+    //     this.isShowList = false
+    //   }
+    //   if (data.option[1] === 'Dialog') {
+    //     this.dialogVisible = true
+    //   }
+    // }
+    function goBack () {
+      isShowList.value = true
+      mode.value = 'list'
+      optionType.value = ''
+      id.value = undefined
+    }
+    function hiddenDialog (val?:'ok') {
+      mode.value = 'list'
+      optionType.value = ''
+      id.value = undefined
+      dialogVisible.value = false
+      if (val === 'ok' || dialogChang.value) {
+        listEL.value?.fetchData()
+      }
+      if (dialogChang.value) {
+        dialogChang.value = false
+      }
+    }
+    function handleDialogChange (msg:boolean) {
+      dialogChang.value = msg
+    }
+
+    fetchMenuData(props.menuId)
+    // this.$bus.$on('go-back', () => {
+    //   this.isShowList = true
+    // })
+
+    provide(baseIndexKey, {
+      primaryKey: primaryKey.value
     })
+
+    return {
+      menuDetail,
+      primaryKey, // 主键
+      template,
+      title,
+      mode,
+      optionType,
+      id,
+      row,
+      // selected,
+      isShowList,
+      dialogVisible,
+      listEL,
+      handleUpsertEnd,
+      handleOption,
+      goBack,
+      handleDialogChange,
+      hiddenDialog
+    }
   }
-}
+})
 </script>
 <style lang="stylus" scoped>
->>>.el-dialog__header
+:deep(.el-dialog__header)
   border-bottom 1px solid #EBEEF5
->>>.el-dialog__body
+:deep(.el-dialog__body)
   padding 20px 20px
 </style>
