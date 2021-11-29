@@ -104,7 +104,7 @@
           :xl="8"
         >
           <c-form-any prop="parentId" :label="$t('parentMenu')">
-            <template #edit>
+            <div slot="edit">
               <el-cascader
                 v-model="menu.parentId"
                 style="width: 100%"
@@ -118,7 +118,7 @@
                 clearable
               >
               </el-cascader>
-            </template>
+            </div>
           </c-form-any>
         </el-col>
         <el-col
@@ -251,107 +251,7 @@
           <el-button @click="handleAddFiled">{{ $t('addField') }}</el-button>
         </div>
         <!-- v-dragging="{ list: menu.fields, item: field, group: 'fieldsTab' }" -->
-        <!-- {{ menu.fields }} -->
-        <draggable
-          v-model="menu.fields"
-          item-key="prop"
-        >
-          <template #item="{element, index}">
-            <el-row :gutter="10">
-              <el-col :span="5">
-                <el-input v-model="element.label" placeholder="label"></el-input>
-              </el-col>
-              <el-col :span="5">
-                <el-input v-model="element.prop" placeholder="prop"></el-input>
-              </el-col>
-              <el-col :span="5">
-                <el-row v-if="element.inputType==='enum'">
-                  <el-col :span="18">
-                    <el-select v-model="element.inputType" :placeholder="$t('pleaseSelect', [$t('type')])" clearable>
-                      <el-option
-                        v-for="type in inputTypeOptions"
-                        :key="type.value"
-                        :label="type.label"
-                        :value="type.value"
-                      >
-                      </el-option>
-                    </el-select>
-                  </el-col>
-                  <el-col :span="6">
-                    <el-button
-                      icon="el-icon-edit"
-                      type="text"
-                      round
-                      @click="handleEditOption(element)"
-                    ></el-button>
-                  </el-col>
-                </el-row>
-                <el-row v-else-if="element.inputType==='date'">
-                  <el-col :span="18">
-                    <el-select v-model="element.inputType" :placeholder="$t('pleaseSelect', [$t('type')])" clearable>
-                      <el-option
-                        v-for="type in inputTypeOptions"
-                        :key="type.value"
-                        :label="type.label"
-                        :value="type.value"
-                      >
-                      </el-option>
-                    </el-select>
-                  </el-col>
-                  <el-col :span="6">
-                    <el-button
-                      icon="el-icon-edit"
-                      type="text"
-                      round
-                      @click="handleEditDateFormat(element)"
-                    ></el-button>
-                  </el-col>
-                </el-row>
-                <el-select
-                  v-else
-                  v-model="element.inputType"
-                  :placeholder="$t('pleaseSelect', [$t('type')])"
-                  clearable
-                >
-                  <el-option
-                    v-for="type in inputTypeOptions"
-                    :key="type.value"
-                    :label="type.label"
-                    :value="type.value"
-                  >
-                  </el-option>
-                </el-select>
-              </el-col>
-              <el-col :span="5">
-                <el-select
-                  v-model="element.use"
-                  multiple
-                  filterable
-                  allow-create
-                  default-first-option
-                  :placeholder="$t('useSet')"
-                >
-                  <el-option :label="$t('list')" :value="1"></el-option>
-                  <el-option :label="$t('screening')" :value="2"></el-option>
-                  <el-option :label="$t('btn.edit')" :value="3"></el-option>
-                </el-select>
-              </el-col>
-              <el-col :span="3">
-                <div style="display:flex">
-                  <div style="width:45px;">
-                    <i v-if="element.primaryKey" class="el-icon-key"></i>
-                  </div>
-                  <el-button type="text" icon="el-icon-rank" :title="$t('dragSort')"></el-button>
-                  <el-button type="text" icon="el-icon-setting" @click="handleEditExtend(element)"></el-button>
-                  <el-button type="text" icon="el-icon-delete" @click="handleReduceFiled(index)"></el-button>
-                </div>
-              </el-col>
-            </el-row>
-          </template>
-        </draggable>
-
-
-        <!-- <div
+        <div
           v-for="(field, key) in menu.fields"
           :key="key"
           class="filed-row"
@@ -446,7 +346,7 @@
               </div>
             </el-col>
           </el-row>
-        </div> -->
+        </div>
       </el-form-item>
       <!-- <c-form-any label="扩展" prop="extra">
               <el-input
@@ -523,8 +423,8 @@
   </div>
 </template>
 
-<script lang="ts">
-import { ref, watch, defineComponent } from 'vue'
+<script>
+import { ref, watch } from 'vue'
 import ExtendEdit from './ExtendEdit.vue'
 import EnumEdit from './EnumEdit.vue'
 import DateEdit from './DateEdit.vue'
@@ -532,10 +432,7 @@ import routerComponents from '@/router/components'
 
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useI18n } from 'vue-i18n'
-import { menuGetListService, MenuDetail } from '@/services/menu'
-
-// import draggable from 'vuedraggable'
-import draggable from 'vuedraggable/src/vuedraggable'
+import { menuGetListService } from '@/services/menu'
 const initialApi = [
   {
     key: 'list',
@@ -582,12 +479,11 @@ const initialExtra = [
   }
 ]
 
-export default defineComponent({
+export default {
   components: {
     ExtendEdit,
     EnumEdit,
-    DateEdit,
-    draggable
+    DateEdit
   },
   props: {
     value: {
@@ -608,12 +504,7 @@ export default defineComponent({
     watch(() => props.value, () => {
       menu.value = props.value
     })
-
-    interface templateOptionsItem {
-      label: string
-      value: string
-    }
-    const templateOptions = ref<Array<templateOptionsItem>>([])
+    const templateOptions = ref([])
 
     Object.keys(routerComponents).forEach(key => {
       templateOptions.value.push({
@@ -631,10 +522,9 @@ export default defineComponent({
         value: 'DISABLE'
       }
     ])
-
-    const allMenus = ref<Array<MenuDetail>>([])
+    const allMenus = ref([])
     function fetchAllMenus () {
-      menuGetListService(undefined).then(result => {
+      menuGetListService().then(result => {
         allMenus.value = result
         if (!menu.value.parentId) {
           menu.value.parentId = result[0].id
@@ -642,17 +532,7 @@ export default defineComponent({
       })
     }
     fetchAllMenus()
-    type Callback = () => void;
-    interface ruleType {
-      field: string
-      fullField: string
-      required: boolean
-      type: string
-      validator: any
-    }
-    function verifySameName (rule: ruleType, value: string, callback: Callback) { // 校验别名是否重名
-      debugger
-
+    function verifySameName (rule, value, callback) { // 校验别名是否重名
       if (value === '') {
         callback(new Error(_$t('message.menuAlias')))
       } else {
@@ -663,9 +543,7 @@ export default defineComponent({
         }
       }
     }
-
-    function verifySamePath (rule: ruleType, value: string, callback: Callback) { // 校验路径是否重复
-      debugger
+    function verifySamePath (rule, value, callback) { // 校验路径是否重复
       if (value === '') {
         callback(new Error(_$t('pleaseEnter', [_$t('menuPath')])))
       } else {
@@ -676,7 +554,6 @@ export default defineComponent({
         }
       }
     }
-
     function isHasSameValue (menus, field, val) {
       return menus.some(item => {
         const menuId = props.value !== null ? props.value.id : ''
@@ -721,8 +598,7 @@ export default defineComponent({
     })
     let previousTemplate = menu.value.template // 暂存切换前的模板
     let isNew = menu.value.id === undefined // 判断是否为新建，用于开关是否提醒
-
-    function selectTemplate (val: string) {
+    function selectTemplate (val) {
       const oldType = menu.value.type
       const changeTemplateType = val && typeof(val) === 'string' ? routerComponents[val].type : val
       if (isNew) {
@@ -793,7 +669,7 @@ export default defineComponent({
         method: ''
       })
     }
-    function handleDeleteApi (key: number) {
+    function handleDeleteApi (key) {
       menu.value.api.splice(key, 1)
     }
     // 添加字段
@@ -808,7 +684,7 @@ export default defineComponent({
       })
     }
     // 删除字段
-    function handleReduceFiled (key: number) {
+    function handleReduceFiled (key) {
       menu.value.fields.splice(key, 1)
     }
     function genExtra () {
@@ -817,17 +693,17 @@ export default defineComponent({
         value: ''
       })
     }
-    function handleDeleteExtra (key: number) {
+    function handleDeleteExtra (key) {
       menu.value.extra.splice(key, 1)
     }
-    function disabledApiKey (key: number | string) {
+    function disabledApiKey (key) {
       if (menu.value.type === 'list') {
         return initialApi.some(item => {
           return item.key === key
         })
       }
     }
-    function disabledExtraKey (key: number | string) {
+    function disabledExtraKey (key) {
       if (menu.value.type === 'list') {
         return initialExtra.some(item => {
           return item.key === key
@@ -841,12 +717,8 @@ export default defineComponent({
     const renderx = ref({})
     const hasPrimaryKey = ref(false)
     const extendEdit = ref()
-    interface itemType{
-      render: string | undefined
-      primaryKey: string | undefined | number
-      options?: Array<null>
-    }
-    function handleEditExtend (item: itemType) {
+
+    function handleEditExtend (item) {
       if (item.render === undefined) {
         // ctx.root.$set(item, 'render', '')
         item.render = ''
@@ -865,8 +737,7 @@ export default defineComponent({
     // Enum值编辑
     const enumOptions = ref({})
     const enumEdit = ref()
-
-    function handleEditOption (item: itemType) {
+    function handleEditOption (item) {
       if (item.options === undefined) {
         // ctx.root.$set(item, 'options', [])
         item.options = []
@@ -919,12 +790,6 @@ export default defineComponent({
   },
   data () {
     return {
-      list2: [
-        { name: 'cat 5', id: 5 },
-        { name: 'cat 6', id: 6 },
-        { name: 'cat 7', id: 7 }
-      ],
-      drag: false,
       inputTypeOptions: [
         {
           value: 'string',
@@ -953,7 +818,7 @@ export default defineComponent({
       ]
     }
   }
-})
+}
 </script>
 
 <style lang="stylus" scoped>

@@ -47,7 +47,6 @@ export default {
     'field': 'initOptions'
   },
   created () {
-    debugger
     this.selectEnum = this.field.options
   },
   methods: {

@@ -33,13 +33,14 @@
   </TabPage>
 </template>
 
-<script>
+<script lang="ts">
 import { defineComponent, ref } from 'vue'
 import ListPage from './MenuList.vue'
 import DetailPage from './MenuDetail.vue'
 import usePageControll from '@/hooks/usePageControll'
 import { TabPage } from '@/views/modules'
 import { menuDeleteService } from '@/services/menu'
+import { RBACUserInfo } from '@/services/user'
 
 export default defineComponent({
   components: {
@@ -60,7 +61,7 @@ export default defineComponent({
       handleRefreshList,
       handleGoBack,
       handleUpsertEnd
-    } = usePageControll({ idField: 'id', listRef, deleteService: menuDeleteService.bind(ctx.root) })
+    } = usePageControll<RBACUserInfo>({ idField: 'id', listRef, deleteService: menuDeleteService.bind(ctx.root) })
 
     return {
       listRef,
