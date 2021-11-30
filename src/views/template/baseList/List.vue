@@ -63,8 +63,8 @@
 <script lang="ts">
 import { defineComponent,ref, PropType, inject } from 'vue'
 import { CTable } from '@ccprivate/admin-toolkit-plus'
-import { ElTable } from 'element-plus'
-
+// import { ElTable } from 'element-plus'
+import CListFilter from '@/components/CListFilter.vue'
 import Actions from './Actions.vue'
 import { MenuDetail } from '@/services/menu'
 
@@ -78,6 +78,7 @@ import useTableResize from '@/hooks/baseList/useTableResize'
 
 export default defineComponent({
   components: {
+    CListFilter,
     Actions
   },
   props: {
@@ -96,6 +97,8 @@ export default defineComponent({
   },
   setup (props,{ emit }) {
 
+    const baseIndex = inject<InjectionKeyType>(baseIndexKey) as InjectionKeyType
+
     // 自定义方法：主要是批量删除、删除、编辑等 在当前页面就能实现的功能
     function todoactions (msg: CButtonActionList) {
       toDoActions[msg[2] as CToDoActionNotRow]()
@@ -109,9 +112,10 @@ export default defineComponent({
       emit('go-back')
     }
 
-    const baseIndex = inject(baseIndexKey) as InjectionKeyType
+
     // 根据菜单中的配置生成页面初始化数据
     const { api,listDataMap, table, filterFields, actions, resource, selectionType, showInfo, showList, cListButtonText, cListFilterExpand, handleCListfilterExpand } = usePageDataInit<BaseListRow>(props.menu)
+    console.log('filterFields',filterFields.value)
     // 分页功能
     const { pagination } = useContentPagination()
     // 数据搜索
@@ -119,7 +123,7 @@ export default defineComponent({
     // 列表选择方法
     const { selected,  handleRowSelectionAdd, handleRowSelectionRemove, handleAllRowSelectionChange } =  useTableSelection<BaseListRow>(table)
     // 新增、批量删除等按钮的方法（包括列表操作列上的删除、预览等按钮）
-    const toDoActions = useToDoActions<BaseListRow>({ fetchData, api: api.value, selected:selected.value, goBack, primaryKey:baseIndex.primaryKey })
+    const toDoActions = useToDoActions<BaseListRow>({ fetchData, api: api.value, selected:selected.value, goBack, primaryKey: baseIndex.primaryKey.value })
     // 根据格式化后的 table 数据生成 c-table 组件渲染时所需的 Header
     const { tableHeader } = useTable<BaseListRow>({ table, api: api.value, resource: resource.value, toDoActions, optionActions })
 
@@ -127,7 +131,7 @@ export default defineComponent({
     // table 自适应
     useTableResize({
       table,
-      elTableComp: tableEl.value?.$refs.table as InstanceType<typeof ElTable>
+      CTableComp: tableEl.value // ?.$refs.table as InstanceType<typeof ElTable>
     })
 
 

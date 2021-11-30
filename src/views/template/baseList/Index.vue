@@ -8,7 +8,7 @@
       @action="handleOption"
     ></ResourceList>
     <ResourceContent
-      v-if="!isShowList || optionType === 'Confirm'"
+      v-if="!isShowList"
       :id="id"
       :mode="mode"
       :menu-id="menuId"
@@ -50,7 +50,7 @@ import ResourceContent from './Page.vue'
 import ResourceList from './List.vue'
 import DialogPage from './dialog/Index'
 import { evil as functionEvil } from '@/utlis/common'
-import { MenuDetail,MenuFields, getMenusDetailService } from '@/services/menu'
+import { MenuDetail, MenuFields, getMenusDetailService } from '@/services/menu'
 
 import { BaseListRow, baseIndexKey } from '@/hooks/baseList/usePageDataInit'
 
@@ -61,11 +61,6 @@ export default defineComponent({
     ResourceContent,
     ...DialogPage
   },
-  // provide () {
-  //   return {
-  //     baseIndex: this
-  //   }
-  // },
   props: {
     menuId: {
       type: Number,
@@ -91,7 +86,8 @@ export default defineComponent({
     const dialogVisible = ref(false)
     const dialogChang = ref(false) // 弹窗数据改动后是否有保存，如果已保存设置为true, 关闭弹窗后重新加载页面。
     const listEL = ref<typeof ResourceList>()
-    function fetchMenuData (id:number) {
+
+    function fetchMenuData (id: number) {
       getMenusDetailService({ id }).then(data => {
         menuDetail.value = data
         const fields = functionEvil<Array<MenuFields<BaseListRow>>>(menuDetail.value.fields)
@@ -106,7 +102,7 @@ export default defineComponent({
       mode.value = 'list'
       listEL.value?.fetchData()
     }
-    const handleOption: COptionActions<BaseListRow> =  function  (data) {
+    const handleOption: COptionActions<BaseListRow> = function (data) {
       template.value = data.option[2] as CActionTemplate
       title.value = data.option[0]
       mode.value = data.option[4]
@@ -149,7 +145,7 @@ export default defineComponent({
       optionType.value = ''
       id.value = undefined
     }
-    function hiddenDialog (val?:'ok') {
+    function hiddenDialog (val?: 'ok') {
       mode.value = 'list'
       optionType.value = ''
       id.value = undefined
@@ -161,18 +157,15 @@ export default defineComponent({
         dialogChang.value = false
       }
     }
-    function handleDialogChange (msg:boolean) {
+    function handleDialogChange (msg: boolean) {
       dialogChang.value = msg
     }
 
-    fetchMenuData(props.menuId)
-    // this.$bus.$on('go-back', () => {
-    //   this.isShowList = true
-    // })
-
     provide(baseIndexKey, {
-      primaryKey: primaryKey.value
+      primaryKey
     })
+
+    fetchMenuData(props.menuId)
 
     return {
       menuDetail,

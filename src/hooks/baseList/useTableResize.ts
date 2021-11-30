@@ -1,14 +1,15 @@
 import { onMounted, onUnmounted, onActivated } from 'vue'
 import { ElTable } from 'element-plus'
-import { ListTabLe } from './usePageDataInit'
+import { CTable } from '@ccprivate/admin-toolkit-plus'
+import { ListTabLe, BaseListRow } from './usePageDataInit'
 
 
 interface BaseListParams<T> {
-  elTableComp: InstanceType<typeof ElTable>
+  CTableComp: InstanceType<CTable<BaseListRow>>
   table: ListTabLe<T>
 }
 
-export default function useTableResize<T> ({ elTableComp, table }: BaseListParams<T>) {
+export default function useTableResize<T> ({ CTableComp, table }: BaseListParams<T>) {
 
   // ========================= table 自适应高度 =========================
 
@@ -29,14 +30,14 @@ export default function useTableResize<T> ({ elTableComp, table }: BaseListParam
   }
 
   function setHeight () {
-    // const tableEl = this.$refs.table.$refs.table.$el
-    const tableRect = elTableComp.$el.getBoundingClientRect()
-    const height = window.innerHeight - tableRect.top - 76
-    table.props = {
-      maxHeight: height,
-      height: height
-    }
-    elTableComp.doLayout()
+    // // const tableEl = this.$refs.table.$refs.table.$el
+    // const tableRect = elTableComp.$el.getBoundingClientRect()
+    // const height = window.innerHeight - tableRect.top - 76
+    // table.props = {
+    //   maxHeight: height,
+    //   height: height
+    // }
+    // elTableComp.doLayout()
   }
 
   window.addEventListener('resize', setHeight)

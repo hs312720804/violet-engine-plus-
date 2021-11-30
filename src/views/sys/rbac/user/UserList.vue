@@ -156,7 +156,7 @@ export default defineComponent({
         {
           label: _$t('btn.operation'),
           render: ({ row }) => {
-            return h(UserRoleSetter, { props: { user: row } }, _$t('setRole'))
+            return h(UserRoleSetter, { user: row }, _$t('setRole'))
           }
         }
       ]
