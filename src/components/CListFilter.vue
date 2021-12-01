@@ -8,7 +8,7 @@
             :key="key"
             v-model="filterForm[item.prop]"
             :label="showLabel ? item.label : ''"
-            :placeholder="(item.placePrefix ? item.placePrefix : '请输入') + item.label"
+            :placeholder="'请输入'+ item.label"
           ></c-form-string>
           <c-form-enum
             v-if="item.inputType === 'enum'"
@@ -87,14 +87,9 @@
 </template>
 
 <script lang="ts">
-interface CListFilterItem {
-  prop: string
-  label: string
-  inputType: 'string' | 'enum' | 'date'
-  options: Array<COptions>
-  placePrefix?: string
-  queryExclude: boolean
-}
+import { BaseListRow } from '@/hooks/baseList/usePageDataInit'
+import { MenuFields } from '@/services/menu'
+
 interface CListFilterButton {
   'query': '查询'
   'reset': '重置'
@@ -108,7 +103,7 @@ export default defineComponent({
   },
   props: {
     options: {
-      type: Array as PropType<Array<CListFilterItem>>,
+      type: Array as PropType<Array<MenuFields<BaseListRow>>>,
       default: () => {
         return []
       }

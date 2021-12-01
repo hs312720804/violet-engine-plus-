@@ -52,7 +52,7 @@
           <el-main>
             <router-view v-slot="{ Component }">
               <keep-alive v-if="isKeepAlive">
-                <component :is="Component"></component>
+                <component :is="Component" :key="route.path"></component>
               </keep-alive>
               <component :is="Component" v-else></component>
             </router-view>

@@ -13,7 +13,7 @@ export interface MenuExtra {
   selectionType: CSelectionType | 'none'
 }
 export type MenuFieldUse = 1 | 2 | 3
-export type MenuFieldType = 'enum' | 'image' | 'date' | 'number'
+export type MenuFieldType = 'enum' | 'image' | 'date' | 'number' | 'string'
 export interface MenuFields<T> {
   inputType: MenuFieldType // 字段类型，当 render 存在时，忽略该字段
   format?: string // 当 inputType 为 date 时该字段才存在，用于格式化时间

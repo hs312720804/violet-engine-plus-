@@ -112,10 +112,8 @@ export default defineComponent({
       emit('go-back')
     }
 
-
     // 根据菜单中的配置生成页面初始化数据
     const { api,listDataMap, table, filterFields, actions, resource, selectionType, showInfo, showList, cListButtonText, cListFilterExpand, handleCListfilterExpand } = usePageDataInit<BaseListRow>(props.menu)
-    console.log('filterFields',filterFields.value)
     // 分页功能
     const { pagination } = useContentPagination()
     // 数据搜索
@@ -134,6 +132,7 @@ export default defineComponent({
       CTableComp: tableEl.value // ?.$refs.table as InstanceType<typeof ElTable>
     })
 
+    fetchData()
 
     return {
 
