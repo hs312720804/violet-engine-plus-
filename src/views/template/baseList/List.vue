@@ -119,7 +119,7 @@ export default defineComponent({
     // 列表选择方法
     const { selected,  handleRowSelectionAdd, handleRowSelectionRemove, handleAllRowSelectionChange } =  useTableSelection<BaseListRow>(table)
     // 新增、批量删除等按钮的方法（包括列表操作列上的删除、预览等按钮）
-    const toDoActions = useToDoActions<BaseListRow>({ fetchData, api: api.value, selected:selected.value, goBack, primaryKey:baseIndex.primaryKey })
+    const toDoActions = useToDoActions<BaseListRow>({ fetchData, api: api.value, selected:selected.value, goBack, primaryKey: baseIndex.primaryKey })
     // 根据格式化后的 table 数据生成 c-table 组件渲染时所需的 Header
     const { tableHeader } = useTable<BaseListRow>({ table, api: api.value, resource: resource.value, toDoActions, optionActions })
 
