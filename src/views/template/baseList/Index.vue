@@ -20,7 +20,7 @@
       @go-back="goBack"
     ></ResourceContent>
     <el-dialog
-      v-model:visible="dialogVisible"
+      v-model="dialogVisible"
       :title="title"
       width="50%"
       @close="hiddenDialog"
@@ -103,6 +103,7 @@ export default defineComponent({
       listEL.value?.fetchData()
     }
     const handleOption: COptionActions<BaseListRow> = function (data) {
+      console.log(data)
       template.value = data.option[2] as CActionTemplate
       title.value = data.option[0]
       mode.value = data.option[4]
@@ -160,11 +161,9 @@ export default defineComponent({
     function handleDialogChange (msg: boolean) {
       dialogChang.value = msg
     }
-
     provide(baseIndexKey, {
       primaryKey
     })
-
     fetchMenuData(props.menuId)
 
     return {

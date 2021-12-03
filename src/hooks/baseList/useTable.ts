@@ -102,6 +102,9 @@ export default function useTable<T extends { [k: string]: any; }> ({ table, api,
                 'span',
                 {},
                 CUtils.format.fillNumber(row[item.prop], 3, ','))
+            },
+            string: function ({ row }) {
+              return row[item.prop]
             }
           }
           header[key].render = renderMap[item.inputType]

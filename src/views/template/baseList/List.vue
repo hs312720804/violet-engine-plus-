@@ -74,7 +74,7 @@ import useContentPagination from '@/hooks/useContentPagination'
 import useTableSelection from '@/hooks/baseList/useTableSelection'
 import useToDoActions from '@/hooks/baseList/useToDoActions'
 import useTable from '@/hooks/baseList/useTable'
-import useTableResize from '@/hooks/baseList/useTableResize'
+// import useTableResize from '@/hooks/baseList/useTableResize'
 
 export default defineComponent({
   components: {
@@ -103,7 +103,7 @@ export default defineComponent({
     function todoactions (msg: CButtonActionList) {
       toDoActions[msg[2] as CToDoActionNotRow]()
     }
-    // 自定义方法：主要是页面调整、弹窗展开等需要在 Index 页面实现的功能
+    // 自定义方法：主要是页面跳转、弹窗展开等需要在 Index 页面实现的功能
     const optionActions: COptionActions<BaseListRow> = function (data) {
       emit('action', data)
     }
@@ -126,11 +126,11 @@ export default defineComponent({
     const { tableHeader } = useTable<BaseListRow>({ table, api: api.value, resource: resource.value, toDoActions, optionActions })
 
     const tableEl = ref<InstanceType<CTable<BaseListRow>>>()
-    // table 自适应
-    useTableResize({
-      table,
-      CTableComp: tableEl.value // ?.$refs.table as InstanceType<typeof ElTable>
-    })
+    // // table 自适应
+    // useTableResize({
+    //   table,
+    //   CTableComp: tableEl.value // ?.$refs.table as InstanceType<typeof ElTable>
+    // })
 
     fetchData()
 

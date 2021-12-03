@@ -11,7 +11,7 @@ for (const path in files) {
   files[path]().then(mod => {
     const matched = path.match(/([A-Za-z0-9-_]+)\./i)
     if (matched && matched.length > 1) {
-      modules[matched[1]] = mod
+      modules[matched[1]] = mod.default
     }
   })
 }
