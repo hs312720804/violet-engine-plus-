@@ -50,12 +50,7 @@
             theme="gray-tab"
           ></c-tag-nav>
           <el-main>
-            <router-view v-slot="{ Component }">
-              <keep-alive v-if="isKeepAlive">
-                <component :is="Component" :key="route.path"></component>
-              </keep-alive>
-              <component :is="Component" v-else></component>
-            </router-view>
+            <router-view></router-view>
           </el-main>
         </el-container>
       </el-container>
@@ -106,11 +101,6 @@ export default defineComponent({
 
     const siteInfo = computed(() => store.state.app.site)
 
-    const isKeepAlive = computed(() => {
-      const meta = route.meta
-      return meta && meta.isCache !== false
-    })
-
     const defaultMenu = computed(() => {
       const mainRoute = $router.options.routes.find(item => {
         return item.path === '/'
@@ -156,7 +146,6 @@ export default defineComponent({
     }
 
     return {
-      isKeepAlive,
       initTags,
       siteInfo,
       defaultMenu,
