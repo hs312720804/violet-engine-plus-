@@ -1,6 +1,5 @@
 const modules: { [key: string]: any; } = {}
 const files = import.meta.glob('./*.vue')
-console.log('==========', files)
 
 for (const path in files) {
   files[path]().then(mod => {
@@ -10,5 +9,4 @@ for (const path in files) {
     }
   })
 }
-console.log('modulesmodulesmodulesmodules', modules)
 export default modules

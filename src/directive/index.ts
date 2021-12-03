@@ -1,5 +1,6 @@
 import { App } from 'vue'
 import debounce from './debounce'
+import { store } from '@/store'
 
 export default (app: App) => {
   /**
@@ -10,6 +11,17 @@ export default (app: App) => {
     mounted (el, binding) {
       const [fn, event = 'click', timer = 500] = binding.value
       el.addEventListener(event, debounce(fn, timer, { leading: true }))
+    }
+  })
+  /**
+   * 自定义全局权限指令
+   */
+  app.directive('permission', {
+    mounted: function (el, binding) {
+      const access = store.state.app.access
+      if (!access[binding.value]) {
+        el.parentNode.removeChild(el)
+      }
     }
   })
 }

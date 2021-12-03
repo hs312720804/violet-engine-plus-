@@ -29,7 +29,7 @@ export default {
   appLog: (state: RootState) => JSON.parse(state.app.site.logo) as AppLogo,
   getEnumOptions: (state: RootState) => (code: string) => {
     const rowEnum = state.app.enums.find(ele => ele.enumCode === code)
-    return rowEnum ? functionEvil<EnumOptions>(rowEnum.options) : undefined
+    return rowEnum ? functionEvil<EnumOptions>(rowEnum.options) : []
   }
   // sidebar: (state: RootState) => state.app.sidebar,
   // language: (state: RootState) => state.app.language,

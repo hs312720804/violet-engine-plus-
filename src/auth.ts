@@ -29,6 +29,7 @@ export async function initUserData () {
         accessObj[item] = true
       })
       store.dispatch('app/setAccess', accessObj)
+      store.dispatch('app/setEnums')
       if (menu.length === 0) {
         throw new Error('not login')
       }

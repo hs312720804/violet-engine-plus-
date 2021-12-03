@@ -10,16 +10,17 @@ export default function useTableSelection<T extends BaseListRow> (table: ListTab
 
   // ========================= 表格选中 =========================
   const baseIndex = inject(baseIndexKey) as InjectionKeyType<T>
+  const primaryKey = baseIndex.primaryKey.value
   const selected = ref<Array<T>>([]) as Ref<Array<T>>
 
   function updateTableSelected () {
     // const table = this.table
     const newSelectedIndex = selected.value.reduce((result, item) => {
-      result[item[baseIndex.primaryKey]] = true
+      result[item[primaryKey]] = true
       return result
     }, {} as SelectedIndex)
     table.selected = table.data.reduce((result, item, index) => {
-      if (newSelectedIndex[item[baseIndex.primaryKey]]) {
+      if (newSelectedIndex[item[primaryKey]]) {
         result.push(index)
       }
       return result
@@ -34,7 +35,7 @@ export default function useTableSelection<T extends BaseListRow> (table: ListTab
 
   function handleRowSelectionRemove (targetItem: T) {
     selected.value = selected.value.filter(item => {
-      return item[baseIndex.primaryKey] !== targetItem[baseIndex.primaryKey]
+      return item[primaryKey] !== targetItem[primaryKey]
     })
     updateTableSelected()
   }
@@ -49,10 +50,10 @@ export default function useTableSelection<T extends BaseListRow> (table: ListTab
 
   function handleAllRowSelectionRemove () {
     const currentPageSelected = table.data.map(e => {
-      return e[baseIndex.primaryKey]
+      return e[primaryKey]
     })
     selected.value = selected.value.filter(e => {
-      return !currentPageSelected.includes(e[baseIndex.primaryKey])
+      return !currentPageSelected.includes(e[primaryKey])
     })
     table.selected = []
   }

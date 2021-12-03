@@ -4,9 +4,9 @@
  * 列表自定义渲染函数
  * Copyright (c) 2021 Your Company
  */
-import { h } from 'vue'
+import { h, resolveDirective, withDirectives, Directive } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { ElMessage } from 'element-plus'
+import { ElButton, ElMessage } from 'element-plus'
 import { CTableRender } from '@ccprivate/admin-toolkit-plus'
 import CellEdit from '@/components/CellEdit.vue'
 import { CUtils } from '@/utlis/common'
@@ -40,40 +40,42 @@ export default function useTableColumn<T extends { [k: string]: any; }> ({ api, 
   function handleOperation (arr: Array<CButtonAction>): CTableRender<T> {
     // 不与权限关联时用例：["编辑:Page:Edit:edit","查看:Page:Edit:read","删除:Todo:rowDelete","自定义Page:Page:AA","DialogPage:Dialog:AAADialog"]
     // 与权限关联时用例：["编辑:Page:Edit:update:edit","查看:Page:Edit:detail:read","删除:Todo:rowDelete:delete","自定义Page:Page:AA","DialogPage:Dialog:AAADialog"]
+    const permissionDirective = resolveDirective('permission') as Directive
+
     return ({ row }) => {
       return arr.map((item, index) => {
         const option = item.split(':') as CButtonActionList
         // if (this.resourceAccess.indexOf(option[3]) > -1) { // 权限是否存在判断
-        return h(
-          'el-button',
+        return withDirectives(h(
+          ElButton,
           {
-            props: {
-              type: 'text',
-              size: 'mini'
-            },
-            // 不与权限关联时不需要指令，mode的索引变成3
-            directives: [
-              {
-                name: 'permission',
-                value: `${resource}:${option[3]}`
-              }
-            ],
-            on: {
-              click: () => {
-                if (option[1] === 'Todo') {
-                  toDoActions[option[2]](row)
-                  // this[option[2]](row)
-                } else {
-                  optionActions({ row, option })
-                  // this.$emit('option', {
-                  //   row,
-                  //   option
-                  // })
-                }
+            type: 'text',
+            size: 'mini',
+            // // 不与权限关联时不需要指令，mode的索引变成3
+            // directives: [
+            //   {
+            //     name: 'permission',
+            //     value: `${resource}:${option[3]}`
+            //   }
+            // ],
+            onClick: () => {
+              if (option[1] === 'Todo') {
+                toDoActions[option[2]](row)
+                // this[option[2]](row)
+              } else {
+                optionActions({ row, option })
+                // this.$emit('option', {
+                //   row,
+                //   option
+                // })
               }
             }
           },
           option[0]
+        ), [
+          // 不与权限关联时不需要指令，mode的索引变成3
+          [permissionDirective, `${resource}:${option[3]}`]
+        ]
         )
         // }
       })
@@ -96,22 +98,18 @@ export default function useTableColumn<T extends { [k: string]: any; }> ({ api, 
   function cellEdit (prop: keyof T): CTableRender<T> {
     return ({ row }) => {
       return h(CellEdit, {
-        props: {
-          initValue: row[prop]
-        },
-        on: {
-          blur: (val: T[keyof T]) => {
-            const form: T = JSON.parse(JSON.stringify(row))
-            form[prop] = val
-            apiFetch({
-              method: api.update[1],
-              url: api.update[0],
-              data: form
-            }).then(() => {
-              ElMessage.success($t('message.editSuccess'))
-              row[prop] = val
-            })
-          }
+        initValue: row[prop],
+        onBlur: (val: T[keyof T]) => {
+          const form: T = JSON.parse(JSON.stringify(row))
+          form[prop] = val
+          apiFetch({
+            method: api.update[1],
+            url: api.update[0],
+            data: form
+          }).then(() => {
+            ElMessage.success($t('message.editSuccess'))
+            row[prop] = val
+          })
         }
       })
     }

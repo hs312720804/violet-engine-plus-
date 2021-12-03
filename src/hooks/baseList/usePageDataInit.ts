@@ -1,4 +1,4 @@
-import { computed, ref, InjectionKey } from 'vue'
+import { computed, ref, Ref, InjectionKey } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { MenuDetail, MenuApi, MenuExtra, MenuFields } from '@/services/menu'
 import { evil as functionEvil, disposalField } from '@/utlis/common'
@@ -11,10 +11,9 @@ export interface ListTabLe<T> {
   props: Omit<ELTableProps<T>, 'data'>
 }
 
-export type InjectionKeyType<T = { [k: string]: any; }> = { primaryKey: string; }
+export type InjectionKeyType<T = { [k: string]: any; }> = { primaryKey: Ref<string>; }
 export type BaseListRow = { [key: string]: any; }
-export const baseIndexKey: InjectionKey<InjectionKeyType> = Symbol()
-
+export const baseIndexKey: InjectionKey<InjectionKeyType> = Symbol('baseIndex')
 
 
 export default function usePageDataInit<T> (menu: MenuDetail) {

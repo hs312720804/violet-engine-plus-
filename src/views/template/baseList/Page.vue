@@ -7,7 +7,7 @@
       @go-back="$emit('go-back')"
     >
       <component
-        :is="pageName"
+        :is="PageComponentMap[pageName]"
         :id="id"
         :mode="mode"
         :menu-id="menuId"
@@ -20,13 +20,10 @@
 </template>
 <script lang="ts">
 import { defineComponent, PropType, ref, computed } from 'vue'
-import Temp from './pages/index'
+import PageComponentMap from './pages/Index'
 import { MenuDetail } from '@/services/menu'
 
 export default defineComponent({
-  components: {
-    ...Temp
-  },
   // props: ['id', 'menuId', 'menu', 'mode', 'template', 'title', 'optionType'],
   props: {
     id: {
@@ -68,6 +65,7 @@ export default defineComponent({
     const showIcon = ref(false)
     const pageName = computed<CActionTemplateTrueName>(() => `${props.template}${props.optionType}`)
     return {
+      PageComponentMap,
       showIcon,
       pageName
     }

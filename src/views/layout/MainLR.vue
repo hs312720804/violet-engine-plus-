@@ -81,16 +81,7 @@
         theme="gray-tab"
       ></c-tag-nav>
       <el-main>
-        <router-view v-slot="{ Component }">
-          <keep-alive v-if="isKeepAlive">
-            <component :is="Component"></component>
-          </keep-alive>
-          <component :is="Component" v-else></component>
-        </router-view>
-        <!-- <keep-alive>
-          <router-view v-if="isKeepAlive" :key="route.name"></router-view>
-        </keep-alive>
-        <router-view v-if="!isKeepAlive" :key="route.name"></router-view> -->
+        <router-view></router-view>
       </el-main>
     </el-container>
   </el-container>
@@ -138,10 +129,7 @@ export default defineComponent({
     const $router = useRouter()
 
     const siteInfo = computed (() => store.state.app.site)
-    const isKeepAlive = computed(() => {
-      const meta = route.meta
-      return meta && meta.isCache !== false
-    })
+
     const defaultMenu = computed(() => {
       const mainRoute = $router.options.routes.find(item => {
         return item.path === '/'
@@ -217,7 +205,6 @@ export default defineComponent({
       drawer,
       device,
       siteInfo,
-      isKeepAlive,
       initTags,
       defaultMenu,
       handleDropdownCommand,
