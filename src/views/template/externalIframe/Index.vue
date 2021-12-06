@@ -1,8 +1,8 @@
 <template>
   <div style="height:100%;">
     <iframe
-      :src="iframeSrc"
       v-if="iframeSrc"
+      :src="iframeSrc"
       width="100%"
       height="100%"
       frameborder="0"
@@ -10,31 +10,35 @@
   </div>
 </template>
 <script>
-export default {
+import { defineComponent,ref } from 'vue'
+import { getMenusDetailService } from '@/services/menu'
+import { evil as functionEvil } from '@/utlis/common'
+export default defineComponent({
   props: {
     menuId: {
-      type: Number
+      type: Number,
+      required: true
     }
   },
-  data () {
-    return {
-      menuDetail: '',
-      iframeSrc: ''
-    }
-  },
-  methods: {
-    fetchMenuData (id) {
-      this.$service.getMenusDetail({ id }).then((data) => {
-        this.menuDetail = data
-        const extra = this.$constants.evil(data.extra)
-        this.iframeSrc = extra.src
+  setup(props) {
+    let menuDetail = ref({})
+    let iframeSrc = ref('')
+    fetchMenuData(props.menuId)
+
+    function fetchMenuData (id) {
+      getMenusDetailService({ id }).then(data => {
+        menuDetail.value = data
+        const extra = functionEvil(data.extra)
+        iframeSrc.value = extra.src
       })
     }
-  },
-  created () {
-    this.fetchMenuData(this.menuId)
+
+    return {
+      menuDetail,
+      iframeSrc
+    }
   }
-}
+})
 </script>
 <style lang="stylus" scoped>
 

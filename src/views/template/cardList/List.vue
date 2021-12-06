@@ -19,12 +19,12 @@
           ></Actions>
         </div>
         <c-list-filter
+          v-if="!filterExpand"
           ref="expandForm"
           :options="filterFields"
           :length="3"
           :form-data="filter"
           :is-expand="filterExpand"
-          v-if="!filterExpand"
           @filter="handleSearch"
           @reset="handleResetSearch"
           @filter-expand="handlefilterExpand"
@@ -33,11 +33,11 @@
       </div>
       <div class="filter-expand">
         <c-list-filter
+          v-if="filterExpand"
           ref="expandForm"
           :options="filterFields"
           :form-data="filter"
           :is-expand="filterExpand"
-          v-if="filterExpand"
           @filter="handleSearch"
           @reset="handleResetSearch"
           @filter-expand="handlefilterExpand"
@@ -53,7 +53,7 @@
         @row-selection-remove="handleRowSelectionRemove"
         @all-row-selection-change="handleAllRowSelectionChange"
       >
-        <div class="card-content" slot="row" slot-scope="{row}">
+        <div slot="row" slot-scope="{row}" class="card-content">
           <CardItem :row="row">
             <div class="card-item__actions">
               <CardOperation
@@ -74,17 +74,17 @@
 import CardList from './cardList'
 import Actions from '@/views/baseList/Actions.vue'
 import listActions from '@/views/baseList/mixin/listActions'
-import CardItem from './CardItem'
+import CardItem from './CardItem.vue'
 import CardOperation from './CardOperation.js'
 export default {
-  extends: CardList,
-  mixins: [listActions],
-  inject: ['baseIndex'],
   components: {
     Actions,
     CardItem,
     CardOperation
   },
+  extends: CardList,
+  mixins: [listActions],
+  inject: ['baseIndex'],
   data () {
     return {
       resourceType: 'id',
@@ -160,6 +160,9 @@ export default {
       })
       return resourceAccess
     }
+  },
+  created () {
+    this.pageSetting(this.menu)
   },
   methods: {
     actionOption (data) {
@@ -287,9 +290,6 @@ export default {
         this.getListData(this.api.list, { ...this.filter, ...params })
       }
     }
-  },
-  created () {
-    this.pageSetting(this.menu)
   }
 }
 </script>
