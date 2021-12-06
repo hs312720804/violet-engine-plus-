@@ -13,6 +13,7 @@
       </div>
       <template v-if="filterFields.length > 0">
         <c-list-filter
+          v-if="!filterExpand"
           ref="expandForm"
           :options="filterFields"
           :length="3"
@@ -20,7 +21,6 @@
           :is-expand="filterExpand"
           :button-text="buttonText"
           :hidden-expand-button="filterFields.length <= 3"
-          v-if="!filterExpand"
           @filter="handleSearch"
           @reset="handleResetSearch"
           @filter-expand="handlefilterExpand"
@@ -30,12 +30,12 @@
     </div>
     <div class="filter-expand">
       <c-list-filter
+        v-if="filterExpand"
         ref="expandForm"
         :options="filterFields"
         :form-data="filter"
         :is-expand="filterExpand"
         :button-text="buttonText"
-        v-if="filterExpand"
         @filter="handleSearch"
         @reset="handleResetSearch"
         @filter-expand="handlefilterExpand"
@@ -46,14 +46,14 @@
       <el-tabs v-model="activeName" @tab-click="handleClick">
         <template v-for="(item, key) in menuChildren">
           <el-tab-pane
+            v-if="item.template"
+            :key="key"
             :label="item.name"
             :name="item.alias"
-            :key="key"
-            v-if="item.template"
           >
             <component
-              :ref="item.alias"
               :is="routerComponents[item.template].template"
+              :ref="item.alias"
               :menu-id="item.id"
             ></component>
           </el-tab-pane>
@@ -72,99 +72,136 @@
 </template>
 
 <script>
+import { defineComponent, ref, reactive, nextTick } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import { getMenusDetailService } from '@/services/menu'
+import { evil as functionEvil, disposalField } from '@/utlis/common'
+import PageComponentMap from '../baseList/pages/Index'
+
 import routerComponents from '@/router/components'
-export default {
+export default defineComponent({
   props: {
     menuId: {
-      type: Number
+      type: Number,
+      required: true
     },
     menu: {
       type: Object,
       default: () => {}
     }
   },
-  data () {
-    return {
-      activeName: '',
-      menuDetail: {},
-      routerComponents,
-      pageTemplate: routerComponents.BaseList.template,
-      menuChildren: [],
-      filterFields: [],
-      filterExpand: false,
-      filter: {},
-      buttonText: {
-        query: this.$t('btn.search'),
-        reset: this.$t('btn.reset'),
-        expand: this.$t('btn.expand'),
-        packUp: this.$t('btn.packUp')
-      }
-    }
-  },
-  methods: {
-    handleClick (tab, event) {
-      this.$router.push({ query: { tab: this.activeName } })
-      this.$nextTick(() => {
-        this.menuChildren.forEach((item, index) => {
-          if (item.alias === this.activeName && item.template === 'BaseList') { // 判断是BaseList时才会进行高度的设置
-            this.$refs[this.activeName][0].$refs.list.setHeight()
+  setup (props) {
+
+    const $router = useRouter()
+    const $route = useRoute()
+    const { t: $t } = useI18n() // 获取 i18n 的 t
+    let pageName = ref('AAPage')
+    let activeName = ref('')
+    let menuDetail = ref({})
+    // let routerComponents = ref('')
+    let pageTemplate = routerComponents.BaseList.template
+    let menuChildren = ref([])
+    let actions = ref('')
+    let filterFields = ref([])
+    let filterExpand = ref(false)
+    let filter = ref({})
+    let buttonText = reactive({
+      query: $t('btn.search'),
+      reset: $t('btn.reset'),
+      expand: $t('btn.expand'),
+      packUp: $t('btn.packUp')
+    })
+
+    function handleClick (tab, event) {
+      $router.push({ query: { tab: activeName.value } })
+      // nextTick()
+      nextTick(() => {
+        menuChildren.value.forEach((item, index) => {
+          if (item.alias === activeName.value && item.template === 'BaseList') { // 判断是BaseList时才会进行高度的设置
+            // this.$refs[activeName][0].$refs.list.setHeight()
           }
         })
       })
-    },
-    fetchMenuData (id) {
-      this.$service.getMenusDetail({ id }).then((data) => {
-        this.menuDetail = data
-        this.menuChildren = this.menuDetail.children
-        const fields = this.$constants.evil(this.menuDetail.fields)
-        const primaryField = fields.filter((field) => {
+    }
+
+    function fetchMenuData (id) {
+      getMenusDetailService({ id }).then(data => {
+        menuDetail.value = data
+        menuChildren.value = menuDetail.value.children
+        const fields = functionEvil(menuDetail.value.fields)
+        const primaryField = fields.filter(field => {
           return 'primaryKey' in field && field.primaryKey === 1
         })
-        this.primaryKey = primaryField.length > 0 ? primaryField[0].prop : 'id'
-        if (this.menuChildren.length > 0) {
-          if (this.$route.query.tab) {
-            this.activeName = this.$route.query.tab
+        // this.primaryKey = primaryField.length > 0 ? primaryField[0].prop : 'id'
+        if (menuChildren.value.length > 0) {
+          if ($route.query.tab) {
+            activeName.value = $route.query.tab
           } else {
-            this.activeName = this.menuChildren[0].alias
+            activeName.value = menuChildren.value[0].alias
           }
         }
-        this.pageSetting(this.menuDetail)
+        pageSetting(menuDetail.value)
       })
-    },
-    pageSetting (data) {
+    }
+    function pageSetting (data) {
       if (data.fields) {
-        const fields = this.$constants.evil(data.fields)
-        this.filterFields = this.$constants.disposalField(fields, 2)
+        const fields = functionEvil(data.fields)
+        filterFields.value = disposalField(fields, 2)
       }
       if (data.extra) {
-        const extra = this.$constants.evil(data.extra)
-        this.actions = 'actions' in extra ? this.$constants.evil(extra.actions) : []
+        const extra = functionEvil(data.extra)
+        actions.value = 'actions' in extra ? functionEvil(extra.actions) : []
       }
-    },
-    handleSearch () {
-      this.menuChildren.forEach(item => {
+    }
+    function handleSearch () {
+      menuChildren.value.forEach(item => {
         const refs = this.$refs[item.alias][0].$refs
         if ('list' in refs) {
           const reflist = refs['list']
-          reflist.filter = this.filter
+          reflist.filter = filter.value
           reflist.fetchData()
         }
       })
-    },
-    handleResetSearch () {
-      Object.keys(this.filter).forEach(key => {
-        this.filter[key] = ''
-      })
-      this.handleSearch()
-    },
-    handlefilterExpand (msg) {
-      this.filterExpand = msg
     }
-  },
-  created () {
-    this.fetchMenuData(this.menuId)
+    function handleResetSearch () {
+      Object.keys(filter.value).forEach(key => {
+        filter[key] = ''
+      })
+      handleSearch()
+    }
+    function handlefilterExpand (msg) {
+      filterExpand.value = msg
+    }
+
+    fetchMenuData(props.menuId)
+
+    console.log('routerComponents===', routerComponents)
+    console.log('PageComponentMap===', PageComponentMap)
+
+    return {
+      activeName,
+      menuDetail,
+      routerComponents,
+      pageTemplate,
+      menuChildren,
+      filterFields,
+      filterExpand,
+      filter,
+      buttonText,
+      handleClick,
+      fetchMenuData,
+      pageSetting,
+      handleSearch,
+      handleResetSearch,
+      handlefilterExpand,
+      pageName,
+      PageComponentMap
+    }
+
   }
-}
+
+})
 </script>
 
 <style lang="stylus" scoped>

@@ -113,13 +113,13 @@ export default defineComponent({
     }
 
     // 根据菜单中的配置生成页面初始化数据
-    const { api,listDataMap, table, filterFields, actions, resource, selectionType, showInfo, showList, cListButtonText, cListFilterExpand, handleCListfilterExpand } = usePageDataInit<BaseListRow>(props.menu)
+    const { api, listDataMap, table, filterFields, actions, resource, selectionType, showInfo, showList, cListButtonText, cListFilterExpand, handleCListfilterExpand } = usePageDataInit<BaseListRow>(props.menu)
     // 分页功能
     const { pagination } = useContentPagination()
     // 数据搜索
-    const { filter, fetchData, handleFilterChange, handleSearch, handleResetSearch } = useTableService<BaseListRow>({ api:api.value, listDataMap:listDataMap.value, table, pagination })
+    const { filter, fetchData, handleFilterChange, handleSearch, handleResetSearch } = useTableService<BaseListRow>({ api:api.value, listDataMap: listDataMap.value, table, pagination })
     // 列表选择方法
-    const { selected,  handleRowSelectionAdd, handleRowSelectionRemove, handleAllRowSelectionChange } =  useTableSelection<BaseListRow>(table)
+    const { selected, handleRowSelectionAdd, handleRowSelectionRemove, handleAllRowSelectionChange } = useTableSelection<BaseListRow>(table)
     // 新增、批量删除等按钮的方法（包括列表操作列上的删除、预览等按钮）
     const toDoActions = useToDoActions<BaseListRow>({ fetchData, api: api.value, selected:selected.value, goBack, primaryKey: baseIndex.primaryKey.value })
     // 根据格式化后的 table 数据生成 c-table 组件渲染时所需的 Header

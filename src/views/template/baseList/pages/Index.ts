@@ -15,5 +15,4 @@ for (const path in files) {
     }
   })
 }
-
 export default modules
