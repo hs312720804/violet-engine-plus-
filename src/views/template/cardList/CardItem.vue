@@ -2,7 +2,7 @@
   <div>
     <div class="img-container">
       <slot></slot>
-      <img src="http://www.coocaa.com/img/index/section1_entry_img3.jpg" />
+      <img src="http://www.coocaa.com/img/index/section1_entry_img3.jpg">
     </div>
     <div class="text">
       <div class="prize">199.00</div>

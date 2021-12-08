@@ -91,7 +91,7 @@ export default defineComponent({
   },
   // extends: BaseList,
   // mixins: [listActions],
-  emits:{
+  emits: {
     'go-back': () => true,
     action:(data:Parameters<COptionActions<BaseListRow>>[0])=> true
   },

@@ -40,6 +40,7 @@ export interface MenuDetail {
    */
   fields: string
   children: MenuDetail[] | null
+  template?: string
 }
 
 export const getMenusDetailService = (params: { id: string | number; }) => {

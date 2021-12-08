@@ -1,4 +1,4 @@
-import { computed, ref, Ref, InjectionKey } from 'vue'
+import { computed, ref, Ref, InjectionKey,reactive } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { MenuDetail, MenuApi, MenuExtra, MenuFields } from '@/services/menu'
 import { evil as functionEvil, disposalField } from '@/utlis/common'
@@ -27,7 +27,7 @@ export default function usePageDataInit<T> (menu: MenuDetail) {
   const selectionType = computed(() => extra.value.selectionType)
   const actions = computed(() => functionEvil<Array<CButtonAction>>(extra.value.actions || '[]'))
 
-  const table: ListTabLe<T> = {
+  const table: ListTabLe<T> = reactive({
     props: {
       border: true,
       stripe: true
@@ -35,7 +35,7 @@ export default function usePageDataInit<T> (menu: MenuDetail) {
     header: [],
     data: [],
     selected: []
-  }
+  })
   const filterFields = ref<Array<MenuFields<T>>>([])
   const showList = ref(false)
   const showInfo = ref(false)
@@ -61,7 +61,11 @@ export default function usePageDataInit<T> (menu: MenuDetail) {
       const fields = functionEvil<Array<MenuFields<T>>>(data.fields)
       filterFields.value = disposalField(fields, FieldUse.filter)
       table.header = disposalField(fields, FieldUse.list)
-      table.header.length > 0 ? showList.value = true : showInfo.value = true
+      if (data.template !== 'CardList' ) {
+        table.header.length > 0 ? showList.value = true : showInfo.value = true
+      } else {
+        showList.value = true
+      }
       // this.getListData(this.api.list, params)
     }
     // if (data.extra) {

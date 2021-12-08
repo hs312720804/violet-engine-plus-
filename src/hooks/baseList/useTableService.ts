@@ -4,7 +4,6 @@ import { ListTabLe } from './usePageDataInit'
 import apiFetch from '@/services/fetch'
 import { MenuApi } from '@/services/menu'
 
-
 import { get } from 'lodash'
 
 
@@ -20,7 +19,6 @@ type Param<T> = {
 }
 // eslint-disable-next-line @typescript-eslint/ban-types
 export default function useTableService<T> ({ api, listDataMap, table, pagination }: Param<T>) {
-
   const filter = reactive({})
 
   function fetchData () {

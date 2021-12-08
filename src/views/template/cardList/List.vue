@@ -14,284 +14,187 @@
             :actions="actions"
             :rows="table.data"
             :resource="resource"
-            @action="actionOption"
-            @todo="actionTodo"
+            @action="optionActions"
+            @todo="todoactions"
           ></Actions>
         </div>
         <c-list-filter
-          v-if="!filterExpand"
+          v-if="!cListFilterExpand"
           ref="expandForm"
           :options="filterFields"
           :length="3"
           :form-data="filter"
-          :is-expand="filterExpand"
+          :is-expand="cListFilterExpand"
           @filter="handleSearch"
           @reset="handleResetSearch"
-          @filter-expand="handlefilterExpand"
+          @filter-expand="handleCListfilterExpand"
         >
         </c-list-filter>
       </div>
       <div class="filter-expand">
         <c-list-filter
-          v-if="filterExpand"
+          v-if="cListFilterExpand"
           ref="expandForm"
           :options="filterFields"
           :form-data="filter"
-          :is-expand="filterExpand"
+          :is-expand="cListFilterExpand"
           @filter="handleSearch"
           @reset="handleResetSearch"
-          @filter-expand="handlefilterExpand"
+          @filter-expand="handleCListfilterExpand"
         >
         </c-list-filter>
       </div>
-      <c-card-list
-        ref="table"
+      <!-- <c-table
+        ref="tableEl"
+        :props="table.props"
+        :header="tableHeader"
         :data="table.data"
         :selected="table.selected"
-        :selection-type="table.selectionType"
+        :selection-type="selectionType ? selectionType : 'none'"
+        @row-selection-add="handleRowSelectionAdd"
+        @row-selection-remove="handleRowSelectionRemove"
+        @all-row-selection-change="handleAllRowSelectionChange"
+      ></c-table> -->
+      <c-card-list
+        ref="tableEl"
+        :data="table.data"
+        :selected="table.selected"
+        :selection-type="selectionType ? selectionType : 'none'"
         @row-selection-add="handleRowSelectionAdd"
         @row-selection-remove="handleRowSelectionRemove"
         @all-row-selection-change="handleAllRowSelectionChange"
       >
-        <div slot="row" slot-scope="{row}" class="card-content">
-          <CardItem :row="row">
-            <div class="card-item__actions">
-              <CardOperation
-                :row="row"
-                :actions="itemActions"
-                :resource="resource"
-                @option="handleOption"
-                @todo="rowActionTodo"
-              ></CardOperation>
-            </div>
-          </CardItem>
-        </div>
+        <template #default="{ row }">
+          <div class="card-content">
+            <CardItem :row="row">
+              <div class="card-item__actions">
+                <!-- <CardOperation
+                  :row="row"
+                  :actions="actions"
+                  :resource="resource"
+                  @option="optionActions"
+                  @todo="todoactions"
+                ></CardOperation> -->
+              </div>
+            </CardItem>
+          </div>
+        </template>
       </c-card-list>
     </c-content-wrapper>
   </div>
 </template>
-<script>
-import CardList from './cardList'
-import Actions from '@/views/baseList/Actions.vue'
-import listActions from '@/views/baseList/mixin/listActions'
+<script lang="ts">
+// import CardList from './cardList'
+
+// import listActions from '@/views/baseList/mixin/listActions'
 import CardItem from './CardItem.vue'
 import CardOperation from './CardOperation.js'
-export default {
+
+import { defineComponent, ref, PropType, inject } from 'vue'
+import { CTable } from '@ccprivate/admin-toolkit-plus'
+// import { ElTable } from 'element-plus'
+import CListFilter from '@/components/CListFilter.vue'
+import Actions from '@/views/template/baseList/Actions.vue'
+import { MenuDetail } from '@/services/menu'
+import usePageDataInit, { BaseListRow, baseIndexKey, InjectionKeyType } from '@/hooks/baseList/usePageDataInit'
+import useTableService from '@/hooks/baseList/useTableService'
+import useContentPagination from '@/hooks/useContentPagination'
+import useTableSelection from '@/hooks/baseList/useTableSelection'
+import useToDoActions from '@/hooks/baseList/useToDoActions'
+// import useTable from '@/hooks/baseList/useTable'
+export default defineComponent({
   components: {
     Actions,
     CardItem,
-    CardOperation
+    // CardOperation,
+    CListFilter
   },
-  extends: CardList,
-  mixins: [listActions],
-  inject: ['baseIndex'],
-  data () {
+  props: {
+    menu: {
+      type: Object as PropType<MenuDetail>,
+      default: () => {
+        return {}
+      }
+    }
+  },
+  // inject: ['baseIndex'],
+  setup (props,{ emit }) {
+
+    const baseIndex = inject<InjectionKeyType>(baseIndexKey) as InjectionKeyType
+
+    // 自定义方法：主要是批量删除、删除、编辑等 在当前页面就能实现的功能
+    function todoactions (msg: CButtonActionList) {
+      toDoActions[msg[2] as CToDoActionNotRow]()
+    }
+    // 自定义方法：主要是页面跳转、弹窗展开等需要在 Index 页面实现的功能
+    const optionActions: COptionActions<BaseListRow> = function (data) {
+      emit('action', data)
+    }
+
+    function goBack () {
+      emit('go-back')
+    }
+    // 根据菜单中的配置生成页面初始化数据
+    const { api, listDataMap, table, filterFields, actions, resource, selectionType, showInfo, showList, cListButtonText, cListFilterExpand, handleCListfilterExpand } = usePageDataInit<BaseListRow>(props.menu)
+    // const { table } = usePageDataInit<BaseListRow>(props.menu)
+    // 分页功能
+    const { pagination } = useContentPagination()
+    // 数据搜索
+
+    const { filter, fetchData, handleFilterChange, handleSearch, handleResetSearch } = useTableService<BaseListRow>({ api:api.value, listDataMap: listDataMap.value, table, pagination })
+
+    // table.data = useTableService<BaseListRow>({ api:api.value, listDataMap: listDataMap.value, table, pagination }).table.data
+
+    console.log('table', table)
+
+    // 列表选择方法
+    const { selected, handleRowSelectionAdd, handleRowSelectionRemove, handleAllRowSelectionChange } = useTableSelection<BaseListRow>(table)
+    // 新增、批量删除等按钮的方法（包括列表操作列上的删除、预览等按钮）
+    const toDoActions = useToDoActions<BaseListRow>({ fetchData, api: api.value, selected:selected.value, goBack, primaryKey: baseIndex.primaryKey.value })
+    // 根据格式化后的 table 数据生成 c-table 组件渲染时所需的 Header
+    // const { tableHeader } = useTable<BaseListRow>({ table, api: api.value, resource: resource.value, toDoActions, optionActions })
+
+    const tableEl = ref<InstanceType<CTable<BaseListRow>>>()
+    // // table 自适应
+    // useTableResize({
+    //   table,
+    //   CTableComp: tableEl.value // ?.$refs.table as InstanceType<typeof ElTable>
+    // })
+
+    fetchData()
+
     return {
-      resourceType: 'id',
-      filterFields: '',
-      filter: {},
-      isExpand: false,
-      filterExpand: false,
-      filterType: '',
-      filterTypeLabel: '',
-      table: {
-        props: {
-          border: true,
-          stripe: true
-        },
-        header: [],
-        data: [],
-        selectionType: 'multiple',
-        selected: []
-      },
-      template: '',
-      actions: [],
-      itemActions: []
-    }
-  },
-  computed: {
-    tableHeader () {
-      let header = JSON.parse(JSON.stringify(this.table.header))
-      this.table.header.forEach((item, key) => {
-        if (typeof item.render === 'string') {
-          let _this = this
-          if (item.render) {
-            // eslint-disable-next-line no-eval
-            header[key].render = eval('(' + item.render + ')')
-          }
-        }
-        if (item.inputType === 'enum' && !('render' in item)) {
-          let options = {}
-          const tagType = ['', 'success', 'info', 'warning', 'danger', 'danger', 'warning', 'success', 'info']
-          let type = ''
-          item.options.forEach((option, index) => {
-            options[option.value] = option.label
-            type = tagType[index]
-          })
-          header[key].render = function (h, { row }) {
-            return h(
-              'el-tag',
-              {
-                attrs: {
-                  type: type
-                }
-              },
-              options[row.status]
-            )
-          }
-        }
-      })
-      return header
-    },
-    api () {
-      return this.$constants.evil(this.menu.api)
-    },
-    resource () {
-      return this.$constants.evil(this.menu.extra).resource
-    },
-    resourceAccess () {
-      const access = this.$store.state.app.access
-      let resourceAccess = []
-      Object.keys(access).forEach((item, key) => {
-        const action = item.split(':')
-        if (action[0] === this.resource) {
-          resourceAccess.push(action[1])
-        }
-      })
-      return resourceAccess
-    }
-  },
-  created () {
-    this.pageSetting(this.menu)
-  },
-  methods: {
-    actionOption (data) {
-      this.$emit('action', data)
-    },
-    actionTodo (msg) {
-      this[msg[2]]()
-    },
-    rowActionTodo (msg) {
-      const { row, option } = msg
-      this[option[2]](row)
-    },
-    handleOption (msg) {
-      this.$emit('option', msg)
-    },
-    /**
-     * Array: ['显示文本:类型(页面page,确认Confirm，弹窗编辑]):Template/Function:Access:[argument]']
-     */
-    handleOperation (arr) {
-      // 不与权限关联时用例：["编辑:Page:Edit:edit","查看:Page:Edit:read","删除:Todo:rowDelete","自定义Page:Page:AA","DialogPage:Dialog:AAADialog"]
-      // 与权限关联时用例：["编辑:Page:Edit:update:edit","查看:Page:Edit:detail:read","删除:Todo:rowDelete:delete","自定义Page:Page:AA","DialogPage:Dialog:AAADialog"]
-      return (h, { row }) => {
-        return arr.map((item, index) => {
-          let option = item.split(':')
-          // if (this.resourceAccess.indexOf(option[3]) > -1) { // 权限是否存在判断
-          return h(
-            'el-button',
-            {
-              props: {
-                type: 'text',
-                size: 'mini'
-              },
-              // 不与权限关联时不需要指令，mode的索引变成3
-              directives: [{
-                name: 'permission',
-                value: `${this.resource}:${option[3]}`
-              }],
-              on: {
-                click: () => {
-                  if (option[1] === 'Todo') {
-                    this[option[2]](row)
-                  } else {
-                    this.$emit('option', { row, option })
-                  }
-                }
-              }
-            },
-            option[0]
-          )
-          // }
-        })
-      }
-    },
-    handleSearch () {
-      let params = {
-        pageNo: this.pagination.currentPage,
-        pageSize: this.pagination.pageSize
-      }
-      this.getListData(this.api.list, { ...this.filter, ...params })
-    },
-    handleResetSearch () {
-      Object.keys(this.filter).forEach(key => {
-        this.filterFrom[key] = ''
-      })
-      this.handleSearch()
-    },
-    handlefilterExpand (msg) {
-      this.filterExpand = msg
-    },
-    handleExpand (val) {
-      this.isExpand = val
-    },
-    handleFilterQuery (value) {
-      this.filter = value
-      this.handleFilterChange('query')
-    },
-    hancleClearFilter () {
-      this.filter = {}
-    },
-    pageSetting (data) {
-      let params = {
-        pageNo: this.pagination.currentPage,
-        pageSize: this.pagination.pageSize
-      }
-      if (data.fields) {
-        const fields = this.$constants.evil(data.fields)
-        this.filterFields = this.baseIndex.disposalField(fields, 2)
-        this.table.header = this.baseIndex.disposalField(fields, 1)
-        this.showList = true
-        // this.filterFields.length > 0 ? this.showList = true : this.showInfo = true
-        this.getListData(this.api.list, params)
-      }
-      if (data.extra) {
-        const extra = this.$constants.evil(data.extra)
-        this.actions = 'actions' in extra ? this.$constants.evil(extra.actions) : []
-        this.itemActions = 'itemActions' in extra ? this.$constants.evil(extra.itemActions) : []
-      }
-    },
-    getListData (url, params) {
-      // const filter = this.parseFilter()
-      const _this = this
-      return new Promise((resolve, reject) => {
-        _this.$service.fetch({
-          method: url[1],
-          url: url[0],
-          params
-        }).then(data => {
-          if (data.pageInfo.list.length < 1 && data.pageInfo.total > 0) {
-            _this.pagination.currentPage = _this.pagination.currentPage - 1
-            _this.getListData()
-          } else {
-            // resolve(data.pageInfo)
-            this.table.data = data.pageInfo.list
-            this.pagination.total = data.pageInfo.total
-          }
-        })
-      })
-    },
-    fetchData () {
-      let params = {
-        pageNo: this.pagination.currentPage,
-        pageSize: this.pagination.pageSize
-      }
-      if (this.api) {
-        this.getListData(this.api.list, { ...this.filter, ...params })
-      }
+      // 页面初始化参数
+      table,
+      filterFields,
+      actions,  // 操作按钮组
+      resource,
+      selectionType,
+      showInfo,
+      showList,
+      cListButtonText,
+      cListFilterExpand,
+      handleCListfilterExpand,
+      // 分页查询
+      pagination,
+      filter,
+      handleFilterChange,
+      handleSearch,
+      handleResetSearch,
+      // 列表选中
+      handleRowSelectionAdd,
+      handleRowSelectionRemove,
+      handleAllRowSelectionChange,
+      // 自定义 ToDo 事件
+      todoactions,
+      optionActions,
+      // table 渲染函数
+      // tableHeader,
+      tableEl
     }
   }
-}
+
+})
 </script>
 <style lang="stylus" scoped>
 >>>.content-list
