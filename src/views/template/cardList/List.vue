@@ -68,13 +68,14 @@
           <div class="card-content">
             <CardItem :row="row">
               <div class="card-item__actions">
-                <!-- <CardOperation
+                <CardOperation
                   :row="row"
-                  :actions="actions"
+                  :actions="itemActions"
                   :resource="resource"
+                  :header="tableHeader"
                   @option="optionActions"
                   @todo="todoactions"
-                ></CardOperation> -->
+                ></CardOperation>
               </div>
             </CardItem>
           </div>
@@ -89,24 +90,28 @@
 // import listActions from '@/views/baseList/mixin/listActions'
 import { defineComponent, ref, PropType, inject } from 'vue'
 import CardItem from './CardItem.vue'
-import CardOperation from './CardOperation.js'
+import CardOperation from './CardOperation.vue'
 
 import { CTable } from '@ccprivate/admin-toolkit-plus'
 // import { ElTable } from 'element-plus'
 import CListFilter from '@/components/CListFilter.vue'
 import Actions from '@/views/template/baseList/Actions.vue'
-import { MenuDetail } from '@/services/menu'
+import { MenuDetail, MenuExtra } from '@/services/menu'
+
 import usePageDataInit, { BaseListRow, baseIndexKey, InjectionKeyType } from '@/hooks/baseList/usePageDataInit'
 import useTableService from '@/hooks/baseList/useTableService'
 import useContentPagination from '@/hooks/useContentPagination'
 import useTableSelection from '@/hooks/baseList/useTableSelection'
 import useToDoActions from '@/hooks/baseList/useToDoActions'
+import useTable from '@/hooks/baseList/useTable'
+import { evil as functionEvil } from '@/utlis/common'
+
 // import useTable from '@/hooks/baseList/useTable'
 export default defineComponent({
   components: {
     Actions,
     CardItem,
-    // CardOperation,
+    CardOperation,
     CListFilter
   },
   props: {
@@ -117,11 +122,18 @@ export default defineComponent({
       }
     }
   },
+  emits: ['action', 'go-back'],
   // inject: ['baseIndex'],
   setup (props,{ emit }) {
 
     const baseIndex = inject<InjectionKeyType>(baseIndexKey) as InjectionKeyType
 
+    const extra = functionEvil<MenuExtra>(props.menu.extra)
+    // 自定义的扩展方法
+    let itemActions = ref<Array<CButtonAction>>([])
+    if (extra && extra.itemActions) {
+      itemActions.value = 'itemActions' in extra ? functionEvil(extra.itemActions) : []
+    }
     // 自定义方法：主要是批量删除、删除、编辑等 在当前页面就能实现的功能
     function todoactions (msg: CButtonActionList) {
       toDoActions[msg[2] as CToDoActionNotRow]()
@@ -136,6 +148,7 @@ export default defineComponent({
     }
     // 根据菜单中的配置生成页面初始化数据
     const { api, listDataMap, table, filterFields, actions, resource, selectionType, showInfo, showList, cListButtonText, cListFilterExpand, handleCListfilterExpand } = usePageDataInit<BaseListRow>(props.menu)
+
     // const { table } = usePageDataInit<BaseListRow>(props.menu)
     // 分页功能
     const { pagination } = useContentPagination()
@@ -152,8 +165,8 @@ export default defineComponent({
     // 新增、批量删除等按钮的方法（包括列表操作列上的删除、预览等按钮）
     const toDoActions = useToDoActions<BaseListRow>({ fetchData, api: api.value, selected:selected.value, goBack, primaryKey: baseIndex.primaryKey.value })
     // 根据格式化后的 table 数据生成 c-table 组件渲染时所需的 Header
-    // const { tableHeader } = useTable<BaseListRow>({ table, api: api.value, resource: resource.value, toDoActions, optionActions })
-
+    const { tableHeader } = useTable<BaseListRow>({ table, api: api.value, resource: resource.value, toDoActions, optionActions })
+    // console.log('header====', tableHeader.value)
     const tableEl = ref<InstanceType<CTable<BaseListRow>>>()
     // // table 自适应
     // useTableResize({
@@ -190,7 +203,9 @@ export default defineComponent({
       optionActions,
       // table 渲染函数
       // tableHeader,
-      tableEl
+      tableEl,
+      itemActions,
+      tableHeader
     }
   }
 

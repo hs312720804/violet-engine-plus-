@@ -1,7 +1,7 @@
 <template>
   <div>
     <c-form
-      ref="form"
+      ref="ruleFormEl"
       label-width="100px"
       :model="form"
       :rules="rules"
@@ -50,12 +50,76 @@
     </c-form>
   </div>
 </template>
-<script>
-export default {
-  inject: ['baseIndex'],
-  props: ['mode', 'id', 'menuId', 'menu'],
-  data () {
-    return {
+<script lang="ts">
+import { defineComponent, ref, toRefs, reactive, PropType, inject } from 'vue'
+import { useStore } from '@/store'
+import { evil as functionEvil, disposalField } from '@/utlis/common'
+import apiFetch from '@/services/fetch'
+import { useI18n } from 'vue-i18n'
+import { ElMessage } from 'element-plus'
+// import { MenuDetail, MenuFields } from '@/services/menu'
+import { MenuDetail, MenuApi, MenuFields } from '@/services/menu'
+import  { BaseListRow, baseIndexKey, InjectionKeyType } from '@/hooks/baseList/usePageDataInit'
+import { ElForm, ElNotification } from 'element-plus'
+
+export default defineComponent({
+  // inject: ['baseIndex'],
+  props: {
+    mode: {
+      type: String,
+      default: ''
+    },
+    id: {
+      type: String,
+      default: ''
+    },
+    menuId: {
+      type: String,
+      default: ''
+    },
+    menu: {
+      type: Object as PropType<MenuDetail>,
+      default: () => {
+        return {}
+      }
+    }
+  },
+  emits: ['go-back', 'upsert-end'],
+  setup (props, { emit }) {
+    debugger
+    const $store = useStore()
+    const { t: _$t } = useI18n()
+    const baseIndex = inject<InjectionKeyType>(baseIndexKey) as InjectionKeyType
+    const ruleFormEl = ref<InstanceType<typeof ElForm>>()
+
+    // const mode = props.mode
+    // const menu = props.menu
+    // const id = props.id
+    const { mode, id } = toRefs(props)
+
+    // interface OrderItem {
+    //   required: boolean
+    //   message: number
+    //   trigger: string | Array<string>
+    // }
+    let aaa = ref('')
+    interface dataType {
+      roleIdsOption: Array<any>
+      defaultProps: {
+        children: string
+        label: string
+      }
+      dialogVisible: boolean
+      isReadonly: boolean
+      fields: Array<MenuFields<BaseListRow>>
+      api: MenuApi
+      form: {[key: string]: any;}
+      rules: ELFormRulesMap
+      // rules: {
+      //   [key: string]: Array<OrderItem>
+      // }
+    }
+    const _this:dataType = reactive({
       roleIdsOption: [],
       defaultProps: {
         children: 'child',
@@ -64,80 +128,103 @@ export default {
       dialogVisible: false,
       isReadonly: false,
       fields: [],
-      api: {},
+      api: {
+        add: ['', ''],
+        delete: ['', ''],
+        detail: ['', ''],
+        list: ['', ''],
+        update: ['', ''],
+        department:['', '']
+      },
       form: {},
       rules: {
         noEmpty: [
-          { required: true, message: this.$t('message.noEmpty'), trigger: ['blur', 'change'] }
+          { required: true, message: _$t('message.noEmpty'), trigger: ['blur', 'change'] }
         ]
       }
-    }
-  },
-  created () {
-    this.mode === 'read' ? this.isReadonly = true : this.isReadonly = false
-    this.parseFormField(this.menu)
-  },
-  methods: {
-    setItemRule (required) {
-      const rule = required ? this.rules.noEmpty : []
+    })
+
+    function setItemRule (required = false) {
+      const rule = required ? _this.rules.noEmpty : []
       return rule
-    },
-    parseFormField (menu) {
-      const fields = this.$constants.evil(menu.fields)
-      this.api = this.$constants.evil(menu.api)
-      this.fields = this.baseIndex.disposalField(fields, 3)
-      if (this.id) {
-        this.fetchData()
+    }
+
+    function parseFormField (menu: MenuDetail) {
+      debugger
+      const fields = functionEvil<Array<MenuFields<BaseListRow>>>(menu.fields)
+      _this.api = functionEvil(menu.api)
+      console.log('api===', _this.api)
+      _this.fields = disposalField(fields, 3)
+      _this.fields.forEach(item => {
+        _this.form[item.prop] = ''
+      })
+      if (id.value) {
+        fetchData()
       }
-    },
-    fetchData () {
+    }
+
+    function fetchData () {
       const params = {}
-      params[this.baseIndex.primaryKey] = this.id
-      this.$service.fetch({
+      params[baseIndex.primaryKey] = id
+      apiFetch({
         method: 'get',
-        url: this.api.detail[0],
+        url: _this.api.detail[0],
         params
       }).then(data => {
-        this.form = data
+        _this.form = data
       })
-    },
-    saveForm () {
-      this.$refs.form.$refs.form.validate(valid => {
+    }
+
+    function saveForm () {
+      ruleFormEl.value.$refs.form.validate(valid => {
         if (valid) {
-          const form = JSON.parse(JSON.stringify(this.form))
+          const form = JSON.parse(JSON.stringify(_this.form))
           if (form.id) {
-            this.$service.fetch({
-              method: this.api.update[1],
-              url: this.api.update[0],
+            apiFetch({
+              method: _this.api.update[1],
+              url: _this.api.update[0],
               data: form
             })
               .then(() => {
-                this.$message.success(this.$t('message.editSuccess'))
-                this.$emit('upsert-end')
+                ElMessage.success(_$t('message.editSuccess'))
+                emit('upsert-end')
               })
               .catch(res => {
                 if (res.message) {
-                  this.$message.error(res.message)
+                  ElMessage.error(res.message)
                 }
               })
           } else {
-            this.$service.fetch({
-              method: this.api.add[1],
-              url: this.api.add[0],
+            apiFetch({
+              method: _this.api.add[1],
+              url: _this.api.add[0],
               data: form
             }).then(() => {
-              this.$message.success(this.$t('message.newSuccess'))
-              this.$emit('upsert-end')
+              ElMessage.success(_$t('message.newSuccess'))
+              emit('upsert-end')
             })
               .catch(res => {
                 if (res.message) {
-                  this.$message.error(res.message)
+                  ElMessage.error(res.message)
                 }
               })
           }
         }
       })
     }
+
+    mode.value === 'read' ? _this.isReadonly = true : _this.isReadonly = false
+    parseFormField(props.menu)
+
+    return {
+      ...toRefs(_this),
+      saveForm,
+      setItemRule,
+      aaa,
+      $store,
+      ruleFormEl
+    }
   }
-}
+
+})
 </script>

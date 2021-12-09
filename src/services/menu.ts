@@ -4,13 +4,14 @@ import MenuDetail from '@/views/sys/rbac/menu/MenuDetail.vue'
 import fetch from './fetch'
 
 export type MenuApi = {
-  [key in 'add' | 'delete' | 'detail' | 'list' | 'update' | 'department']: [string, 'post' | 'get']
+  [key in 'add' | 'delete' | 'detail' | 'list' | 'update' | 'department' ]: [string, 'post' | 'get']
 }
 export interface MenuExtra {
   actions?: string // Array<CButtonAction>
   listDataMap: string
   resource: string
   selectionType: CSelectionType | 'none'
+  itemActions?: string
 }
 export type MenuFieldUse = 1 | 2 | 3
 export type MenuFieldType = 'enum' | 'image' | 'date' | 'number' | 'string'
@@ -25,6 +26,7 @@ export interface MenuFields<T> {
   use: Array<MenuFieldUse> // 该字段在列表表格（1）、列表筛选（2）、编辑页（3）中显示，eg: [1,3]，表示只在列表表格和编辑页中显示，不在列表筛选中显示
   width: string // 字段在表格中的宽度 eg: '100px'
   primaryKey: 1 | 0 // 是否主键; 1:是,0:否
+  required?: boolean | undefined
 }
 export interface MenuDetail {
   /**

@@ -118,7 +118,6 @@ export default defineComponent({
     provide(baseIndexKey, {
       primaryKey
     })
-    debugger
     fetchMenuData(props.menuId)
 
     return {

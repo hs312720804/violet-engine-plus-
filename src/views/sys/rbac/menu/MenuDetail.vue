@@ -116,8 +116,7 @@ export default {
   emits: ['go-back', 'upsert-end'],
   setup (props, { emit }) {
     // const _$t = ctx.root.$t.bind(ctx.root)
-    const { t } = useI18n()
-    const _$t = t
+    const { t: _$t } = useI18n()
     // const service = ctx.root.$service
     const mode = ref(props.initMode)
     const title = computed(() => {
