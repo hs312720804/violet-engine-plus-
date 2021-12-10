@@ -29,9 +29,8 @@ export default defineComponent({
   },
   emits: ['todo', 'option'],
   render () {
-    console.log('header====', this.header)
     return this.header.map(item => {
-      return item.render(this.row)
+      return item.render({ row: this.row })
     })
     // const _this = useTableColumn({ this.resource, this.actions, optionActions })
 

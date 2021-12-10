@@ -162,7 +162,8 @@ export default defineComponent({
       optionActions,
       // table 渲染函数
       tableHeader,
-      tableEl
+      tableEl,
+      fetchData
     }
   }
 })

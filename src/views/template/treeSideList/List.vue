@@ -225,7 +225,8 @@ export default defineComponent({
       tableHeader,
       tableEl,
       treeData,
-      handleInputDepartmentId
+      handleInputDepartmentId,
+      fetchData
     }
   }
 

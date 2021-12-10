@@ -84,9 +84,12 @@ export default defineComponent({
       }
     }
   },
-  emits: ['go-back', 'upsert-end'],
+  // emits: ['go-back', 'upsert-end'],
+  emits: {
+    'go-back': () => true,
+    'upsert-end': () => true
+  },
   setup (props, { emit }) {
-    debugger
     const $store = useStore()
     const { t: _$t } = useI18n()
     const baseIndex = inject<InjectionKeyType>(baseIndexKey) as InjectionKeyType
@@ -150,7 +153,6 @@ export default defineComponent({
     }
 
     function parseFormField (menu: MenuDetail) {
-      debugger
       const fields = functionEvil<Array<MenuFields<BaseListRow>>>(menu.fields)
       _this.api = functionEvil(menu.api)
       console.log('api===', _this.api)
@@ -165,7 +167,7 @@ export default defineComponent({
 
     function fetchData () {
       const params = {}
-      params[baseIndex.primaryKey] = id
+      params[baseIndex.primaryKey.value] = id.value
       apiFetch({
         method: 'get',
         url: _this.api.detail[0],

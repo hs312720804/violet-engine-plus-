@@ -73,7 +73,7 @@
                   :actions="itemActions"
                   :resource="resource"
                   :header="tableHeader"
-                  @option="optionActions"
+                  @action="optionActions"
                   @todo="todoactions"
                 ></CardOperation>
               </div>
@@ -166,7 +166,6 @@ export default defineComponent({
     const toDoActions = useToDoActions<BaseListRow>({ fetchData, api: api.value, selected:selected.value, goBack, primaryKey: baseIndex.primaryKey.value })
     // 根据格式化后的 table 数据生成 c-table 组件渲染时所需的 Header
     const { tableHeader } = useTable<BaseListRow>({ table, api: api.value, resource: resource.value, toDoActions, optionActions })
-    // console.log('header====', tableHeader.value)
     const tableEl = ref<InstanceType<CTable<BaseListRow>>>()
     // // table 自适应
     // useTableResize({
@@ -205,7 +204,8 @@ export default defineComponent({
       // tableHeader,
       tableEl,
       itemActions,
-      tableHeader
+      tableHeader,
+      fetchData
     }
   }
 
