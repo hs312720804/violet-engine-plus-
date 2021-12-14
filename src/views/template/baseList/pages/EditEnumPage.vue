@@ -1,9 +1,9 @@
 <template>
   <div>
     <c-form
+      ref="ruleFormEl"
       label-width="100px"
       :model="form"
-      ref="form"
       :rules="rules"
       :readonly="isReadonly"
     >
@@ -12,18 +12,18 @@
           <c-form-string
             v-if="item.inputType === 'string' || !item.inputType"
             :key="key"
+            v-model="form[item.prop]"
             :label="item.label"
             :placeholder="$t('pleaseEnter', [item.label])"
             :rules="setItemRule(item.required)"
             :prop="item.prop"
-            v-model="form[item.prop]"
             class="el-item-width"
           ></c-form-string>
           <c-form-enum
             v-if="item.inputType === 'enum'"
-            :label="item.label"
             :key="key"
             v-model="form[item.prop]"
+            :label="item.label"
             type="radio"
             :prop="item.prop"
             :rules="setItemRule(item.required)"
@@ -42,8 +42,8 @@
             </el-date-picker>
           </el-form-item>
           <el-form-item
-            label="枚举值"
             v-if="item.prop === 'options'"
+            label="枚举值"
           >
             <el-row>
               <el-col style="padding-bottom:10px">
@@ -78,114 +78,105 @@
       </div>
       <el-form-item v-if="!isReadonly">
         <el-button type="success" @click="$emit('go-back')">{{ $t('btn.cancel') }}</el-button>
-        <el-button type="primary" v-debounce="[saveForm, 'click', 500]">{{ $t('btn.save') }}</el-button>
+        <el-button v-debounce="[saveForm, 'click', 500]" type="primary">{{ $t('btn.save') }}</el-button>
       </el-form-item>
     </c-form>
   </div>
 </template>
-<script>
-export default {
-  inject: ['baseIndex'],
-  props: ['mode', 'id', 'menuId', 'menu'],
-  data () {
-    return {
-      roleIdsOption: [],
-      defaultProps: {
-        children: 'child',
-        label: 'name'
-      },
-      dialogVisible: false,
-      isReadonly: false,
-      fields: [],
-      api: {},
-      form: {},
-      rules: {
-        noEmpty: [
-          { required: true, message: this.$t('message.noEmpty'), trigger: ['blur', 'change'] }
-        ]
-      },
-      optionForm: []
+<script lang="ts">
+import { defineComponent, ref, Ref, toRefs, PropType, inject } from 'vue'
+import { useStore } from '@/store'
+import { useI18n } from 'vue-i18n'
+import { MenuDetail } from '@/services/menu'
+import  { baseIndexKey, InjectionKeyType } from '@/hooks/baseList/usePageDataInit'
+import { ElForm } from 'element-plus'
+import useEditBaeList from '@/hooks/useEditBaeList'
+
+// import { defineComponent, ref, toRefs, reactive, PropType, inject } from 'vue'
+// import { useStore } from '@/store'
+// import { evil as functionEvil, disposalField } from '@/utlis/common'
+// import apiFetch from '@/services/fetch'
+// import { useI18n } from 'vue-i18n'
+// import { ElMessage } from 'element-plus'
+// // import { MenuDetail, MenuFields } from '@/services/menu'
+// import { MenuDetail, MenuApi, MenuFields } from '@/services/menu'
+// import  { BaseListRow, baseIndexKey, InjectionKeyType } from '@/hooks/baseList/usePageDataInit'
+// import { ElForm } from 'element-plus'
+
+export default defineComponent({
+  props: {
+    mode: {
+      type: String,
+      default: ''
+    },
+    id: {
+      type: String,
+      default: ''
+    },
+    menuId: {
+      type: String,
+      default: ''
+    },
+    menu: {
+      type: Object as PropType<MenuDetail>,
+      default: () => {
+        return {}
+      }
     }
   },
-  methods: {
-    hancleAddOption () {
-      this.optionForm.push({
+  emits: {
+    'go-back': () => true,
+    'upsert-end': () => true
+  },
+  setup (props, { emit }) {
+    const $store = useStore()
+    const { t: _$t } = useI18n()
+    const baseIndex = inject<InjectionKeyType>(baseIndexKey) as InjectionKeyType
+    const ruleFormEl = ref<InstanceType<typeof ElForm>>()
+    const { mode, id } = toRefs(props)
+    const {
+      _this,
+      saveForm,
+      setItemRule,
+      parseFormField } = useEditBaeList<Ref<InstanceType<typeof ElForm>>, InjectionKeyType, Ref<string>>({ ruleFormEl, baseIndex, id, upsertEnd, fetchDataCallback })
+
+    mode.value === 'read' ? _this.isReadonly = true : _this.isReadonly = false
+    interface optionFormType{
+      label: string
+      value: string
+    }
+    let optionForm = ref<Array<optionFormType>>([])
+    function hancleAddOption () {
+      optionForm.value.push({
         label: '',
         value: ''
       })
-    },
-    handleDeleteOption (key) {
-      this.optionForm.splice(key, 1)
-    },
-    setItemRule (required) {
-      const rule = required ? this.rules.noEmpty : []
-      return rule
-    },
-    parseFormField (menu) {
-      const fields = this.$constants.evil(menu.fields)
-      this.api = this.$constants.evil(menu.api)
-      this.fields = this.baseIndex.disposalField(fields, 3)
-      if (this.id) {
-        this.fetchData()
-      }
-    },
-    fetchData () {
-      const params = {}
-      params[this.baseIndex.primaryKey] = this.id
-      this.$service.fetch({
-        method: 'get',
-        url: this.api.detail[0],
-        params
-      }).then(data => {
-        this.form = data
-        // eslint-disable-next-line no-eval
-        this.optionForm = eval('(' + data.options + ')')
-      })
-    },
-    saveForm () {
-      this.$refs.form.$refs.form.validate(valid => {
-        if (valid) {
-          const form = JSON.parse(JSON.stringify(this.form))
-          form.options = JSON.stringify(this.optionForm)
-          if (form.id) {
-            this.$service.fetch({
-              method: this.api.update[1],
-              url: this.api.update[0],
-              data: form
-            })
-              .then(() => {
-                this.$message.success(this.$t('message.editSuccess'))
-                this.$emit('upsert-end')
-              })
-              .catch(res => {
-                if (res.message) {
-                  this.$message.error(res.message)
-                }
-              })
-          } else {
-            this.$service.fetch({
-              method: this.api.add[1],
-              url: this.api.add[0],
-              data: form
-            }).then(() => {
-              this.$message.success(this.$t('message.newSuccess'))
-              this.$emit('upsert-end')
-            })
-              .catch(res => {
-                if (res.message) {
-                  this.$message.error(res.message)
-                }
-              })
-          }
-        }
-      })
     }
-  },
-  created () {
-    this.mode === 'read' ? this.isReadonly = true : this.isReadonly = false
-    this.parseFormField(this.menu)
+    function handleDeleteOption (key: number) {
+      optionForm.value.splice(key, 1)
+    }
+    function upsertEnd() {
+      emit('upsert-end')
+    }
+    function fetchDataCallback(data) {
+      console.log('data==', data)
+      optionForm.value = eval('(' + data.options + ')')
+    }
+    // 获取详情
+    parseFormField(props.menu)
+
+    return {
+      ...toRefs(_this),
+      $store,
+      ruleFormEl,
+      saveForm,
+      setItemRule,
+      optionForm,
+      hancleAddOption,
+      handleDeleteOption
+    }
   }
-}
+})
 </script>
 <style lang="stylus" scoped>
 .enum-value

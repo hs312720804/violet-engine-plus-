@@ -51,16 +51,13 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref, toRefs, reactive, PropType, inject } from 'vue'
+import { defineComponent, ref, Ref, toRefs, PropType, inject } from 'vue'
 import { useStore } from '@/store'
-import { evil as functionEvil, disposalField } from '@/utlis/common'
-import apiFetch from '@/services/fetch'
 import { useI18n } from 'vue-i18n'
-import { ElMessage } from 'element-plus'
-// import { MenuDetail, MenuFields } from '@/services/menu'
-import { MenuDetail, MenuApi, MenuFields } from '@/services/menu'
-import  { BaseListRow, baseIndexKey, InjectionKeyType } from '@/hooks/baseList/usePageDataInit'
-import { ElForm, ElNotification } from 'element-plus'
+import { MenuDetail } from '@/services/menu'
+import  { baseIndexKey, InjectionKeyType } from '@/hooks/baseList/usePageDataInit'
+import { ElForm } from 'element-plus'
+import useEditBaeList from '@/hooks/useEditBaeList'
 
 export default defineComponent({
   // inject: ['baseIndex'],
@@ -84,7 +81,6 @@ export default defineComponent({
       }
     }
   },
-  // emits: ['go-back', 'upsert-end'],
   emits: {
     'go-back': () => true,
     'upsert-end': () => true
@@ -94,137 +90,29 @@ export default defineComponent({
     const { t: _$t } = useI18n()
     const baseIndex = inject<InjectionKeyType>(baseIndexKey) as InjectionKeyType
     const ruleFormEl = ref<InstanceType<typeof ElForm>>()
-
-    // const mode = props.mode
-    // const menu = props.menu
-    // const id = props.id
     const { mode, id } = toRefs(props)
 
-    // interface OrderItem {
-    //   required: boolean
-    //   message: number
-    //   trigger: string | Array<string>
-    // }
-    let aaa = ref('')
-    interface dataType {
-      roleIdsOption: Array<any>
-      defaultProps: {
-        children: string
-        label: string
-      }
-      dialogVisible: boolean
-      isReadonly: boolean
-      fields: Array<MenuFields<BaseListRow>>
-      api: MenuApi
-      form: {[key: string]: any;}
-      rules: ELFormRulesMap
-      // rules: {
-      //   [key: string]: Array<OrderItem>
-      // }
-    }
-    const _this:dataType = reactive({
-      roleIdsOption: [],
-      defaultProps: {
-        children: 'child',
-        label: 'name'
-      },
-      dialogVisible: false,
-      isReadonly: false,
-      fields: [],
-      api: {
-        add: ['', ''],
-        delete: ['', ''],
-        detail: ['', ''],
-        list: ['', ''],
-        update: ['', ''],
-        department:['', '']
-      },
-      form: {},
-      rules: {
-        noEmpty: [
-          { required: true, message: _$t('message.noEmpty'), trigger: ['blur', 'change'] }
-        ]
-      }
-    })
 
-    function setItemRule (required = false) {
-      const rule = required ? _this.rules.noEmpty : []
-      return rule
+    function upsertEnd() {
+      emit('upsert-end')
     }
-
-    function parseFormField (menu: MenuDetail) {
-      const fields = functionEvil<Array<MenuFields<BaseListRow>>>(menu.fields)
-      _this.api = functionEvil(menu.api)
-      console.log('api===', _this.api)
-      _this.fields = disposalField(fields, 3)
-      _this.fields.forEach(item => {
-        _this.form[item.prop] = ''
-      })
-      if (id.value) {
-        fetchData()
-      }
-    }
-
-    function fetchData () {
-      const params = {}
-      params[baseIndex.primaryKey.value] = id.value
-      apiFetch({
-        method: 'get',
-        url: _this.api.detail[0],
-        params
-      }).then(data => {
-        _this.form = data
-      })
-    }
-
-    function saveForm () {
-      ruleFormEl.value.$refs.form.validate(valid => {
-        if (valid) {
-          const form = JSON.parse(JSON.stringify(_this.form))
-          if (form.id) {
-            apiFetch({
-              method: _this.api.update[1],
-              url: _this.api.update[0],
-              data: form
-            })
-              .then(() => {
-                ElMessage.success(_$t('message.editSuccess'))
-                emit('upsert-end')
-              })
-              .catch(res => {
-                if (res.message) {
-                  ElMessage.error(res.message)
-                }
-              })
-          } else {
-            apiFetch({
-              method: _this.api.add[1],
-              url: _this.api.add[0],
-              data: form
-            }).then(() => {
-              ElMessage.success(_$t('message.newSuccess'))
-              emit('upsert-end')
-            })
-              .catch(res => {
-                if (res.message) {
-                  ElMessage.error(res.message)
-                }
-              })
-          }
-        }
-      })
-    }
+    const {
+      _this,
+      saveForm,
+      setItemRule,
+      parseFormField } = useEditBaeList<Ref<InstanceType<typeof ElForm>>, InjectionKeyType, Ref<string>>(ruleFormEl, baseIndex, id, upsertEnd)
 
     mode.value === 'read' ? _this.isReadonly = true : _this.isReadonly = false
+
+    // 获取详情
     parseFormField(props.menu)
 
     return {
       ...toRefs(_this),
-      saveForm,
-      setItemRule,
-      aaa,
       $store,
-      ruleFormEl
+      ruleFormEl,
+      saveForm,
+      setItemRule
     }
   }
 

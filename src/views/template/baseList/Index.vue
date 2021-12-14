@@ -94,6 +94,7 @@ export default defineComponent({
     provide(baseIndexKey, {
       primaryKey
     })
+
     fetchMenuData(props.menuId)
 
     return {

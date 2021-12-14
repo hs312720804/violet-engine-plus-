@@ -34,7 +34,7 @@ export default function initBaseListTemplate<T> (listEL:T) {
   function handleUpsertEnd () {
     isShowList.value = true
     mode.value = 'list'
-    // listEL.value?.fetchData()
+    listEL.value?.fetchData()
   }
 
   const handleOption: COptionActions<BaseListRow> = function (data) {
