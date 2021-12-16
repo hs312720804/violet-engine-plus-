@@ -27,6 +27,8 @@
             :default-active="route.name"
             :items="menu || defaultMenu"
             :is-collapse="isCollapseMenu"
+            background-color="#282c34"
+            text-color="rgba(255,255,255,0.7)"
           >
           </c-menu>
         </el-scrollbar>
@@ -39,7 +41,7 @@
         <el-button
           class="collpase-btn"
           type="text"
-          :icon="isCollapseMenu? 'el-icon-cc-indent' : 'el-icon-cc-outdent'"
+          :icon="isCollapseMenu? Expand : Fold"
           @click="handleToggleMenu"
         >
         </el-button>
@@ -101,6 +103,8 @@ import { UIBasic } from './Index.vue'
 
 import useMainWindowResize,{ HeaderDropdownCommand, DeviceChangeMethods } from '@/hooks/useMainWindowResize'
 import useUserSiteInfo from '@/hooks/useUserSiteInfo'
+
+import { Fold, Expand } from '@element-plus/icons-vue'
 
 export default defineComponent({
   components: {
@@ -211,7 +215,9 @@ export default defineComponent({
       handleToggleMenu,
       route,
       store,
-      tagRef
+      tagRef,
+      Fold,
+      Expand
     }
 
   }

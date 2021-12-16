@@ -25,7 +25,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElForm } from 'element-plus'
 import { CUtils } from '@/utlis/common'
@@ -89,13 +89,13 @@ export default defineComponent({
     return {
       formEl,
       isReadonly: false,
-      form: {
+      form: reactive({
         loginName: '',
         name: '',
         password: '',
         email: '',
         phone: ''
-      },
+      }),
       rules,
       handleCancelRegister,
       handleRegister

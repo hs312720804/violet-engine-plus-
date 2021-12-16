@@ -100,7 +100,7 @@ export default defineComponent({
       _this,
       saveForm,
       setItemRule,
-      parseFormField } = useEditBaeList<Ref<InstanceType<typeof ElForm>>, InjectionKeyType, Ref<string>>(ruleFormEl, baseIndex, id, upsertEnd)
+      parseFormField } = useEditBaeList<Ref<InstanceType<typeof ElForm>>, InjectionKeyType, Ref<string>>({ ruleFormEl, baseIndex, id, upsertEnd })
 
     mode.value === 'read' ? _this.isReadonly = true : _this.isReadonly = false
 

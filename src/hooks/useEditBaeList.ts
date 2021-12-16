@@ -74,7 +74,7 @@ export default function editBaseList<T, B, I> ({ ruleFormEl, baseIndex, id, upse
     console.log('api===', _this.api)
     _this.fields = disposalField(fields, 3)
 
-    if (id.value) {
+    if (id && id.value) {
       fetchData()
     }
   }
@@ -89,7 +89,7 @@ export default function editBaseList<T, B, I> ({ ruleFormEl, baseIndex, id, upse
       params
     }).then(data => {
       _this.form = data // 表单
-      fetchDataCallback(data)
+      fetchDataCallback && fetchDataCallback(data)
     })
   }
 

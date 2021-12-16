@@ -69,7 +69,7 @@
                   </el-form-item>
                 </el-col>
                 <el-col :span="3">
-                  <el-button type="text" icon="el-icon-delete" @click="handleDeleteOption(index)"></el-button>
+                  <el-button type="text" :icon="Delete" @click="handleDeleteOption(index)"></el-button>
                 </el-col>
               </el-row>
             </div>
@@ -91,6 +91,7 @@ import { MenuDetail } from '@/services/menu'
 import  { baseIndexKey, InjectionKeyType } from '@/hooks/baseList/usePageDataInit'
 import { ElForm } from 'element-plus'
 import useEditBaeList from '@/hooks/useEditBaeList'
+import { Delete } from '@element-plus/icons-vue'
 
 // import { defineComponent, ref, toRefs, reactive, PropType, inject } from 'vue'
 // import { useStore } from '@/store'
@@ -160,7 +161,7 @@ export default defineComponent({
     }
     function fetchDataCallback(data) {
       console.log('data==', data)
-      optionForm.value = eval('(' + data.options + ')')
+      optionForm.value = data.options ? eval('(' + data.options + ')') : []
     }
     // 获取详情
     parseFormField(props.menu)
@@ -173,7 +174,8 @@ export default defineComponent({
       setItemRule,
       optionForm,
       hancleAddOption,
-      handleDeleteOption
+      handleDeleteOption,
+      Delete
     }
   }
 })

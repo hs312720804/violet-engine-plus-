@@ -91,7 +91,6 @@
         >
           <c-form-enum
             v-model="menu.status"
-            type="radio"
             :label="$t('toEnable')"
             :options="statusOptions"
           ></c-form-enum>
@@ -109,13 +108,8 @@
                 v-model="menu.parentId"
                 style="width: 100%"
                 :options="allMenus"
-                :props="{
-                  checkStrictly: true,
-                  label: 'name',
-                  value: 'id',
-                  expandTrigger: 'hover'
-                }"
                 clearable
+                :props="parentIdProps"
               >
               </el-cascader>
             </template>
@@ -130,7 +124,6 @@
         >
           <c-form-enum
             v-model="menu.template"
-            type="radio"
             :label="$t('template')"
             :options="templateOptions"
             :placeholder="$t('placeholder.selectTemplate')"
@@ -215,7 +208,7 @@
                   <div style="margin-left:10px">
                     <el-button
                       v-if="!disabledApiKey(api.key)"
-                      icon="el-icon-delete"
+                      :icon="Delete"
                       type="text"
                       @click="handleDeleteApi(key)"
                     ></el-button>
@@ -279,7 +272,7 @@
                   </el-col>
                   <el-col :span="6">
                     <el-button
-                      icon="el-icon-edit"
+                      :icon="Edit"
                       type="text"
                       round
                       @click="handleEditOption(element)"
@@ -341,9 +334,9 @@
                   <div style="width:45px;">
                     <i v-if="element.primaryKey" class="el-icon-key"></i>
                   </div>
-                  <el-button type="text" icon="el-icon-rank" :title="$t('dragSort')"></el-button>
-                  <el-button type="text" icon="el-icon-setting" @click="handleEditExtend(element)"></el-button>
-                  <el-button type="text" icon="el-icon-delete" @click="handleReduceFiled(index)"></el-button>
+                  <el-button type="text" :icon="Rank" :title="$t('dragSort')"></el-button>
+                  <el-button type="text" :icon="Setting" @click="handleEditExtend(element)"></el-button>
+                  <el-button type="text" :icon="Delete" @click="handleReduceFiled(index)"></el-button>
                 </div>
               </el-col>
             </el-row>
@@ -497,7 +490,7 @@
                 <el-button
                   v-if="!disabledExtraKey(extra.key)"
                   type="text"
-                  icon="el-icon-delete"
+                  :icon="Delete"
                   @click="handleDeleteExtra(key)"
                 ></el-button>
               </div>
@@ -524,7 +517,7 @@
 </template>
 
 <script lang="ts">
-import { ref, watch, defineComponent } from 'vue'
+import { ref, watch, defineComponent, reactive } from 'vue'
 import ExtendEdit from './ExtendEdit.vue'
 import EnumEdit from './EnumEdit.vue'
 import DateEdit from './DateEdit.vue'
@@ -536,6 +529,8 @@ import { menuGetListService, MenuDetail } from '@/services/menu'
 
 // import draggable from 'vuedraggable'
 import draggable from 'vuedraggable/src/vuedraggable'
+import { Edit, Delete, Setting, Rank } from '@element-plus/icons-vue'
+
 const initialApi = [
   {
     key: 'list',
@@ -598,12 +593,7 @@ export default defineComponent({
     }
   },
   setup (props, ctx) {
-    console.log('ctx=========', ctx)
-
-    // const _$t = ctx.root.$t.bind(ctx.root)
-    const { t } = useI18n()
-    const _$t = t
-    // const service = ctx.root.$service
+    const { t: _$t } = useI18n()
     let menu = ref(props.value)
     watch(() => props.value, () => {
       menu.value = props.value
@@ -621,7 +611,7 @@ export default defineComponent({
         value: key
       })
     })
-    const statusOptions = ref([
+    const statusOptions = [
       {
         label: _$t('yes'),
         value: 'ENABLE'
@@ -630,7 +620,7 @@ export default defineComponent({
         label: _$t('no'),
         value: 'DISABLE'
       }
-    ])
+    ]
 
     const allMenus = ref<Array<MenuDetail>>([])
     function fetchAllMenus () {
@@ -890,6 +880,14 @@ export default defineComponent({
       // ctx.refs.dateEdit.dialogVisible = true
       dateEdit.value.dialogVisible = true
     }
+
+    const parentIdProps = reactive({
+      checkStrictly: true,
+      label: 'name',
+      value: 'id',
+      expandTrigger: 'hover'
+    })
+
     return {
       menu,
       allMenus,
@@ -914,7 +912,12 @@ export default defineComponent({
       handleEditDateFormat,
       dateEdit,
       enumEdit,
-      extendEdit
+      extendEdit,
+      parentIdProps,
+      Edit,
+      Delete,
+      Setting,
+      Rank
     }
   },
   data () {
