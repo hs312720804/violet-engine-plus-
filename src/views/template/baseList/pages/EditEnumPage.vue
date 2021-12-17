@@ -135,18 +135,25 @@ export default defineComponent({
     const baseIndex = inject<InjectionKeyType>(baseIndexKey) as InjectionKeyType
     const ruleFormEl = ref<InstanceType<typeof ElForm>>()
     const { mode, id } = toRefs(props)
+    const primaryKeyValue = baseIndex.primaryKey.value
+
     const {
       _this,
       saveForm,
       setItemRule,
-      parseFormField } = useEditBaeList<Ref<InstanceType<typeof ElForm>>, InjectionKeyType, Ref<string>>({ ruleFormEl, baseIndex, id, upsertEnd, fetchDataCallback })
+      parseFormField } = useEditBaeList<Ref<InstanceType<typeof ElForm>>, InjectionKeyType, Ref<string>>({ ruleFormEl, primaryKeyValue, id, upsertEnd, fetchDataCallback })
 
+    // 初始化数据
     mode.value === 'read' ? _this.isReadonly = true : _this.isReadonly = false
     interface optionFormType{
       label: string
       value: string
     }
     let optionForm = ref<Array<optionFormType>>([])
+
+    // created 获取详情
+    parseFormField(props.menu)
+
     function hancleAddOption () {
       optionForm.value.push({
         label: '',
@@ -163,8 +170,6 @@ export default defineComponent({
       console.log('data==', data)
       optionForm.value = data.options ? eval('(' + data.options + ')') : []
     }
-    // 获取详情
-    parseFormField(props.menu)
 
     return {
       ...toRefs(_this),

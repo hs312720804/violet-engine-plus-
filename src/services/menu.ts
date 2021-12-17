@@ -4,7 +4,7 @@ import MenuDetail from '@/views/sys/rbac/menu/MenuDetail.vue'
 import fetch from './fetch'
 
 export type MenuApi = {
-  [key in 'add' | 'delete' | 'detail' | 'list' | 'update' | 'department' ]: [string, 'post' | 'get']
+  [key in 'add' | 'delete' | 'detail' | 'list' | 'update' | 'department' ]: [string, 'post' | 'get' | '']
 }
 export interface MenuExtra {
   actions?: string // Array<CButtonAction>

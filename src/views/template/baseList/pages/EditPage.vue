@@ -91,21 +91,23 @@ export default defineComponent({
     const baseIndex = inject<InjectionKeyType>(baseIndexKey) as InjectionKeyType
     const ruleFormEl = ref<InstanceType<typeof ElForm>>()
     const { mode, id } = toRefs(props)
+    const primaryKeyValue = baseIndex.primaryKey.value
 
-
-    function upsertEnd() {
-      emit('upsert-end')
-    }
     const {
       _this,
       saveForm,
       setItemRule,
-      parseFormField } = useEditBaeList<Ref<InstanceType<typeof ElForm>>, InjectionKeyType, Ref<string>>({ ruleFormEl, baseIndex, id, upsertEnd })
+      parseFormField } = useEditBaeList<Ref<InstanceType<typeof ElForm>>, InjectionKeyType, Ref<string>>({ ruleFormEl, primaryKeyValue, id, upsertEnd })
 
+    // 初始化数据
     mode.value === 'read' ? _this.isReadonly = true : _this.isReadonly = false
 
-    // 获取详情
+    // created 获取详情
     parseFormField(props.menu)
+
+    function upsertEnd() {
+      emit('upsert-end')
+    }
 
     return {
       ...toRefs(_this),

@@ -8,12 +8,12 @@ import { useI18n } from 'vue-i18n'
 
 interface Params<T, B, I> {
   ruleFormEl: T
-  baseIndex: B
+  primaryKeyValue: string
   id: I
   upsertEnd: () => void
   fetchDataCallback: () => void
 }
-export default function editBaseList<T, B, I> ({ ruleFormEl, baseIndex, id, upsertEnd, fetchDataCallback }: Params<T, B, I>) {
+export default function editBaseList<T, B, I> ({ ruleFormEl, primaryKeyValue, id, upsertEnd, fetchDataCallback, fetchDataFn }: Params<T, B, I>) {
 
   // interface OrderItem {
   //   required: boolean
@@ -38,7 +38,7 @@ export default function editBaseList<T, B, I> ({ ruleFormEl, baseIndex, id, upse
     //   [key: string]: Array<OrderItem>
     // }
   }
-  const _this:dataType = reactive({
+  const _this = reactive<dataType>({
     roleIdsOption: [],
     defaultProps: {
       children: 'child',
@@ -68,6 +68,23 @@ export default function editBaseList<T, B, I> ({ ruleFormEl, baseIndex, id, upse
     return rule
   }
 
+  // function setItemRule (item) {
+  //   const noEmpty = [{
+  //     required: true,
+  //     message: this.$t('pleaseEnter', [item.label])
+  //   }]
+  //   if (item.prop in this.rules) {
+  //     const itemRule = JSON.parse(JSON.stringify(noEmpty))
+  //     this.rules[item.prop].forEach(obj => {
+  //       itemRule.push(obj)
+  //     })
+  //     return itemRule
+  //   } else {
+  //     const rule = item.required ? noEmpty : []
+  //     return rule
+  //   }
+  // }
+
   function parseFormField (menu: MenuDetail) {
     const fields = functionEvil<Array<MenuFields<BaseListRow>>>(menu.fields)
     _this.api = functionEvil(menu.api)
@@ -79,10 +96,13 @@ export default function editBaseList<T, B, I> ({ ruleFormEl, baseIndex, id, upse
     }
   }
 
+
   // 获取详情
   function fetchData () {
+    if (fetchDataFn) return fetchDataFn()
     const params = {}
-    params[baseIndex.primaryKey.value] = id.value
+    // 关键字段：比如ID、userId
+    params[primaryKeyValue] = id.value
     apiFetch({
       method: 'get',
       url: _this.api.detail[0],
