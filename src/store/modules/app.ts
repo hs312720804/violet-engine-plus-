@@ -131,10 +131,10 @@ const app = {
       commit('CLEAR_ACCESS')
     },
     async initSite ({ commit, state }: AppActionContext) {
-      if (!state.site) {
-        const siteInfo = await getSiteInfo()
-        commit('SET_SITE', siteInfo)
-      }
+      // if (!state.site) {
+      const siteInfo = await getSiteInfo()
+      commit('SET_SITE', siteInfo)
+      // }
       return state.site
     },
     setBreadcrumb: ({ commit, rootState }: AppActionContext, breadcrumb: CBreadcrumbItems) => {

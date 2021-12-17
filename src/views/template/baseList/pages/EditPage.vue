@@ -110,7 +110,7 @@ export default defineComponent({
     }
 
     return {
-      ...toRefs(_this),
+      ...toRefs(_this), // 初始一些变量: roleIdsOption & defaultProps & dialogVisible & isReadonly & fields & api & form & rules
       $store,
       ruleFormEl,
       saveForm,

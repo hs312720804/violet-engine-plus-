@@ -78,7 +78,7 @@
       </div>
       <el-form-item v-if="!isReadonly">
         <el-button type="success" @click="$emit('go-back')">{{ $t('btn.cancel') }}</el-button>
-        <el-button v-debounce="[saveForm, 'click', 500]" type="primary">{{ $t('btn.save') }}</el-button>
+        <el-button v-debounce="[save, 'click', 500]" type="primary">{{ $t('btn.save') }}</el-button>
       </el-form-item>
     </c-form>
   </div>
@@ -170,12 +170,16 @@ export default defineComponent({
       console.log('data==', data)
       optionForm.value = data.options ? eval('(' + data.options + ')') : []
     }
-
+    // 自定义save 为了加参数
+    function save () {
+      _this.form.options = JSON.stringify(optionForm.value)
+      saveForm()
+    }
     return {
-      ...toRefs(_this),
+      ...toRefs(_this), // 初始一些变量: roleIdsOption & defaultProps & dialogVisible & isReadonly & fields & api & form & rules
       $store,
       ruleFormEl,
-      saveForm,
+      save,
       setItemRule,
       optionForm,
       hancleAddOption,

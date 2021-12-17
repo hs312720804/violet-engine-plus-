@@ -6,6 +6,8 @@
       class="add-page"
       @go-back="$emit('go-back')"
     >
+      <!-- 返回 -->
+      <template #actions><el-button type="text" @click="$emit('go-back')">返回</el-button></template>
       <component
         :is="PageComponentMap[pageName]"
         :id="id"

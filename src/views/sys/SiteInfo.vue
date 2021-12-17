@@ -359,11 +359,11 @@ export default defineComponent({
   display flex
   font-size 12px
   padding-top 10px
-  >>>.el-radio-group
+  :deep(el-radio-group)
     display flex
-  >>>.el-radio
-    display flex
-  >>>.el-radio__label
+  :deep(.el-radio)
+    height auto
+  :deep(.el-radio__label)
     display block
 .c-layout-item
   display block
@@ -411,7 +411,7 @@ export default defineComponent({
   cursor auto
 .c-layout p:hover
   border-color #999 !important
->>>.avatar-uploader
+:deep(avatar-uploader)
   .el-upload
     cursor pointer
     position relative
@@ -426,7 +426,7 @@ export default defineComponent({
     width auto
 .c-logo-attr
   display flex
-  >>>.el-input-group__prepend, >>>.el-input-group__append
+  :deep(.el-input-group__prepend), :deep(.el-input-group__append)
     padding 0 10px
 .c-site-logo
   display flex
