@@ -307,20 +307,20 @@ export default defineComponent({
   margin-left 40px
 </style>
 <style lang="stylus" scoped>
->>>.collpase-btn
+:deep(.collpase-btn)
   &,
   &:hover,
   &:focus
     color #fff
->>>.collpase-btn
+:deep(.collpase-btn)
   width 100%
   background #eb603a
   border-radius 0
   padding 10px 20px 10px
->>>.collpase-btn.el-button--small i
+:deep(.collpase-btn.el-button--small i)
   font-size 20px !important
   color #fff
->>>.collpase-btn:hover, >>>.collpase-btn:focus
+:deep(.collpase-btn:hover), :deep(.collpase-btn:focus)
   color #fff
   background #e44907
 </style>

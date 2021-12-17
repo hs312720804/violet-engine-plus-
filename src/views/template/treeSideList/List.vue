@@ -252,7 +252,7 @@ export default defineComponent({
   height 0
   clear both
   display block
->>>.content-list
+:deep(.content-list)
   margin-top 0
   .el-pagination
     padding 15px 0 0
@@ -275,7 +275,7 @@ table
 th, td
   border 1px solid #EBEEF5
   padding 8px
->>>.data-form
+:deep(.data-form)
   .el-form-item--small.el-form-item
     margin-bottom 14px
 .list-option

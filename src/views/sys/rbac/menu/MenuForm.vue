@@ -969,7 +969,7 @@ export default defineComponent({
   display flex
   span
     margin-right 10px
->>>.el-select
+:deep(.el-select)
   width 100%
 .c-title
   font-size 16px

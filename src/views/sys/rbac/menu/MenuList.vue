@@ -152,8 +152,8 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-.menu-page >>> .list-layout > .list
+.menu-page :deep(.list-layout) > .list
   overflow auto
->>>.actions
+:deep(.actions)
   margin-bottom 14px
 </style>

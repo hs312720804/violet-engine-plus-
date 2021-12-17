@@ -50,8 +50,8 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
->>>.el-dialog__body
+:deep(.el-dialog__body)
   padding 20px 20px 10px
-  >>>.el-select
+  :deep(.el-select)
     width auto
 </style>

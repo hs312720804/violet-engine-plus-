@@ -209,8 +209,8 @@ export default defineComponent({
   background #fff
   z-index 200
   position relative
->>>.el-tabs--top .el-tabs__item.is-top:nth-child(2)
+:deep(.el-tabs--top .el-tabs__item.is-top:nth-child(2))
   padding-left 14px
->>>.el-tabs__header
+:deep(.el-tabs__header)
   margin-bottom 0
 </style>

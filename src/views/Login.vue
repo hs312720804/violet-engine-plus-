@@ -338,7 +338,7 @@ input:-webkit-autofill
   height 100%
   z-index 1
   content ''
->>>.el-tabs__active-bar
+:deep(.el-tabs__active-bar)
   background-color #fc4c02
 .verify-btn
   position absolute

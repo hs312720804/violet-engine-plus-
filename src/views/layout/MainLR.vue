@@ -328,7 +328,7 @@ export default defineComponent({
   margin-left 40px
 </style>
 <style lang="stylus" scoped>
->>>.el-header
+:deep(.el-header)
   .collpase-btn
     &,
     &:hover,
@@ -348,9 +348,9 @@ export default defineComponent({
   line-height 1
   padding-top 5px
   font-size 14px
-  >>>.breadcrumb
+  :deep(.breadcrumb)
     padding-top 0
-  >>>.el-breadcrumb__inner.is-link
+  :deep(.el-breadcrumb__inner.is-link)
     font-weight normal
 .right-main
   height 100vh

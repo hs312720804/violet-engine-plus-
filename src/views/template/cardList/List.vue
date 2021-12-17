@@ -212,7 +212,7 @@ export default defineComponent({
 })
 </script>
 <style lang="stylus" scoped>
->>>.content-list
+:deep(.content-list)
   margin-top 0
   .el-pagination
     padding 0
@@ -236,7 +236,7 @@ table
 th, td
   border 1px solid #EBEEF5
   padding 8px
->>>.data-form
+:deep(.data-form)
   .el-form-item--small.el-form-item
     margin-bottom 14px
 .list-option
@@ -244,8 +244,8 @@ th, td
     margin-right 20px
     margin-bottom 14px
     float left
->>>.card-item__selection
-  top 7px
+:deep(.card-item__selection)
+  // top 7px
   left 14px
 .card-item__actions
   position absolute
