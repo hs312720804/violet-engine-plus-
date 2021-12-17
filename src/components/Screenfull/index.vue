@@ -1,6 +1,10 @@
 <template>
   <div class="c-fullscreen" @click="handleClick">
-    <i :class="isFullscreen ? 'el-icon-cc-fullscreen-exit' : 'el-icon-full-screen'"></i>
+    <el-icon :size="20">
+      <failed v-if="isFullscreen"></failed>
+      <full-screen v-else></full-screen>
+    </el-icon>
+    <!-- <i :class="isFullscreen ? 'el-icon-cc-fullscreen-exit' : 'el-icon-cc-fullScreen'"></i> -->
   </div>
 </template>
 

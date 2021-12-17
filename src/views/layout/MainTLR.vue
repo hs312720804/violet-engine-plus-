@@ -32,6 +32,7 @@
               {{ store.state.user.name }}
               <i class="el-icon-arrow-down el-icon--right"></i>
             </span>
+            <el-icon><arrow-down></arrow-down></el-icon>
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item command="account">{{ $t('accountInfo') }}</el-dropdown-item>
@@ -41,15 +42,17 @@
           </el-dropdown>
         </div>
         <div class="system-setting" @click="$emit('set-layout', true)">
-          <i class="el-icon-setting"></i>
+          <!-- <i class="el-icon-setting"></i> -->
+          <el-icon :size="20"><setting></setting></el-icon>
         </div>
       </el-header>
       <el-container direction="layout">
         <div :class="isCollapseMenu? 'aside__menu aside__menu_collapse' : 'aside__menu'">
+          <!-- :icon="isCollapseMenu? 'el-icon-cc-indent' : 'el-icon-cc-outdent'" -->
           <el-button
             class="collpase-btn"
             type="text"
-            :icon="isCollapseMenu? 'el-icon-cc-indent' : 'el-icon-cc-outdent'"
+            :icon="isCollapseMenu? Expand : Fold"
             @click="handleToggleMenu"
           >
           </el-button>
@@ -59,6 +62,8 @@
                 :default-active="route.name"
                 :items="menu || defaultMenu"
                 :is-collapse="isCollapseMenu"
+                background-color="#282c34"
+                text-color="rgba(255,255,255,0.7)"
               >
               </c-menu>
             </el-scrollbar>
@@ -96,7 +101,7 @@ import { UIBasic } from './Index.vue'
 
 import { HeaderDropdownCommand } from '@/hooks/useMainWindowResize'
 import useUserSiteInfo from '@/hooks/useUserSiteInfo'
-
+import { Fold, Expand } from '@element-plus/icons-vue'
 export default defineComponent({
   components: {
     Screenfull,
@@ -188,7 +193,9 @@ export default defineComponent({
       handleDropdownCommand,
       handleToggleMenu,
       route,
-      store
+      store,
+      Fold,
+      Expand
     }
 
   }

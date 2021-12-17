@@ -13,6 +13,8 @@ import router from '@/router/index'
 import i18n from '@/i18n'
 import installDirective from '@/directive'
 import JsonViewer from 'vue3-json-viewer'
+// import CIcon from '@/components/CIcon.vue'
+
 // import { use } from 'element-plus/lib/locale'
 // import './auth'
 
@@ -21,3 +23,4 @@ const app = createApp(App)
 installElementPlus(app)
 installDirective(app)
 app.use(store, key).use(router).use(adminToolkitPlus).use(i18n).use(JsonViewer).mount('#app')
+// app.component('CIcon', CIcon)

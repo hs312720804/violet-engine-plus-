@@ -18,7 +18,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="2">
-          <el-button type="text" icon="el-icon-delete" @click="handleDeleteOption(key)"></el-button>
+          <el-button type="text" :icon="Delete" @click="handleDeleteOption(key)"></el-button>
         </el-col>
       </el-row>
     </el-form>
@@ -30,6 +30,8 @@
 </template>
 
 <script>
+import { Delete } from '@element-plus/icons-vue'
+
 export default {
   props: {
     menu: {
@@ -56,6 +58,11 @@ export default {
       api: {},
       formLabelWidth: '60px'
     }
+  },
+  created () {
+    this.optionForm = this.row.options ? JSON.parse(this.row.options) : []
+    console.log(this.optionForm, this.row)
+    this.api = this.menu.api ? JSON.parse(this.menu.api) : {}
   },
   methods: {
     hancleAddOption () {
@@ -95,11 +102,6 @@ export default {
     handleDeleteOption (key) {
       this.optionForm.splice(key, 1)
     }
-  },
-  created () {
-    this.optionForm = this.row.options ? JSON.parse(this.row.options) : []
-    console.log(this.optionForm, this.row)
-    this.api = this.menu.api ? JSON.parse(this.menu.api) : {}
   }
 
 }

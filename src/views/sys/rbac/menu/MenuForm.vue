@@ -293,7 +293,7 @@
                   </el-col>
                   <el-col :span="6">
                     <el-button
-                      icon="el-icon-edit"
+                      :icon="Edit"
                       type="text"
                       round
                       @click="handleEditDateFormat(element)"

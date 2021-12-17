@@ -2,20 +2,20 @@
   <div style="height:calc(100vh - 170px);">
     <div class="box-wrapper">
       <transition :enter-active-class="`animated${transitionduration} ${nowTransition}`" :duration="transitionduration">
-        <div class="box" key="box-1" v-if="boxIndex === 1">
+        <div v-if="boxIndex === 1" key="box-1" class="box">
           <el-image class="box-content" src="https://beta-res-fusionmedia.skysrt.com/material/20201214/1607943075199.jpg"></el-image>
         </div>
-        <div class="box" key="box-2" v-else-if="boxIndex === 2">
+        <div v-else-if="boxIndex === 2" key="box-2" class="box">
           <iframe class="box-content" src="https://css3test.com/"></iframe>
         </div>
-        <div class="box" key="box-3" v-else-if="boxIndex === 3">
+        <div v-else-if="boxIndex === 3" key="box-3" class="box">
           <video
             class="box-content"
             controls
             src="https://beta-res-fusionmedia.skysrt.com/material/20201214/1607943575462.mp4"
           ></video>
         </div>
-        <div class="box" key="box-4" v-else-if="boxIndex === 4">
+        <div v-else-if="boxIndex === 4" key="box-4" class="box">
           <video
             class="box-content"
             controls
@@ -23,7 +23,7 @@
             src="https://beta-res-fusionmedia.skysrt.com/material/20210917/23e29b04-0952-4e03-9825-c0c96cf40832.wav"
           ></video>
         </div>
-        <div class="box" key="box-5" v-else-if="boxIndex === 5">
+        <div v-else-if="boxIndex === 5" key="box-5" class="box">
           <el-image class="box-content" src="https://beta-res-fusionmedia.skysrt.com/material/20201222/1608628726989.jpg"></el-image>
         </div>
       </transition>
@@ -51,8 +51,10 @@
         </el-select>
       </el-form-item>
 
-      <el-button type="primary" @click="handlePageChange(-1)">上一张</el-button>
-      <el-button type="primary" @click="handlePageChange(1)">下一张</el-button>
+      <el-form-item>
+        <el-button type="primary" @click="handlePageChange(-1)">上一张</el-button>
+        <el-button type="primary" @click="handlePageChange(1)">下一张</el-button>
+      </el-form-item>
     </el-form>
   </div>
 </template>

@@ -63,6 +63,7 @@
               {{ store.state.user.name }}
               <i class="el-icon-arrow-down el-icon--right"></i>
             </span>
+            <el-icon><arrow-down></arrow-down></el-icon>
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item command="account">{{ $t('accountInfo') }}</el-dropdown-item>
@@ -72,7 +73,8 @@
           </el-dropdown>
         </div>
         <div class="system-setting" @click="$emit('set-layout', true)">
-          <i class="el-icon-setting"></i>
+          <!-- <i class="el-icon-setting"></i> -->
+          <el-icon :size="20"><setting></setting></el-icon>
         </div>
       </el-header>
       <c-tag-nav
