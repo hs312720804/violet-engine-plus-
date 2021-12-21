@@ -233,8 +233,8 @@ export default defineComponent({
 .aside__menu
   min-height 100vh
   background $--side-menu-bg
-.aside__menu:not(.aside__menu_collapse)
-  width 200px
+// .aside__menu:not(.aside__menu_collapse)
+//   width 200px
 .aside__menu-main
   height 100vh
   display block
@@ -247,9 +247,9 @@ export default defineComponent({
   box-sizing border-box
   position relative
   overflow hidden
-.aside__menu .menu:not(.el-menu--collapse)
-  width 200px
-  background $--side-menu-bg
+// .aside__menu .menu:not(.el-menu--collapse)
+//   width 200px
+//   background $--side-menu-bg
 .menu li
   position relative
 .el-submenu__title

@@ -94,7 +94,7 @@
 import { defineComponent, ref, PropType, inject } from 'vue'
 
 import { CTable } from '@ccprivate/admin-toolkit-plus'
-import CListFilter from '@/components/CListFilter.vue'
+// import CListFilter from '@/components/CListFilter.vue'
 import Actions from '@/views/template/baseList/Actions.vue'
 
 import { MenuDetail } from '@/services/menu'
@@ -109,7 +109,7 @@ import { useStore } from '@/store'
 import apiFetch from '@/services/fetch'
 export default defineComponent({
   components: {
-    CListFilter,
+    // CListFilter,
     Actions
   },
   // extends: BaseList,

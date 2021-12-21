@@ -94,7 +94,7 @@ import CardOperation from './CardOperation.vue'
 
 import { CTable } from '@ccprivate/admin-toolkit-plus'
 // import { ElTable } from 'element-plus'
-import CListFilter from '@/components/CListFilter.vue'
+// import CListFilter from '@/components/CListFilter.vue'
 import Actions from '@/views/template/baseList/Actions.vue'
 import { MenuDetail, MenuExtra } from '@/services/menu'
 
@@ -111,8 +111,8 @@ export default defineComponent({
   components: {
     Actions,
     CardItem,
-    CardOperation,
-    CListFilter
+    CardOperation
+    // CListFilter
   },
   props: {
     menu: {

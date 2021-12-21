@@ -3,7 +3,6 @@ import ElementPlus from 'element-plus'
 // import 'element-plus/lib/theme-chalk/index.css'
 // import 'element-plus/dist/index.css'
 import 'element-plus/theme-chalk/index.css'
-import { ElIcon } from 'element-plus'
 import * as ElIconModules from '@element-plus/icons-vue'
 
 export default (app: App<Element>) => {
@@ -19,7 +18,7 @@ export default (app: App<Element>) => {
       app.component(iconName, item)
     }
   }
-  app.use(ElementPlus, { size: 'small' }).use(ElIcon)
+  app.use(ElementPlus, { size: 'small' })
 }
 
 

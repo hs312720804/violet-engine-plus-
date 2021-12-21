@@ -7,7 +7,6 @@
     "serve": "vite preview"
   },
   "dependencies": {
-    "@ccprivate/admin-toolkit-plus": "^1.0.1",
     "@ccprivate/utils": "^0.2.4",
     "@element-plus/icons-vue": "^0.2.4",
     "@vue/runtime-core": "^3.2.26",

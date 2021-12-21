@@ -65,7 +65,16 @@
             prop="icon"
             :placeholder="$t('placeholder.menuIcon')"
           >
+            <template #append>
+              <el-button :icon="PictureFilled" @click="iconVisible.is = true">选择</el-button>
+            </template>
           </c-form-string>
+          <!-- <c-icon-select
+            :go-back-icon="'el-icon-cc-arrowleft'"
+            :is-use-initial-icon="true"
+            @get-icon="getIcon"
+            @go-back="goBack"
+          ></c-icon-select> -->
         </el-col>
         <el-col
           :xs="24"
@@ -513,6 +522,11 @@
       ref="dateEdit"
       :field="dateFormat"
     ></DateEdit>
+    <IconList
+      :show="iconVisible"
+      :show-define="false"
+      @getIcon="getIcon"
+    ></IconList>
   </div>
 </template>
 
@@ -529,7 +543,8 @@ import { menuGetListService, MenuDetail } from '@/services/menu'
 
 // import draggable from 'vuedraggable'
 import draggable from 'vuedraggable/src/vuedraggable'
-import { Edit, Delete, Setting, Rank } from '@element-plus/icons-vue'
+import { Edit, Delete, Setting, Rank, PictureFilled } from '@element-plus/icons-vue'
+import IconList from '@/components/icons/Index.vue'
 
 const initialApi = [
   {
@@ -582,7 +597,8 @@ export default defineComponent({
     ExtendEdit,
     EnumEdit,
     DateEdit,
-    draggable
+    draggable,
+    IconList
   },
   props: {
     value: {
@@ -888,6 +904,11 @@ export default defineComponent({
       expandTrigger: 'hover'
     })
 
+    let iconVisible = reactive({ is: false })
+    function getIcon (icon) {
+      menu.value.icon = icon
+      iconVisible.is = false
+    }
     return {
       menu,
       allMenus,
@@ -917,7 +938,10 @@ export default defineComponent({
       Edit,
       Delete,
       Setting,
-      Rank
+      Rank,
+      PictureFilled,
+      iconVisible,
+      getIcon
     }
   },
   data () {

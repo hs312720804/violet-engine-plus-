@@ -41,11 +41,13 @@
           <template v-if="!hiddenExpandButton">
             <el-button v-if="!expand" class="text-btn" @click="handleFilterExpand">
               {{ genButtonText.expand }}
-              <i class="el-icon-arrow-down"></i>
+              <!-- <i class="el-icon-arrow-down"></i> -->
+              <el-icon><arrow-down></arrow-down></el-icon>
             </el-button>
             <el-button v-if="expand" class="text-btn" @click="handleFilterExpand">
               {{ genButtonText.packUp }}
-              <i class="el-icon-arrow-up"></i>
+              <!-- <i class="el-icon-arrow-up"></i> -->
+              <el-icon><arrow-up></arrow-up></el-icon>
             </el-button>
           </template>
         </el-button-group>
@@ -68,7 +70,8 @@
               @click="handleFilterExpand"
             >
               {{ genButtonText.expand }}
-              <i class="el-icon-arrow-down"></i>
+              <!-- <i class="el-icon-arrow-down"></i> -->
+              <el-icon><arrow-down></arrow-down></el-icon>
             </el-button>
             <el-button
               v-if="expand"
@@ -77,7 +80,8 @@
               @click="handleFilterExpand"
             >
               {{ genButtonText.packUp }}
-              <i class="el-icon-arrow-up"></i>
+              <!-- <i class="el-icon-arrow-up"></i> -->
+              <el-icon><arrow-up></arrow-up></el-icon>
             </el-button>
           </template>
         </template>

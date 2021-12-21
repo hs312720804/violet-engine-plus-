@@ -64,7 +64,7 @@
 import { defineComponent,ref, PropType, inject } from 'vue'
 import { CTable } from '@ccprivate/admin-toolkit-plus'
 // import { ElTable } from 'element-plus'
-import CListFilter from '@/components/CListFilter.vue'
+// import CListFilter from '@/components/CListFilter.vue'
 import Actions from './Actions.vue'
 import { MenuDetail } from '@/services/menu'
 
@@ -78,7 +78,7 @@ import useTable from '@/hooks/baseList/useTable'
 
 export default defineComponent({
   components: {
-    CListFilter,
+    // CListFilter,
     Actions
   },
   props: {
