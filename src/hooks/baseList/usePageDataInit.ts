@@ -4,6 +4,7 @@ import { MenuDetail, MenuApi, MenuExtra, MenuFields } from '@/services/menu'
 import { evil as functionEvil, disposalField } from '@/utlis/common'
 import consts from '@/utlis/consts'
 const { FieldUse } = consts
+import { useStore } from '@/store'
 export interface ListTabLe<T> {
   data: Array<T>
   header: Array<MenuFields<T>>
@@ -19,6 +20,7 @@ export const baseIndexKey: InjectionKey<InjectionKeyType> = Symbol('baseIndex')
 export default function usePageDataInit<T> (menu: MenuDetail) {
 
   const { t: $t } = useI18n()
+  const store = useStore()
 
   const api = computed(() => functionEvil<MenuApi>(menu.api))
   const extra = computed(() => functionEvil<MenuExtra>(menu.extra))
@@ -59,7 +61,17 @@ export default function usePageDataInit<T> (menu: MenuDetail) {
     // }
     if (data.fields) {
       const fields = functionEvil<Array<MenuFields<T>>>(data.fields)
-      filterFields.value = disposalField(fields, FieldUse.filter)
+
+      const getEnumOptions = store.getters.getEnumOptions
+      filterFields.value = disposalField(fields, FieldUse.filter).map(item => {
+        if (item.inputType === 'enum') {  // 针对enum类型的表单项，需要拿到相应枚举字典的数据
+          item.options = getEnumOptions(item.options)
+        }
+        return {
+          ...item
+        }
+      })
+
       table.header = disposalField(fields, FieldUse.list)
       if (data.template !== 'CardList' ) {
         table.header.length > 0 ? showList.value = true : showInfo.value = true

@@ -27,7 +27,11 @@
             :label="showLabel ? item.label : ''"
           >
             <template #edit>
-              <el-date-picker v-model="filterForm[item.prop]" type="date" :placeholder="item.label"></el-date-picker>
+              <el-date-picker
+                v-model="filterForm[item.prop]"
+                type="date"
+                :placeholder="item.label"
+              ></el-date-picker>
             </template>
           </c-form-any>
           <slot name="loop" :data="item"></slot>
@@ -145,7 +149,7 @@ export default defineComponent({
   emits: ['filter', 'filter-expand', 'reset'],
   setup (props, { emit }) {
     const store = useStore()
-    const getEnumOptions = computed(()=>store.getters.getEnumOptions)
+    const getEnumOptions = computed(()=> store.getters.getEnumOptions)
     const expand = ref(props.isExpand)
     const genButtonText = computed<CListFilterButton>(() => {
       return {

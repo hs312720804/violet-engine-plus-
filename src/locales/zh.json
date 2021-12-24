@@ -128,7 +128,8 @@
     "operationError": "操作失败",
     "pleaseEnterString": "请至少输入{0}个字符",
     "emailIncorrect": "邮件地址格式不正确",
-    "notFound": "页面不存在"
+    "notFound": "页面不存在",
+    "notTemplate": "菜单模板不存在，请检查菜单配置。"
   },
   "pleaseEnter": "请输入{0}",
   "pleaseSelect": "请选择{0}",

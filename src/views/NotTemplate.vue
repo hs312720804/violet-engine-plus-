@@ -1,6 +1,6 @@
 <template>
   <div class="notfound">
-    <i></i>
+    <el-icon size="50"><sunset></sunset></el-icon>
     <span class="text">{{ $t('message.notTemplate') }}</span>
   </div>
 </template>

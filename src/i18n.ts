@@ -35,8 +35,8 @@ function loadLocaleMessages (i18n: I18n<unknown, unknown, unknown, true>) {
 // })
 const i18n = createI18n({
   legacy: true, // 使用组合式API则要把 legacy 设置为 false
-  locale: (import.meta.env.VITE_APP_I18N_LOCALE as string) || 'en',
-  fallbackLocale: (import.meta.env.VITE_APP_I18N_FALLBACK_LOCALE as string) || 'en'
+  locale: (import.meta.env.VITE_APP_I18N_LOCALE as string) || 'zh',
+  fallbackLocale: (import.meta.env.VITE_APP_I18N_FALLBACK_LOCALE as string) || 'zh'
 })
 
 loadLocaleMessages(i18n) // Lazy loading Message

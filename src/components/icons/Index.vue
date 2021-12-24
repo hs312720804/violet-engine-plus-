@@ -70,4 +70,8 @@ export default defineComponent({
 
 })
 </script>
+<style lang="stylus" scoped>
+:deep(.el-icon)
+  font-size 30px
+</style>
 
