@@ -13,7 +13,13 @@ const HOST = process.env.HOST || '127.0.0.1'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [
+    vue(
+      {
+        refTransform: true // 开启ref转换
+      }
+    )
+  ],
   resolve: {
     alias: [
       { find: '@', replacement: resolve(__dirname, 'src') }

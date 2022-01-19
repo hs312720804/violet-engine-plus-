@@ -4,10 +4,8 @@
     <span class="text">{{ $t('message.notTemplate') }}</span>
   </div>
 </template>
-<script>
-export default {
+<script setup>
 
-}
 </script>
 <style lang="stylus" scoped>
 .notfound
@@ -17,7 +15,7 @@ export default {
   display block
   height 64px
   width 64px
-  background-image url(../assets/notfound.png)
+  // background-image url(../assets/notfound.png)
   margin 0 auto
 .notfound
   span

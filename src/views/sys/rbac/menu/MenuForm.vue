@@ -610,7 +610,7 @@ export default defineComponent({
       }
     }
   },
-  setup (props, ctx) {
+  setup (props) {
     const { t: _$t } = useI18n()
     let menu = ref(props.value)
     watch(() => props.value, () => {

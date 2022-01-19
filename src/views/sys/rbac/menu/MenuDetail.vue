@@ -52,7 +52,11 @@
           </el-form-item>
         </el-form>
         <!--菜单编辑-->
-        <MenuForm v-if="!isJsonView" ref="formRef" :value="menu"></MenuForm>
+        <MenuForm
+          v-if="!isJsonView"
+          ref="formRef"
+          :value="menu"
+        ></MenuForm>
         <!--预览JSON-->
         <div v-else style="margin-bottom:20px">
           <json-viewer
@@ -115,6 +119,7 @@ export default {
   },
   emits: ['go-back', 'upsert-end'],
   setup (props, { emit }) {
+
     // const _$t = ctx.root.$t.bind(ctx.root)
     const { t: _$t } = useI18n()
     // const service = ctx.root.$service
