@@ -32,6 +32,7 @@ export interface MenuDetail {
   /**
    * JSON.stringify(MenuApi[])
    */
+  id: number
   api: string
   /**
    * JSON.stringify(MenuExtra)

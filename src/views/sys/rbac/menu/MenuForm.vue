@@ -451,17 +451,17 @@
         </div> -->
       </el-form-item>
       <!-- <c-form-any label="扩展" prop="extra">
-              <el-input
-                type="textarea"
-                placeholder="扩展"
-                v-model="menu.extra"
-                :rows="5"
-                slot="edit"
-                show-word-limit
-              >
-              </el-input>
-              <span slot="read">{{ menu.extra ? '是' : '否' }} </span>
-            </c-form-any> -->
+        <el-input
+          slot="edit"
+          v-model="menu.extra"
+          type="textarea"
+          placeholder="扩展"
+          :rows="5"
+          show-word-limit
+        >
+        </el-input>
+        <span slot="read">{{ menu.extra ? '是' : '否' }} </span>
+      </c-form-any> -->
       <el-form-item :label="$t('extension')">
         <el-button style="margin-bottom:10px;" @click="genExtra">{{ $t('addExtension') }}</el-button>
         <div v-for="(extra, key) in menu.extra" :key="key" style="margin-bottom:10px;">
@@ -523,7 +523,6 @@
       :field="dateFormat"
     ></DateEdit>
 
-    <!-- 选择图标弹窗 -->
     <IconList
       :show="iconVisible"
       :show-define="false"
@@ -643,14 +642,14 @@ export default defineComponent({
     const allMenus = ref<Array<MenuDetail>>([])
     function fetchAllMenus () {
       menuGetListService(undefined).then(result => {
-        allMenus.value = result
-        if (!menu.value.parentId) {
-          menu.value.parentId = result[0].id
+        allMenus.value = result as Array<MenuDetail>
+        if (!menu.value.parentId && allMenus.value.length > 0) {
+          menu.value.parentId = allMenus.value[0].id
         }
       })
     }
     fetchAllMenus()
-    type Callback = () => void;
+    type Callback = (x?: Error) => void;
     interface ruleType {
       field: string
       fullField: string
@@ -659,8 +658,6 @@ export default defineComponent({
       validator: any
     }
     function verifySameName (rule: ruleType, value: string, callback: Callback) { // 校验别名是否重名
-      debugger
-
       if (value === '') {
         callback(new Error(_$t('message.menuAlias')))
       } else {
@@ -673,7 +670,6 @@ export default defineComponent({
     }
 
     function verifySamePath (rule: ruleType, value: string, callback: Callback) { // 校验路径是否重复
-      debugger
       if (value === '') {
         callback(new Error(_$t('pleaseEnter', [_$t('menuPath')])))
       } else {
@@ -685,7 +681,7 @@ export default defineComponent({
       }
     }
 
-    function isHasSameValue (menus, field, val) {
+    function isHasSameValue (menus: MenuDetail[], field: string, val: string) {
       return menus.some(item => {
         const menuId = props.value !== null ? props.value.id : ''
         if (item.id !== menuId) { // 排除当前编辑的菜单
@@ -699,7 +695,7 @@ export default defineComponent({
         }
       })
     }
-    const rules = ref({
+    const rules = reactive({
       name: [
         {
           required: true,
@@ -889,7 +885,10 @@ export default defineComponent({
     const dateFormat = ref({})
     const dateEdit = ref()
 
-    function handleEditDateFormat (item) {
+    interface dateFormatType {
+      format: undefined | string
+    }
+    function handleEditDateFormat (item: dateFormatType) {
       if (item.format === undefined) {
         // ctx.root.$set(item, 'format', '')
         item.format = ''
@@ -907,7 +906,8 @@ export default defineComponent({
     })
 
     let iconVisible = reactive({ is: false })
-    function getIcon (icon) {
+
+    function getIcon (icon: string) {
       menu.value.icon = icon
       iconVisible.is = false
     }
